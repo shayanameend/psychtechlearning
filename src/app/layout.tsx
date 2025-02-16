@@ -4,8 +4,7 @@ import type { PropsWithChildren } from "react";
 import "~/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Next App",
-  description: "Next App",
+  title: "Psychtech Learning",
 };
 
 export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
