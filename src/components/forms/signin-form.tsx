@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as Link } from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { default as zod } from "zod";
 
@@ -37,6 +38,8 @@ const SignInFormSchema = zod.object({
 });
 
 export function SignInForm() {
+  const router = useRouter();
+
   const form = useForm<zod.infer<typeof SignInFormSchema>>({
     resolver: zodResolver(SignInFormSchema),
     defaultValues: {
@@ -47,6 +50,8 @@ export function SignInForm() {
 
   const onSubmit = (data: zod.infer<typeof SignInFormSchema>) => {
     console.log(form.getValues());
+
+    router.push(paths.app.dashboard());
   };
 
   return (
@@ -78,6 +83,7 @@ export function SignInForm() {
                 <FormControl>
                   <Input {...field} placeholder="********" type="password" />
                 </FormControl>
+                <FormMessage />
                 <FormDescription className={cn("text-right")}>
                   <Link
                     href={paths.auth.forgotPassword()}
@@ -86,7 +92,6 @@ export function SignInForm() {
                     Forgot password?
                   </Link>
                 </FormDescription>
-                <FormMessage />
               </FormItem>
             )}
           />

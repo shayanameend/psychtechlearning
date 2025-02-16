@@ -10,4 +10,7 @@ export const paths = {
     create: () => "/profile/create",
     update: () => "/profile/update",
   },
+  app: {
+    dashboard: () => "/dashboard",
+  },
 };
