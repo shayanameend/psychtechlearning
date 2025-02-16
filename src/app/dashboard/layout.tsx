@@ -28,15 +28,7 @@ export default function DashboardLayout({
           </h1>
         </Link>
       </header>
-      <main>
-        <section
-          className={cn(
-            "p-6 md:p-10 min-h-[calc(100svh_-_4.5rem)] lg:min-h-[calc(100svh_-_6.5rem)]",
-          )}
-        >
-          {children}
-        </section>
-      </main>
+      <main>{children}</main>
     </>
   );
 }
