@@ -1,15 +1,23 @@
 "use client";
 
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EditIcon,
+  XIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { Steps } from "~/components/ui/steps";
+import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 
 export default function DashboardPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showNotes, setShowNotes] = useState(false);
+  const [isEditing, setIsEditing] = useState(-1);
 
   const steps = [1, 2, 3, 4];
 
@@ -56,6 +64,26 @@ export default function DashboardPage() {
           id: "2",
           content:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+        },
+        {
+          id: "3",
+          content:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+        },
+        {
+          id: "4",
+          content:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+        },
+        {
+          id: "5",
+          content:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+        },
+        {
+          id: "6",
+          content:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
         },
       ],
     },
@@ -169,8 +197,8 @@ export default function DashboardPage() {
                   {data[currentStep - 1]?.sectionGuidePdf?.label}
                 </p>
                 <Button
-                  size="sm"
                   onClick={data[currentStep - 1]?.sectionGuidePdf?.action}
+                  size="sm"
                 >
                   Download
                 </Button>
@@ -183,8 +211,8 @@ export default function DashboardPage() {
                   {data[currentStep - 1]?.sectionMedCards?.label}
                 </p>
                 <Button
-                  size="sm"
                   onClick={data[currentStep - 1]?.sectionMedCards?.action}
+                  size="sm"
                 >
                   View Med Cards
                 </Button>
@@ -197,10 +225,10 @@ export default function DashboardPage() {
                   {data[currentStep - 1]?.sectionSampleQuestions?.label}
                 </p>
                 <Button
-                  size="sm"
                   onClick={
                     data[currentStep - 1]?.sectionSampleQuestions?.action
                   }
+                  size="sm"
                 >
                   View Questions
                 </Button>
@@ -213,14 +241,13 @@ export default function DashboardPage() {
                   {data[currentStep - 1]?.sectionTest?.label}
                 </p>
                 <Button
-                  size="sm"
                   onClick={data[currentStep - 1]?.sectionTest?.action}
+                  size="sm"
                 >
                   Take Test
                 </Button>
               </article>
             </div>
-
             <div
               className={cn(
                 "space-y-3 lg:space-y-6",
@@ -229,11 +256,13 @@ export default function DashboardPage() {
             >
               <article>
                 <h3 className={cn("text-primary text-lg font-medium")}>
-                  User Notes
+                  Your Notes
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  Here you can find notes added by users. These notes are meant
-                  to help you understand the material better.
+                  Here you can find the notes you've taken while studying this
+                  section. These notes are personal to you and can help
+                  reinforce your learning. Feel free to add, edit, or delete any
+                  notes as you progress through the material.
                 </p>
               </article>
               <article>
@@ -242,13 +271,42 @@ export default function DashboardPage() {
                     No notes added by users.
                   </p>
                 ) : (
-                  data[currentStep - 1]?.sectionUserNotes?.map((note) => (
-                    <ul key={note.id} className={cn("space-y-2 pl-3")}>
-                      <li className={cn("text-gray-600 text-sm list-disc")}>
-                        {note.content}
-                      </li>
-                    </ul>
-                  ))
+                  <ul className={cn("space-y-2 pl-3")}>
+                    {data[currentStep - 1]?.sectionUserNotes?.map(
+                      (note, index) => (
+                        <li
+                          key={note.id}
+                          className={cn("text-gray-600 text-sm list-disc")}
+                        >
+                          {isEditing === index ? (
+                            <Textarea
+                              defaultValue={note.content}
+                              className={cn("resize-none")}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                  setIsEditing(-1);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <>
+                              <span>{note.content}</span>
+                              <Button
+                                onClick={() => {
+                                  setIsEditing(index);
+                                }}
+                                variant="link"
+                                size="icon"
+                                className={cn("ml-1 size-6")}
+                              >
+                                <EditIcon />
+                              </Button>
+                            </>
+                          )}
+                        </li>
+                      ),
+                    )}
+                  </ul>
                 )}
               </article>
             </div>
@@ -259,10 +317,11 @@ export default function DashboardPage() {
                 onClick={() => {
                   setShowNotes(!showNotes);
                 }}
+                size={showNotes ? "icon" : "default"}
                 variant="outline"
-                className={cn("lg:hidden")}
+                className={cn("lg:hidden", showNotes && "rounded-full")}
               >
-                Open Notes
+                {!showNotes ? "Show Notes" : <XIcon />}
               </Button>
             </div>
             <div className={cn("flex gap-4")}>
