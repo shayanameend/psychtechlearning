@@ -4,20 +4,144 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EditIcon,
+  PlusIcon,
+  Trash2Icon,
   XIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { Steps } from "~/components/ui/steps";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 
+const data = [
+  {
+    sectionTitle: "Nursing Science",
+    sectionDescription:
+      "Learn about essential nursing skills, including how to take blood pressure, perform CPR, and more.",
+    sectionGuidePdf: {
+      label: "Download the nursing science study guide.",
+      action: () => {},
+    },
+    sectionMedCards: {
+      label: "Review medication flashcards to reinforce learning.",
+      action: () => {},
+    },
+    sectionSampleQuestions: {
+      label: "Test your knowledge with sample questions.",
+      action: () => {},
+    },
+    sectionTest: {
+      label: "Take a test to assess your knowledge.",
+      action: () => {},
+    },
+    sectionUserNotes: [
+      {
+        id: "1",
+        content:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+      },
+      {
+        id: "2",
+        content:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+      },
+      {
+        id: "3",
+        content:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+      },
+    ],
+  },
+  {
+    sectionTitle: "Anatomy & Physiology",
+    sectionDescription:
+      "Study the structure and function of the human body, including the skeletal, muscular, and nervous systems.",
+    sectionGuidePdf: {
+      label: "Download the anatomy & physiology study guide.",
+      action: () => {},
+    },
+    sectionMedCards: {
+      label: "Review medication flashcards to reinforce learning.",
+      action: () => {},
+    },
+    sectionSampleQuestions: {
+      label: "Test your knowledge with sample questions.",
+      action: () => {},
+    },
+    sectionTest: {
+      label: "Take a test to assess your knowledge.",
+      action: () => {},
+    },
+    sectionUserNotes: [],
+  },
+  {
+    sectionTitle: "Pharmacology",
+    sectionDescription:
+      "Learn about the principles of pharmacology, including drug classifications, side effects, and more.",
+    sectionGuidePdf: {
+      label: "Download the pharmacology study guide.",
+      action: () => {},
+    },
+    sectionMedCards: {
+      label: "Review medication flashcards to reinforce learning.",
+      action: () => {},
+    },
+    sectionSampleQuestions: {
+      label: "Test your knowledge with sample questions.",
+      action: () => {},
+    },
+    sectionTest: {
+      label: "Take a test to assess your knowledge.",
+      action: () => {},
+    },
+    sectionUserNotes: [
+      {
+        id: "1",
+        content:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
+      },
+    ],
+  },
+  {
+    sectionTitle: "Mental Health",
+    sectionDescription:
+      "Study the mental health nursing concepts, including therapeutic communication, mental health disorders, and more.",
+    sectionGuidePdf: {
+      label: "Download the mental health study guide.",
+      action: () => {},
+    },
+    sectionMedCards: {
+      label: "Review medication flashcards to reinforce learning.",
+      action: () => {},
+    },
+    sectionSampleQuestions: {
+      label: "Test your knowledge with sample questions.",
+      action: () => {},
+    },
+    sectionTest: {
+      label: "Take a test to assess your knowledge.",
+      action: () => {},
+    },
+    sectionUserNotes: [],
+  },
+];
+
 export default function DashboardPage() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [content, setContent] = useState(data[currentStep - 1]);
   const [showNotes, setShowNotes] = useState(false);
   const [isEditing, setIsEditing] = useState(-1);
+  const [noteValue, setNoteValue] = useState("");
+
+  useEffect(() => {
+    setContent(data[currentStep - 1]);
+  }, [currentStep]);
+
+  useEffect(() => {
+    setNoteValue(content.sectionUserNotes[isEditing]?.content);
+  }, [content, isEditing]);
 
   const steps = [1, 2, 3, 4];
 
@@ -32,134 +156,6 @@ export default function DashboardPage() {
       setCurrentStep(currentStep + 1);
     }
   };
-
-  const data = [
-    {
-      sectionTitle: "Nursing Science",
-      sectionDescription:
-        "Learn about essential nursing skills, including how to take blood pressure, perform CPR, and more.",
-      sectionGuidePdf: {
-        label: "Download the nursing science study guide.",
-        action: () => {},
-      },
-      sectionMedCards: {
-        label: "Review medication flashcards to reinforce learning.",
-        action: () => {},
-      },
-      sectionSampleQuestions: {
-        label: "Test your knowledge with sample questions.",
-        action: () => {},
-      },
-      sectionTest: {
-        label: "Take a test to assess your knowledge.",
-        action: () => {},
-      },
-      sectionUserNotes: [
-        {
-          id: "1",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-        },
-        {
-          id: "2",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-        },
-        {
-          id: "3",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-        },
-        {
-          id: "4",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-        },
-        {
-          id: "5",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-        },
-        {
-          id: "6",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-        },
-      ],
-    },
-    {
-      sectionTitle: "Anatomy & Physiology",
-      sectionDescription:
-        "Study the structure and function of the human body, including the skeletal, muscular, and nervous systems.",
-      sectionGuidePdf: {
-        label: "Download the anatomy & physiology study guide.",
-        action: () => {},
-      },
-      sectionMedCards: {
-        label: "Review medication flashcards to reinforce learning.",
-        action: () => {},
-      },
-      sectionSampleQuestions: {
-        label: "Test your knowledge with sample questions.",
-        action: () => {},
-      },
-      sectionTest: {
-        label: "Take a test to assess your knowledge.",
-        action: () => {},
-      },
-      sectionUserNotes: [],
-    },
-    {
-      sectionTitle: "Pharmacology",
-      sectionDescription:
-        "Learn about the principles of pharmacology, including drug classifications, side effects, and more.",
-      sectionGuidePdf: {
-        label: "Download the pharmacology study guide.",
-        action: () => {},
-      },
-      sectionMedCards: {
-        label: "Review medication flashcards to reinforce learning.",
-        action: () => {},
-      },
-      sectionSampleQuestions: {
-        label: "Test your knowledge with sample questions.",
-        action: () => {},
-      },
-      sectionTest: {
-        label: "Take a test to assess your knowledge.",
-        action: () => {},
-      },
-      sectionUserNotes: [
-        {
-          id: "1",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-        },
-      ],
-    },
-    {
-      sectionTitle: "Mental Health",
-      sectionDescription:
-        "Study the mental health nursing concepts, including therapeutic communication, mental health disorders, and more.",
-      sectionGuidePdf: {
-        label: "Download the mental health study guide.",
-        action: () => {},
-      },
-      sectionMedCards: {
-        label: "Review medication flashcards to reinforce learning.",
-        action: () => {},
-      },
-      sectionSampleQuestions: {
-        label: "Test your knowledge with sample questions.",
-        action: () => {},
-      },
-      sectionTest: {
-        label: "Take a test to assess your knowledge.",
-        action: () => {},
-      },
-      sectionUserNotes: [],
-    },
-  ];
 
   return (
     <>
@@ -183,10 +179,10 @@ export default function DashboardPage() {
             >
               <article className={cn("space-y-2")}>
                 <h3 className={cn("text-primary text-xl font-bold")}>
-                  {data[currentStep - 1]?.sectionTitle}
+                  {content?.sectionTitle}
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {data[currentStep - 1]?.sectionDescription}
+                  {content?.sectionDescription}
                 </p>
               </article>
               <article className={cn("space-y-2")}>
@@ -194,12 +190,9 @@ export default function DashboardPage() {
                   Study Guide
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {data[currentStep - 1]?.sectionGuidePdf?.label}
+                  {content?.sectionGuidePdf?.label}
                 </p>
-                <Button
-                  onClick={data[currentStep - 1]?.sectionGuidePdf?.action}
-                  size="sm"
-                >
+                <Button onClick={content?.sectionGuidePdf?.action} size="sm">
                   Download
                 </Button>
               </article>
@@ -208,12 +201,9 @@ export default function DashboardPage() {
                   Medication Flashcards
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {data[currentStep - 1]?.sectionMedCards?.label}
+                  {content?.sectionMedCards?.label}
                 </p>
-                <Button
-                  onClick={data[currentStep - 1]?.sectionMedCards?.action}
-                  size="sm"
-                >
+                <Button onClick={content?.sectionMedCards?.action} size="sm">
                   View Med Cards
                 </Button>
               </article>
@@ -222,12 +212,10 @@ export default function DashboardPage() {
                   Sample Questions
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {data[currentStep - 1]?.sectionSampleQuestions?.label}
+                  {content?.sectionSampleQuestions?.label}
                 </p>
                 <Button
-                  onClick={
-                    data[currentStep - 1]?.sectionSampleQuestions?.action
-                  }
+                  onClick={content?.sectionSampleQuestions?.action}
                   size="sm"
                 >
                   View Questions
@@ -238,12 +226,9 @@ export default function DashboardPage() {
                   Test
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {data[currentStep - 1]?.sectionTest?.label}
+                  {content?.sectionTest?.label}
                 </p>
-                <Button
-                  onClick={data[currentStep - 1]?.sectionTest?.action}
-                  size="sm"
-                >
+                <Button onClick={content?.sectionTest?.action} size="sm">
                   Take Test
                 </Button>
               </article>
@@ -255,9 +240,42 @@ export default function DashboardPage() {
               )}
             >
               <article>
-                <h3 className={cn("text-primary text-lg font-medium")}>
-                  Your Notes
-                </h3>
+                <div className={cn("flex justify-between items-center")}>
+                  <h3 className={cn("text-primary text-lg font-medium")}>
+                    Your Notes
+                  </h3>
+                  <Button
+                    onClick={() => {
+                      if (
+                        content.sectionUserNotes[
+                          content.sectionUserNotes.length - 1
+                        ].content.trim() !== ""
+                      ) {
+                        setContent((prev) => ({
+                          ...prev,
+                          sectionUserNotes: [
+                            ...prev.sectionUserNotes,
+                            {
+                              id: String(
+                                prev.sectionUserNotes[
+                                  prev.sectionUserNotes.length - 1
+                                ]?.id + 1,
+                              ),
+                              content: "",
+                            },
+                          ],
+                        }));
+
+                        setIsEditing(content.sectionUserNotes.length);
+                      }
+                    }}
+                    variant="outline"
+                    size="icon"
+                    className={cn("size-5 rounded-sm")}
+                  >
+                    <PlusIcon />
+                  </Button>
+                </div>
                 <p className={cn("text-gray-600 text-sm")}>
                   Here you can find the notes you've taken while studying this
                   section. These notes are personal to you and can help
@@ -266,46 +284,85 @@ export default function DashboardPage() {
                 </p>
               </article>
               <article>
-                {data[currentStep - 1]?.sectionUserNotes?.length === 0 ? (
+                {content?.sectionUserNotes?.length === 0 ? (
                   <p className={cn("text-gray-600 text-sm")}>
                     No notes added by users.
                   </p>
                 ) : (
                   <ul className={cn("space-y-2 pl-3")}>
-                    {data[currentStep - 1]?.sectionUserNotes?.map(
-                      (note, index) => (
-                        <li
-                          key={note.id}
-                          className={cn("text-gray-600 text-sm list-disc")}
-                        >
-                          {isEditing === index ? (
-                            <Textarea
-                              defaultValue={note.content}
-                              className={cn("resize-none")}
-                              onKeyDown={(event) => {
-                                if (event.key === "Enter") {
-                                  setIsEditing(-1);
+                    {content?.sectionUserNotes?.map((note, index) => (
+                      <li
+                        key={note.id}
+                        className={cn("text-gray-600 text-sm list-disc")}
+                      >
+                        {isEditing === index ? (
+                          <Textarea
+                            value={noteValue}
+                            onChange={(event) => {
+                              setNoteValue(event.currentTarget.value);
+                            }}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") {
+                                setIsEditing(-1);
+                                if (event.currentTarget.value.trim() === "") {
+                                  setContent((prev) => ({
+                                    ...prev,
+                                    sectionUserNotes:
+                                      prev.sectionUserNotes.filter(
+                                        (n) => n.id !== note.id,
+                                      ),
+                                  }));
+                                } else {
+                                  setContent((prev) => ({
+                                    ...prev,
+                                    sectionUserNotes: prev.sectionUserNotes.map(
+                                      (n) =>
+                                        n.id === note.id
+                                          ? {
+                                              ...n,
+                                              content: noteValue,
+                                            }
+                                          : n,
+                                    ),
+                                  }));
                                 }
+                              }
+                            }}
+                            className={cn("resize-none")}
+                          />
+                        ) : (
+                          <>
+                            <span>{note.content}</span>
+                            <Button
+                              onClick={() => {
+                                setIsEditing(index);
                               }}
-                            />
-                          ) : (
-                            <>
-                              <span>{note.content}</span>
-                              <Button
-                                onClick={() => {
-                                  setIsEditing(index);
-                                }}
-                                variant="link"
-                                size="icon"
-                                className={cn("ml-1 size-6")}
-                              >
-                                <EditIcon />
-                              </Button>
-                            </>
-                          )}
-                        </li>
-                      ),
-                    )}
+                              variant="link"
+                              size="icon"
+                              className={cn("ml-1 size-6")}
+                            >
+                              <EditIcon />
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                setContent((prev) => ({
+                                  ...prev,
+                                  sectionUserNotes:
+                                    prev.sectionUserNotes.filter(
+                                      (n) => n.id !== note.id,
+                                    ),
+                                }));
+                              }}
+                              variant="link"
+                              size="icon"
+                              className={cn("ml-1 size-6")}
+                            >
+                              <Trash2Icon className={cn("text-red-500")} />
+                            </Button>
+                          </>
+                        )}
+                      </li>
+                    ))}
                   </ul>
                 )}
               </article>
@@ -335,6 +392,7 @@ export default function DashboardPage() {
               </Button>
               <Button
                 onClick={handleNext}
+                disabled={currentStep === steps.length}
                 size="icon"
                 className={cn("rounded-full")}
               >
