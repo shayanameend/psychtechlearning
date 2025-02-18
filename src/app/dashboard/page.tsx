@@ -20,6 +20,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Steps } from "~/components/ui/steps";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
@@ -422,7 +424,14 @@ export default function DashboardPage() {
                 </p>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm">View Questions</Button>
+                    <Button
+                      onClick={() => {
+                        setQuestionIndex(0);
+                      }}
+                      size="sm"
+                    >
+                      View Questions
+                    </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
                     <DialogHeader>
@@ -444,43 +453,38 @@ export default function DashboardPage() {
                           {sampleTestQuestions[questionIndex]?.question}
                         </p>
                       </div>
-                      <ul className={cn("space-y-2")}>
+                      <RadioGroup
+                        onValueChange={(value) => {
+                          setSampleTestAnswers((prev) => {
+                            const answers = [...prev];
+
+                            answers[questionIndex] = value;
+
+                            return answers;
+                          });
+                        }}
+                      >
                         {sampleTestQuestions[questionIndex]?.answers.map(
-                          (answer, index) => (
-                            <li
-                              // biome-ignore lint/suspicious/noArrayIndexKey: <>
-                              key={index}
-                              className={cn(
-                                "text-gray-600 text-sm",
-                                sampleTestAnswers[questionIndex] === answer &&
-                                  "text-primary",
-                              )}
-                            >
-                              <label>
-                                <input
-                                  type="radio"
-                                  name={`question-${questionIndex}`}
-                                  value={answer}
+                          (option, index) => {
+                            return (
+                              <div
+                                // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                                key={index}
+                                className="flex items-center space-x-2"
+                              >
+                                <RadioGroupItem
                                   checked={
-                                    sampleTestAnswers[questionIndex] === answer
+                                    sampleTestAnswers[questionIndex] === option
                                   }
-                                  onChange={(event) => {
-                                    setSampleTestAnswers((prev) => {
-                                      const answers = [...prev];
-
-                                      answers[questionIndex] =
-                                        event.target.value;
-
-                                      return answers;
-                                    });
-                                  }}
+                                  value={option}
+                                  id={option}
                                 />
-                                <span className={cn("ml-1")}>{answer}</span>
-                              </label>
-                            </li>
-                          ),
+                                <Label htmlFor={option}>{option}</Label>
+                              </div>
+                            );
+                          },
                         )}
-                      </ul>
+                      </RadioGroup>
                     </article>
                     <DialogFooter>
                       <Button
@@ -521,7 +525,14 @@ export default function DashboardPage() {
                 </p>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm">Take Test</Button>
+                    <Button
+                      onClick={() => {
+                        setQuestionIndex(0);
+                      }}
+                      size="sm"
+                    >
+                      Take Test
+                    </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
                     <DialogHeader>
@@ -532,7 +543,48 @@ export default function DashboardPage() {
                         choice questions and is timed. Good luck!
                       </DialogDescription>
                     </DialogHeader>
-                    {/* <MCQ question={finalTestQuestions[questionIndex]} /> */}
+                    <article className={cn("space-y-3")}>
+                      <div className={cn("space-y-1")}>
+                        <h4 className={cn("text-lg font-medium")}>
+                          Question {questionIndex + 1}
+                        </h4>
+                        <p className={cn("text-gray-600 text-sm")}>
+                          {finalTestQuestions[questionIndex]?.question}
+                        </p>
+                      </div>
+                      <RadioGroup
+                        onValueChange={(value) => {
+                          setFinalTestAnswers((prev) => {
+                            const answers = [...prev];
+
+                            answers[questionIndex] = value;
+
+                            return answers;
+                          });
+                        }}
+                      >
+                        {finalTestQuestions[questionIndex]?.answers.map(
+                          (option, index) => {
+                            return (
+                              <div
+                                // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                                key={index}
+                                className="flex items-center space-x-2"
+                              >
+                                <RadioGroupItem
+                                  checked={
+                                    finalTestAnswers[questionIndex] === option
+                                  }
+                                  value={option}
+                                  id={option}
+                                />
+                                <Label htmlFor={option}>{option}</Label>
+                              </div>
+                            );
+                          },
+                        )}
+                      </RadioGroup>
+                    </article>
                     <DialogFooter>
                       <Button
                         onClick={() => {
