@@ -496,7 +496,7 @@ export default function DashboardPage() {
                       View Flashcards
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
+                  <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                     <DialogHeader>
                       <DialogTitle>
                         Flashcards: {content?.sectionTitle}
@@ -577,7 +577,7 @@ export default function DashboardPage() {
                       View Questions
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
+                  <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                     <DialogHeader>
                       <DialogTitle>
                         Sample Questions: {content?.sectionTitle}
@@ -678,7 +678,7 @@ export default function DashboardPage() {
                       Take Test
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
+                  <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                     <DialogHeader>
                       <DialogTitle>Test: {content?.sectionTitle}</DialogTitle>
                       <DialogDescription>
