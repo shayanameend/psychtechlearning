@@ -11,9 +11,24 @@ import {
 import { useEffect, useState } from "react";
 
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import { Steps } from "~/components/ui/steps";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
+
+interface Question {
+  question: string;
+  answers: string[];
+  correctAnswer: string;
+}
 
 const data = [
   {
@@ -22,19 +37,50 @@ const data = [
       "Learn about essential nursing skills, including how to take blood pressure, perform CPR, and more.",
     sectionGuidePdf: {
       label: "Download the nursing science study guide.",
-      action: () => {},
     },
     sectionMedCards: {
       label: "Review medication flashcards to reinforce learning.",
-      action: () => {},
+      cards: [],
     },
-    sectionSampleQuestions: {
+    sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the normal range for blood pressure?",
+          answers: ["120/80", "140/90", "160/100", "180/110"],
+          correctAnswer: "120/80",
+        },
+        {
+          question: "What is the normal range for heart rate?",
+          answers: ["60-100 bpm", "100-140 bpm", "140-180 bpm", "180-220 bpm"],
+          correctAnswer: "60-100 bpm",
+        },
+        {
+          question: "What is the normal range for respiratory rate?",
+          answers: ["12-20 bpm", "20-30 bpm", "30-40 bpm", "40-50 bpm"],
+          correctAnswer: "12-20 bpm",
+        },
+      ],
     },
-    sectionTest: {
+    sectionFinalTest: {
       label: "Take a test to assess your knowledge.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the normal range for blood pressure?",
+          answers: ["120/80", "140/90", "160/100", "180/110"],
+          correctAnswer: "120/80",
+        },
+        {
+          question: "What is the normal range for heart rate?",
+          answers: ["60-100 bpm", "100-140 bpm", "140-180 bpm", "180-220 bpm"],
+          correctAnswer: "60-100 bpm",
+        },
+        {
+          question: "What is the normal range for respiratory rate?",
+          answers: ["12-20 bpm", "20-30 bpm", "30-40 bpm", "40-50 bpm"],
+          correctAnswer: "12-20 bpm",
+        },
+      ],
     },
     sectionUserNotes: [
       {
@@ -60,19 +106,60 @@ const data = [
       "Study the structure and function of the human body, including the skeletal, muscular, and nervous systems.",
     sectionGuidePdf: {
       label: "Download the anatomy & physiology study guide.",
-      action: () => {},
     },
     sectionMedCards: {
       label: "Review medication flashcards to reinforce learning.",
-      action: () => {},
+      cards: [],
     },
-    sectionSampleQuestions: {
+    sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the largest organ in the human body?",
+          answers: ["Liver", "Skin", "Heart", "Lungs"],
+          correctAnswer: "Skin",
+        },
+        {
+          question: "What is the smallest bone in the human body?",
+          answers: ["Stapes", "Malleus", "Incus", "Femur"],
+          correctAnswer: "Stapes",
+        },
+        {
+          question: "What is the primary function of the respiratory system?",
+          answers: [
+            "Transport oxygen to cells",
+            "Remove waste from the body",
+            "Regulate body temperature",
+            "Protect the body from pathogens",
+          ],
+          correctAnswer: "Transport oxygen to cells",
+        },
+      ],
     },
-    sectionTest: {
+    sectionFinalTest: {
       label: "Take a test to assess your knowledge.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the largest organ in the human body?",
+          answers: ["Liver", "Skin", "Heart", "Lungs"],
+          correctAnswer: "Skin",
+        },
+        {
+          question: "What is the smallest bone in the human body?",
+          answers: ["Stapes", "Malleus", "Incus", "Femur"],
+          correctAnswer: "Stapes",
+        },
+        {
+          question: "What is the primary function of the respiratory system?",
+          answers: [
+            "Transport oxygen to cells",
+            "Remove waste from the body",
+            "Regulate body temperature",
+            "Protect the body from pathogens",
+          ],
+          correctAnswer: "Transport oxygen to cells",
+        },
+      ],
     },
     sectionUserNotes: [],
   },
@@ -82,19 +169,80 @@ const data = [
       "Learn about the principles of pharmacology, including drug classifications, side effects, and more.",
     sectionGuidePdf: {
       label: "Download the pharmacology study guide.",
-      action: () => {},
     },
     sectionMedCards: {
       label: "Review medication flashcards to reinforce learning.",
-      action: () => {},
+      cards: [],
     },
-    sectionSampleQuestions: {
+    sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the primary function of an analgesic?",
+          answers: [
+            "Reduce fever",
+            "Relieve pain",
+            "Treat infection",
+            "Lower blood pressure",
+          ],
+          correctAnswer: "Relieve pain",
+        },
+        {
+          question: "What is the primary function of an antibiotic?",
+          answers: [
+            "Reduce fever",
+            "Relieve pain",
+            "Treat infection",
+            "Lower blood pressure",
+          ],
+          correctAnswer: "Treat infection",
+        },
+        {
+          question: "What is the primary function of an antihypertensive?",
+          answers: [
+            "Reduce fever",
+            "Relieve pain",
+            "Treat infection",
+            "Lower blood pressure",
+          ],
+          correctAnswer: "Lower blood pressure",
+        },
+      ],
     },
-    sectionTest: {
+    sectionFinalTest: {
       label: "Take a test to assess your knowledge.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the primary function of an analgesic?",
+          answers: [
+            "Reduce fever",
+            "Relieve pain",
+            "Treat infection",
+            "Lower blood pressure",
+          ],
+          correctAnswer: "Relieve pain",
+        },
+        {
+          question: "What is the primary function of an antibiotic?",
+          answers: [
+            "Reduce fever",
+            "Relieve pain",
+            "Treat infection",
+            "Lower blood pressure",
+          ],
+          correctAnswer: "Treat infection",
+        },
+        {
+          question: "What is the primary function of an antihypertensive?",
+          answers: [
+            "Reduce fever",
+            "Relieve pain",
+            "Treat infection",
+            "Lower blood pressure",
+          ],
+          correctAnswer: "Lower blood pressure",
+        },
+      ],
     },
     sectionUserNotes: [
       {
@@ -110,19 +258,50 @@ const data = [
       "Study the mental health nursing concepts, including therapeutic communication, mental health disorders, and more.",
     sectionGuidePdf: {
       label: "Download the mental health study guide.",
-      action: () => {},
     },
     sectionMedCards: {
       label: "Review medication flashcards to reinforce learning.",
-      action: () => {},
+      cards: [],
     },
-    sectionSampleQuestions: {
+    sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the primary symptom of depression?",
+          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
+          correctAnswer: "Anhedonia",
+        },
+        {
+          question: "What is the primary symptom of anxiety?",
+          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
+          correctAnswer: "Anhedonia",
+        },
+        {
+          question: "What is the primary symptom of schizophrenia?",
+          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
+          correctAnswer: "Hallucinations",
+        },
+      ],
     },
-    sectionTest: {
+    sectionFinalTest: {
       label: "Take a test to assess your knowledge.",
-      action: () => {},
+      questions: [
+        {
+          question: "What is the primary symptom of depression?",
+          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
+          correctAnswer: "Anhedonia",
+        },
+        {
+          question: "What is the primary symptom of anxiety?",
+          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
+          correctAnswer: "Anhedonia",
+        },
+        {
+          question: "What is the primary symptom of schizophrenia?",
+          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
+          correctAnswer: "Hallucinations",
+        },
+      ],
     },
     sectionUserNotes: [],
   },
@@ -131,6 +310,17 @@ const data = [
 export default function DashboardPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [content, setContent] = useState(data[currentStep - 1]);
+  const [sampleTestQuestions, setSampleTestQuestions] = useState<Question[]>(
+    [],
+  );
+  const [sampleTestAnswers, setSampleTestAnswers] = useState<
+    Array<string | null>
+  >([]);
+  const [finalTestQuestions, setFinalTestQuestions] = useState<Question[]>([]);
+  const [finalTestAnswers, setFinalTestAnswers] = useState<
+    Array<string | null>
+  >([]);
+  const [questionIndex, setQuestionIndex] = useState(0);
   const [showNotes, setShowNotes] = useState(false);
   const [isEditing, setIsEditing] = useState(-1);
   const [noteValue, setNoteValue] = useState("");
@@ -140,7 +330,27 @@ export default function DashboardPage() {
   }, [currentStep]);
 
   useEffect(() => {
-    setNoteValue(content.sectionUserNotes[isEditing]?.content);
+    setSampleTestQuestions(content.sectionSampleTest.questions);
+  }, [content]);
+
+  useEffect(() => {
+    setSampleTestAnswers(
+      Array.from({ length: sampleTestQuestions.length }, () => null),
+    );
+  }, [sampleTestQuestions]);
+
+  useEffect(() => {
+    setFinalTestAnswers(
+      Array.from({ length: finalTestQuestions.length }, () => null),
+    );
+  }, [finalTestQuestions]);
+
+  useEffect(() => {
+    setFinalTestQuestions(content.sectionFinalTest.questions);
+  }, [content]);
+
+  useEffect(() => {
+    setNoteValue(content.sectionUserNotes[isEditing].content);
   }, [content, isEditing]);
 
   const steps = [1, 2, 3, 4];
@@ -192,45 +402,166 @@ export default function DashboardPage() {
                 <p className={cn("text-gray-600 text-sm")}>
                   {content?.sectionGuidePdf?.label}
                 </p>
-                <Button onClick={content?.sectionGuidePdf?.action} size="sm">
-                  Download
-                </Button>
+                <Button size="sm">Download</Button>
               </article>
               <article className={cn("space-y-2")}>
                 <h3 className={cn("text-foreground/70 text-lg font-medium")}>
-                  Medication Flashcards
+                  Flashcards
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
                   {content?.sectionMedCards?.label}
                 </p>
-                <Button onClick={content?.sectionMedCards?.action} size="sm">
-                  View Med Cards
-                </Button>
+                <Button size="sm">View Flashcards</Button>
               </article>
               <article className={cn("space-y-2")}>
                 <h3 className={cn("text-foreground/70 text-lg font-medium")}>
                   Sample Questions
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {content?.sectionSampleQuestions?.label}
+                  {content?.sectionSampleTest?.label}
                 </p>
-                <Button
-                  onClick={content?.sectionSampleQuestions?.action}
-                  size="sm"
-                >
-                  View Questions
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm">View Questions</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Sample Questions: {content?.sectionTitle}
+                      </DialogTitle>
+                      <DialogDescription>
+                        This is a set of sample questions to help you practice
+                        and reinforce your knowledge on {content?.sectionTitle}.
+                        The questions consist of multiple choice questions.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <article className={cn("space-y-3")}>
+                      <div className={cn("space-y-1")}>
+                        <h4 className={cn("text-lg font-medium")}>
+                          Question {questionIndex + 1}
+                        </h4>
+                        <p className={cn("text-gray-600 text-sm")}>
+                          {sampleTestQuestions[questionIndex].question}
+                        </p>
+                      </div>
+                      <ul className={cn("space-y-2")}>
+                        {sampleTestQuestions[questionIndex].answers.map(
+                          (answer, index) => (
+                            <li
+                              // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                              key={index}
+                              className={cn(
+                                "text-gray-600 text-sm",
+                                sampleTestAnswers[questionIndex] === answer &&
+                                  "text-primary",
+                              )}
+                            >
+                              <label>
+                                <input
+                                  type="radio"
+                                  name={`question-${questionIndex}`}
+                                  value={answer}
+                                  checked={
+                                    sampleTestAnswers[questionIndex] === answer
+                                  }
+                                  onChange={(event) => {
+                                    setSampleTestAnswers((prev) => {
+                                      const answers = [...prev];
+
+                                      answers[questionIndex] =
+                                        event.target.value;
+
+                                      return answers;
+                                    });
+                                  }}
+                                />
+                                <span className={cn("ml-1")}>{answer}</span>
+                              </label>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    </article>
+                    <DialogFooter>
+                      <Button
+                        onClick={() => {
+                          if (questionIndex > 0) {
+                            setQuestionIndex(questionIndex - 1);
+                          }
+                        }}
+                        disabled={questionIndex === 0}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (questionIndex < sampleTestQuestions.length - 1) {
+                            setQuestionIndex(questionIndex + 1);
+                          }
+                        }}
+                        size="sm"
+                        variant="outline"
+                      >
+                        {questionIndex === sampleTestQuestions.length - 1
+                          ? "Submit"
+                          : "Next"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </article>
               <article className={cn("space-y-2")}>
                 <h3 className={cn("text-foreground/70 text-lg font-medium")}>
                   Test
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {content?.sectionTest?.label}
+                  {content?.sectionFinalTest?.label}
                 </p>
-                <Button onClick={content?.sectionTest?.action} size="sm">
-                  Take Test
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm">Take Test</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
+                    <DialogHeader>
+                      <DialogTitle>Test: {content?.sectionTitle}</DialogTitle>
+                      <DialogDescription>
+                        This is a test to assess your knowledge on{" "}
+                        {content?.sectionTitle}. The test consists of multiple
+                        choice questions and is timed. Good luck!
+                      </DialogDescription>
+                    </DialogHeader>
+                    {/* <MCQ question={finalTestQuestions[questionIndex]} /> */}
+                    <DialogFooter>
+                      <Button
+                        onClick={() => {
+                          if (questionIndex > 0) {
+                            setQuestionIndex(questionIndex - 1);
+                          }
+                        }}
+                        disabled={questionIndex === 0}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (questionIndex < finalTestQuestions.length - 1) {
+                            setQuestionIndex(questionIndex + 1);
+                          }
+                        }}
+                        size="sm"
+                        variant="outline"
+                      >
+                        {questionIndex === finalTestQuestions.length - 1
+                          ? "Submit"
+                          : "Next"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </article>
             </div>
             <div
@@ -259,7 +590,7 @@ export default function DashboardPage() {
                               id: String(
                                 prev.sectionUserNotes[
                                   prev.sectionUserNotes.length - 1
-                                ]?.id + 1,
+                                ].id + 1,
                               ),
                               content: "",
                             },
