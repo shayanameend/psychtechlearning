@@ -350,7 +350,7 @@ export default function DashboardPage() {
   }, [content]);
 
   useEffect(() => {
-    setNoteValue(content.sectionUserNotes[isEditing].content);
+    setNoteValue(content.sectionUserNotes[isEditing]?.content);
   }, [content, isEditing]);
 
   const steps = [1, 2, 3, 4];
@@ -441,11 +441,11 @@ export default function DashboardPage() {
                           Question {questionIndex + 1}
                         </h4>
                         <p className={cn("text-gray-600 text-sm")}>
-                          {sampleTestQuestions[questionIndex].question}
+                          {sampleTestQuestions[questionIndex]?.question}
                         </p>
                       </div>
                       <ul className={cn("space-y-2")}>
-                        {sampleTestQuestions[questionIndex].answers.map(
+                        {sampleTestQuestions[questionIndex]?.answers.map(
                           (answer, index) => (
                             <li
                               // biome-ignore lint/suspicious/noArrayIndexKey: <>
@@ -580,7 +580,7 @@ export default function DashboardPage() {
                       if (
                         content.sectionUserNotes[
                           content.sectionUserNotes.length - 1
-                        ].content.trim() !== ""
+                        ]?.content.trim() !== ""
                       ) {
                         setContent((prev) => ({
                           ...prev,
@@ -590,7 +590,7 @@ export default function DashboardPage() {
                               id: String(
                                 prev.sectionUserNotes[
                                   prev.sectionUserNotes.length - 1
-                                ].id + 1,
+                                ]?.id + 1,
                               ),
                               content: "",
                             },
