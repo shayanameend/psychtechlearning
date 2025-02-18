@@ -40,9 +40,25 @@ const data = [
     sectionGuidePdf: {
       label: "Download the nursing science study guide.",
     },
-    sectionMedCards: {
+    sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
-      cards: [],
+      cards: [
+        {
+          id: "1",
+          question: "What is the normal range for blood pressure?",
+          answer: "120/80",
+        },
+        {
+          id: "2",
+          question: "What is the normal range for heart rate?",
+          answer: "60-100 bpm",
+        },
+        {
+          id: "3",
+          question: "What is the normal range for respiratory rate?",
+          answer: "12-20 bpm",
+        },
+      ],
     },
     sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
@@ -109,9 +125,25 @@ const data = [
     sectionGuidePdf: {
       label: "Download the anatomy & physiology study guide.",
     },
-    sectionMedCards: {
+    sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
-      cards: [],
+      cards: [
+        {
+          id: "1",
+          question: "What is the largest organ in the human body?",
+          answer: "Skin",
+        },
+        {
+          id: "2",
+          question: "What is the smallest bone in the human body?",
+          answer: "Stapes",
+        },
+        {
+          id: "3",
+          question: "What is the primary function of the respiratory system?",
+          answer: "Transport oxygen to cells",
+        },
+      ],
     },
     sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
@@ -172,9 +204,25 @@ const data = [
     sectionGuidePdf: {
       label: "Download the pharmacology study guide.",
     },
-    sectionMedCards: {
+    sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
-      cards: [],
+      cards: [
+        {
+          id: "1",
+          question: "What is the primary function of an analgesic?",
+          answer: "Relieve pain",
+        },
+        {
+          id: "2",
+          question: "What is the primary function of an antibiotic?",
+          answer: "Treat infection",
+        },
+        {
+          id: "3",
+          question: "What is the primary function of an antihypertensive?",
+          answer: "Lower blood pressure",
+        },
+      ],
     },
     sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
@@ -261,9 +309,25 @@ const data = [
     sectionGuidePdf: {
       label: "Download the mental health study guide.",
     },
-    sectionMedCards: {
+    sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
-      cards: [],
+      cards: [
+        {
+          id: "1",
+          question: "What is the primary symptom of depression?",
+          answer: "Anhedonia",
+        },
+        {
+          id: "2",
+          question: "What is the primary symptom of anxiety?",
+          answer: "Anhedonia",
+        },
+        {
+          id: "3",
+          question: "What is the primary symptom of schizophrenia?",
+          answer: "Hallucinations",
+        },
+      ],
     },
     sectionSampleTest: {
       label: "Test your knowledge with sample questions.",
@@ -312,6 +376,10 @@ const data = [
 export default function DashboardPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [content, setContent] = useState(data[currentStep - 1]);
+  const [flashcards, setFlashcards] = useState(
+    data[currentStep - 1].sectionFlashcards.cards,
+  );
+  const [showFlashcard, setShowFlashcard] = useState(false);
   const [sampleTestQuestions, setSampleTestQuestions] = useState<Question[]>(
     [],
   );
@@ -330,6 +398,10 @@ export default function DashboardPage() {
   useEffect(() => {
     setContent(data[currentStep - 1]);
   }, [currentStep]);
+
+  useEffect(() => {
+    setFlashcards(content.sectionFlashcards.cards);
+  }, [content]);
 
   useEffect(() => {
     setSampleTestQuestions(content.sectionSampleTest.questions);
@@ -411,9 +483,81 @@ export default function DashboardPage() {
                   Flashcards
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {content?.sectionMedCards?.label}
+                  {content?.sectionFlashcards?.label}
                 </p>
-                <Button size="sm">View Flashcards</Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={() => {
+                        setQuestionIndex(0);
+                      }}
+                      size="sm"
+                    >
+                      View Flashcards
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[384px] lg:max-w-[512px]">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Flashcards: {content?.sectionTitle}
+                      </DialogTitle>
+                      <DialogDescription>
+                        This is a set of flashcards to help you reinforce your
+                        learning on {content?.sectionTitle}.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <article className={cn("space-y-2")}>
+                      <p className={cn("text-gray-600 text-sm")}>
+                        <span className={cn("mr-1")}>{questionIndex + 1}.</span>
+                        {flashcards[questionIndex]?.question}
+                        {showFlashcard && (
+                          <span className={cn("ml-1 text-primary")}>
+                            {flashcards[questionIndex]?.answer}
+                          </span>
+                        )}
+                      </p>
+                    </article>
+                    <DialogFooter>
+                      <Button
+                        onClick={() => {
+                          setShowFlashcard(!showFlashcard);
+                        }}
+                        size="sm"
+                        variant="outline"
+                        className={cn("mr-auto")}
+                      >
+                        {showFlashcard ? "Hide Answer" : "Show Answer"}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (questionIndex > 0) {
+                            setQuestionIndex(questionIndex - 1);
+                            setShowFlashcard(false);
+                          }
+                        }}
+                        disabled={questionIndex === 0}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (questionIndex < sampleTestQuestions.length - 1) {
+                            setQuestionIndex(questionIndex + 1);
+                            setShowFlashcard(false);
+                          }
+                        }}
+                        size="sm"
+                        variant="outline"
+                      >
+                        {questionIndex === sampleTestQuestions.length - 1
+                          ? "Submit"
+                          : "Next"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </article>
               <article className={cn("space-y-2")}>
                 <h3 className={cn("text-foreground/70 text-lg font-medium")}>
