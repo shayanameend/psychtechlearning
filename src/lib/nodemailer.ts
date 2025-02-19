@@ -22,8 +22,8 @@ async function sendOTP({
   nodemailerTransporter.sendMail(
     {
       from: {
-        name: "Eco Built",
-        address: "support@ecobuilt.com",
+        name: "Psychtech Learning",
+        address: "support@psychtechlearning.com",
       },
       to,
       subject: "Verify Your Email",
