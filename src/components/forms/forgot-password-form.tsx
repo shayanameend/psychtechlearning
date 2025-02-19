@@ -1,8 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError, default as axios } from "axios";
+import { Loader2Icon } from "lucide-react";
 import { default as Link } from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { default as zod } from "zod";
 
 import { Button } from "~/components/ui/button";
@@ -28,16 +33,45 @@ const ForgotPasswordFormSchema = zod.object({
     }),
 });
 
+async function forgotPassword({
+  email,
+}: zod.infer<typeof ForgotPasswordFormSchema>) {
+  const response = await axios.post("/api/auth/reset-password", { email });
+
+  return response.data;
+}
+
 export function ForgotPasswordForm() {
+  const router = useRouter();
+
   const form = useForm<zod.infer<typeof ForgotPasswordFormSchema>>({
     resolver: zodResolver(ForgotPasswordFormSchema),
     defaultValues: {
-      email: "",
+      email: "shayan.ameen.developer@gmail.com",
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: ({ data, info }) => {
+      toast.success(info.message);
+
+      sessionStorage.setItem("token", data.token);
+
+      router.push(paths.auth.verifyOTP());
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+    onSettled: () => {
+      form.reset();
     },
   });
 
   const onSubmit = (data: zod.infer<typeof ForgotPasswordFormSchema>) => {
-    console.log(form.getValues());
+    mutation.mutate(data);
   };
 
   return (
@@ -61,7 +95,10 @@ export function ForgotPasswordForm() {
             )}
           />
           <Button type="submit" className={cn("w-full")}>
-            Forgot Password
+            {mutation.isPending && (
+              <Loader2Icon className={cn("animate-spin")} />
+            )}
+            <span>Forgot Password</span>
           </Button>
         </main>
         <footer>

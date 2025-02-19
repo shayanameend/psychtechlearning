@@ -1,9 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError, default as axios } from "axios";
+import { Loader2Icon } from "lucide-react";
 import { default as Link } from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { default as zod } from "zod";
 
 import { Button } from "~/components/ui/button";
@@ -37,21 +41,44 @@ const SignUpFormSchema = zod.object({
     }),
 });
 
+async function signUp({ email, password }: zod.infer<typeof SignUpFormSchema>) {
+  const response = await axios.post("/api/auth/sign-up", { email, password });
+
+  return response.data;
+}
+
 export function SignUpForm() {
   const router = useRouter();
 
   const form = useForm<zod.infer<typeof SignUpFormSchema>>({
     resolver: zodResolver(SignUpFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "shayan.ameen.developer@gmail.com",
+      password: "12345678",
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: signUp,
+    onSuccess: ({ data, info }) => {
+      toast.success(info.message);
+
+      sessionStorage.setItem("token", data.token);
+
+      router.push(paths.auth.verifyOTP());
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+    onSettled: () => {
+      form.reset();
     },
   });
 
   const onSubmit = (data: zod.infer<typeof SignUpFormSchema>) => {
-    console.log(form.getValues());
-
-    router.push(paths.app.dashboard());
+    mutation.mutate(data);
   };
 
   return (
@@ -96,7 +123,10 @@ export function SignUpForm() {
             )}
           />
           <Button type="submit" className={cn("w-full")}>
-            Sign Up
+            {mutation.isPending && (
+              <Loader2Icon className={cn("animate-spin")} />
+            )}
+            <span>Sign Up</span>
           </Button>
         </main>
         <footer>
