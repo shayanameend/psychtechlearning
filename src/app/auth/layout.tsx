@@ -13,7 +13,9 @@ export default function AuthLayout({ children }: Readonly<PropsWithChildren>) {
     <>
       <main>
         <section className={cn("grid min-h-svh lg:grid-cols-2")}>
-          <div className={cn("flex flex-col gap-4 p-6 md:p-10")}>
+          <div
+            className={cn("flex flex-col gap-12 justify-center p-6 md:p-10")}
+          >
             <div className={cn("flex justify-center gap-2 md:justify-start")}>
               <Link
                 href={paths.root()}
@@ -29,7 +31,7 @@ export default function AuthLayout({ children }: Readonly<PropsWithChildren>) {
                 <span>Psychtech Learning</span>
               </Link>
             </div>
-            <div className={cn("flex-1 flex items-center justify-center")}>
+            <div className={cn("md:flex-1 flex items-center justify-center")}>
               <div className={cn("w-full max-w-xs")}>{children}</div>
             </div>
           </div>
