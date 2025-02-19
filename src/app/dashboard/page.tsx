@@ -39,6 +39,7 @@ const data = [
       "Learn about essential nursing skills, including how to take blood pressure, perform CPR, and more.",
     sectionGuidePdf: {
       label: "Download the nursing science study guide.",
+      link: "guide.pdf",
     },
     sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
@@ -124,6 +125,7 @@ const data = [
       "Study the structure and function of the human body, including the skeletal, muscular, and nervous systems.",
     sectionGuidePdf: {
       label: "Download the anatomy & physiology study guide.",
+      link: "guide.pdf",
     },
     sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
@@ -203,6 +205,7 @@ const data = [
       "Learn about the principles of pharmacology, including drug classifications, side effects, and more.",
     sectionGuidePdf: {
       label: "Download the pharmacology study guide.",
+      link: "guide.pdf",
     },
     sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
@@ -308,6 +311,7 @@ const data = [
       "Study the mental health nursing concepts, including therapeutic communication, mental health disorders, and more.",
     sectionGuidePdf: {
       label: "Download the mental health study guide.",
+      link: "guide.pdf",
     },
     sectionFlashcards: {
       label: "Review medication flashcards to reinforce learning.",
@@ -476,7 +480,14 @@ export default function DashboardPage() {
                 <p className={cn("text-gray-600 text-sm")}>
                   {content?.sectionGuidePdf?.label}
                 </p>
-                <Button size="sm">Download</Button>
+                <Button
+                  onClick={() => {
+                    window.open(content?.sectionGuidePdf?.link, "_blank");
+                  }}
+                  size="sm"
+                >
+                  Download
+                </Button>
               </article>
               <article className={cn("space-y-2")}>
                 <h3 className={cn("text-foreground/70 text-lg font-medium")}>
