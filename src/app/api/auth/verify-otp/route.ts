@@ -60,10 +60,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         data: { token },
+        info: {
+          message: "OTP Verified Successfully!",
+        },
       },
       {
         status: 200,
-        statusText: "OTP Verified Successfully!",
       },
     );
   } catch (error) {

@@ -77,10 +77,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         data: { token },
+        info: {
+          message: "Sign Up Successful!",
+        },
       },
       {
         status: 201,
-        statusText: "Sign Up Successful!",
       },
     );
   } catch (error) {

@@ -29,10 +29,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         data: {},
+        info: {
+          message: "Password Updated Successfully!",
+        },
       },
       {
         status: 200,
-        statusText: "Password Updated Successfully!",
       },
     );
   } catch (error) {

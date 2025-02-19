@@ -48,10 +48,14 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      {},
+      {
+        data: {},
+        info: {
+          message: "OTP Sent Successfully!",
+        },
+      },
       {
         status: 200,
-        statusText: "OTP Sent Successfully!",
       },
     );
   } catch (error) {

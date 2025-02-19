@@ -80,7 +80,6 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 200,
-          statusText: "Success",
         },
       );
     }
@@ -94,7 +93,6 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 200,
-        statusText: "Success",
       },
     );
   } catch (error) {

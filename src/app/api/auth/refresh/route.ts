@@ -31,10 +31,12 @@ export async function POST(request: NextRequest) {
           user: decodedUser,
           token,
         },
+        info: {
+          message: "Token Refreshed Successfully!",
+        },
       },
       {
         status: 200,
-        statusText: "Token Refreshed Successfully!",
       },
     );
   } catch (error) {

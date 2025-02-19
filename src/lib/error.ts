@@ -45,7 +45,6 @@ function handleErrors({ error }: { error: unknown }) {
       },
       {
         status: 400,
-        statusText: "Bad Request",
       },
     );
   }
@@ -60,7 +59,6 @@ function handleErrors({ error }: { error: unknown }) {
           },
           {
             status: 400,
-            statusText: "Bad Request",
           },
         );
 
@@ -72,7 +70,6 @@ function handleErrors({ error }: { error: unknown }) {
           },
           {
             status: 401,
-            statusText: "Unauthorized",
           },
         );
 
@@ -84,7 +81,6 @@ function handleErrors({ error }: { error: unknown }) {
           },
           {
             status: 403,
-            statusText: "Forbidden",
           },
         );
 
@@ -96,7 +92,6 @@ function handleErrors({ error }: { error: unknown }) {
           },
           {
             status: 404,
-            statusText: "Not Found",
           },
         );
     }
@@ -112,7 +107,6 @@ function handleErrors({ error }: { error: unknown }) {
       },
       {
         status: 500,
-        statusText: "Internal Server Error",
       },
     );
   }
@@ -124,7 +118,6 @@ function handleErrors({ error }: { error: unknown }) {
     },
     {
       status: 500,
-      statusText: "Internal Server Error",
     },
   );
 }
