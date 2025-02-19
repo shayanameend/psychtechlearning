@@ -1,9 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError, default as axios } from "axios";
+import { Loader2Icon } from "lucide-react";
 import { default as Link } from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { default as zod } from "zod";
 
 import { Button } from "~/components/ui/button";
@@ -37,21 +41,55 @@ const SignInFormSchema = zod.object({
     }),
 });
 
+async function signIn({ email, password }: zod.infer<typeof SignInFormSchema>) {
+  const response = await axios.post("/api/auth/sign-in", { email, password });
+
+  return response.data;
+}
+
 export function SignInForm() {
   const router = useRouter();
 
   const form = useForm<zod.infer<typeof SignInFormSchema>>({
     resolver: zodResolver(SignInFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "shayan.ameen.developer@gmail.com",
+      password: "12345678",
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: signIn,
+    onSuccess: ({ data, info }) => {
+      switch (info.message) {
+        case "OTP Sent Successfully!":
+          toast.success(info.message);
+
+          sessionStorage.setItem("token", data.token);
+
+          router.push(paths.auth.verifyOTP());
+          break;
+        case "Sign In Successful!":
+          toast.success(info.message);
+
+          localStorage.setItem("token", data.token);
+
+          router.push(paths.app.dashboard());
+          break;
+      }
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+    onSettled: () => {
+      form.reset();
     },
   });
 
   const onSubmit = (data: zod.infer<typeof SignInFormSchema>) => {
-    console.log(form.getValues());
-
-    router.push(paths.app.dashboard());
+    mutation.mutate(data);
   };
 
   return (
@@ -95,8 +133,15 @@ export function SignInForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className={cn("w-full")}>
-            Sign In
+          <Button
+            disabled={!form.formState.isValid || mutation.isPending}
+            type="submit"
+            className={cn("w-full")}
+          >
+            {mutation.isPending && (
+              <Loader2Icon className={cn("animate-spin")} />
+            )}
+            <span>Sign In</span>
           </Button>
         </main>
         <footer>

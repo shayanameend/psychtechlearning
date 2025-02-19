@@ -74,10 +74,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           data: { token },
+          info: {
+            message: "OTP Sent Successfully!",
+          },
         },
         {
           status: 200,
-          statusText: "OTP Sent Successfully!",
+          statusText: "Success",
         },
       );
     }
@@ -85,10 +88,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         data: { token },
+        info: {
+          message: "Sign In Successful!",
+        },
       },
       {
         status: 200,
-        statusText: "Sign In Successful!",
+        statusText: "Success",
       },
     );
   } catch (error) {
