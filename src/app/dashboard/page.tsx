@@ -526,7 +526,7 @@ export default function DashboardPage() {
                         variant="outline"
                         className={cn("mr-auto")}
                       >
-                        {showFlashcard ? "Hide Answer" : "Show Answer"}
+                        {showFlashcard ? "Hide" : "Show"}
                       </Button>
                       <Button
                         onClick={() => {
