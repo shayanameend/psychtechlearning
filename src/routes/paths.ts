@@ -1,7 +1,9 @@
 export const paths = {
   root: () => "/",
   api: {
+    root: () => "/api",
     auth: {
+      root: () => "/api/auth",
       signUp: () => "/api/auth/sign-up",
       signIn: () => "/api/auth/sign-in",
       resetPassword: () => "/api/auth/reset-password",
@@ -13,7 +15,9 @@ export const paths = {
     },
   },
   app: {
+    root: () => "/",
     auth: {
+      root: () => "/auth",
       signUp: () => "/auth/sign-up",
       signIn: () => "/auth/sign-in",
       forgotPassword: () => "/auth/forgot-password",

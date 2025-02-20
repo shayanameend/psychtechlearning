@@ -5,10 +5,12 @@ import type { Dispatch, PropsWithChildren, SetStateAction } from "react";
 
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { Loader2Icon } from "lucide-react";
+import { cn } from "~/lib/utils";
 import { paths } from "~/routes/paths";
 
 export interface User {
@@ -67,6 +69,7 @@ async function refresh() {
 }
 
 export function UserProvider({ children }: Readonly<PropsWithChildren>) {
+  const pathname = usePathname();
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -81,7 +84,7 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
       setToken(data.token);
       setUser(data.user);
 
-      sessionStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.token);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -93,8 +96,6 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
 
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
-
-      return router.push(paths.app.auth.signIn());
     },
     onSettled: () => {
       setIsLoading(false);
@@ -111,18 +112,51 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
     }
   }, [refreshMutation.mutate]);
 
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+
+    if (!localToken) {
+      return router.push(paths.app.auth.signIn());
+    }
+
+    if (!isLoading && !token && !user) {
+      return router.push(paths.app.auth.signIn());
+    }
+
+    if (!isLoading && token && !user?.profile) {
+      return router.push(paths.app.auth.profile.create());
+    }
+
+    if (
+      !isLoading &&
+      token &&
+      user?.profile &&
+      pathname.includes(paths.app.auth.root())
+    ) {
+      return router.push(paths.app.dashboard.root());
+    }
+  }, [isLoading, token, user, router.push, pathname]);
+
+  if (!isLoading) {
+    return (
+      <UserContext.Provider
+        value={{
+          isLoading,
+          token,
+          user,
+          setIsLoading,
+          setToken,
+          setUser,
+        }}
+      >
+        {children}
+      </UserContext.Provider>
+    );
+  }
+
   return (
-    <UserContext.Provider
-      value={{
-        isLoading,
-        token,
-        user,
-        setIsLoading,
-        setToken,
-        setUser,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+    <div className={cn("flex items-center justify-center min-h-svh")}>
+      <Loader2Icon className={cn("size-8 text-primary animate-spin")} />
+    </div>
   );
 }

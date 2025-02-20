@@ -1,40 +1,16 @@
 "use client";
 
-import { type PropsWithChildren, useEffect } from "react";
+import type { PropsWithChildren } from "react";
 
-import { GalleryVerticalEndIcon, Loader2Icon } from "lucide-react";
+import { GalleryVerticalEndIcon } from "lucide-react";
 import { default as Image } from "next/image";
 import { default as Link } from "next/link";
-import { useRouter } from "next/navigation";
 
 import { assets } from "~/assets";
 import { cn } from "~/lib/utils";
-import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 
 export default function AuthLayout({ children }: Readonly<PropsWithChildren>) {
-  const router = useRouter();
-
-  const { isLoading, token, user } = useUserContext();
-
-  useEffect(() => {
-    if (!isLoading && token) {
-      if (user?.profile) {
-        router.push(paths.app.dashboard.root());
-      } else {
-        router.push(paths.app.auth.profile.create());
-      }
-    }
-  }, [isLoading, token, user, router.push]);
-
-  if (isLoading) {
-    return (
-      <div className={cn("flex items-center justify-center min-h-svh")}>
-        <Loader2Icon className={cn("size-8 text-primary animate-spin")} />
-      </div>
-    );
-  }
-
   return (
     <>
       <main>
@@ -44,11 +20,7 @@ export default function AuthLayout({ children }: Readonly<PropsWithChildren>) {
           >
             <div className={cn("flex justify-center gap-2 md:justify-start")}>
               <Link
-                href={
-                  !isLoading && token
-                    ? paths.app.dashboard.root()
-                    : paths.root()
-                }
+                href={paths.app.dashboard.root()}
                 className={cn("flex items-center gap-2 font-medium")}
               >
                 <span

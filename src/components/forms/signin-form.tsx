@@ -78,9 +78,9 @@ export function SignInForm() {
         case "Sign In Successful!":
           toast.success(info.message);
 
-          setIsLoading?.(false);
           setToken?.(data.token);
           setUser?.(data.user);
+          setIsLoading?.(false);
 
           localStorage.setItem("token", data.token);
 
