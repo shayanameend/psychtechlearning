@@ -1,5 +1,7 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
+import { default as axios } from "axios";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -25,372 +27,84 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Steps } from "~/components/ui/steps";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
+import { useUserContext } from "~/providers/user-provider";
+import { paths } from "~/routes/paths";
 
-interface Question {
+interface Flashcard {
+  id: string;
+  question: string;
+  answer: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface TestQuestion {
+  id: string;
   question: string;
   answers: string[];
   correctAnswer: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const data = [
-  {
-    sectionTitle: "Nursing Science",
-    sectionDescription:
-      "Learn about essential nursing skills, including how to take blood pressure, perform CPR, and more.",
-    sectionGuidePdf: {
-      label: "Download the nursing science study guide.",
-      link: "guide.pdf",
-    },
-    sectionFlashcards: {
-      label: "Review medication flashcards to reinforce learning.",
-      cards: [
-        {
-          id: "1",
-          question: "What is the normal range for blood pressure?",
-          answer: "120/80",
-        },
-        {
-          id: "2",
-          question: "What is the normal range for heart rate?",
-          answer: "60-100 bpm",
-        },
-        {
-          id: "3",
-          question: "What is the normal range for respiratory rate?",
-          answer: "12-20 bpm",
-        },
-      ],
-    },
-    sectionSampleTest: {
-      label: "Test your knowledge with sample questions.",
-      questions: [
-        {
-          question: "What is the normal range for blood pressure?",
-          answers: ["120/80", "140/90", "160/100", "180/110"],
-          correctAnswer: "120/80",
-        },
-        {
-          question: "What is the normal range for heart rate?",
-          answers: ["60-100 bpm", "100-140 bpm", "140-180 bpm", "180-220 bpm"],
-          correctAnswer: "60-100 bpm",
-        },
-        {
-          question: "What is the normal range for respiratory rate?",
-          answers: ["12-20 bpm", "20-30 bpm", "30-40 bpm", "40-50 bpm"],
-          correctAnswer: "12-20 bpm",
-        },
-      ],
-    },
-    sectionFinalTest: {
-      label: "Take a test to assess your knowledge.",
-      questions: [
-        {
-          question: "What is the normal range for blood pressure?",
-          answers: ["120/80", "140/90", "160/100", "180/110"],
-          correctAnswer: "120/80",
-        },
-        {
-          question: "What is the normal range for heart rate?",
-          answers: ["60-100 bpm", "100-140 bpm", "140-180 bpm", "180-220 bpm"],
-          correctAnswer: "60-100 bpm",
-        },
-        {
-          question: "What is the normal range for respiratory rate?",
-          answers: ["12-20 bpm", "20-30 bpm", "30-40 bpm", "40-50 bpm"],
-          correctAnswer: "12-20 bpm",
-        },
-      ],
-    },
-    sectionUserNotes: [
-      {
-        id: "1",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-      },
-      {
-        id: "2",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-      },
-      {
-        id: "3",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-      },
-    ],
-  },
-  {
-    sectionTitle: "Anatomy & Physiology",
-    sectionDescription:
-      "Study the structure and function of the human body, including the skeletal, muscular, and nervous systems.",
-    sectionGuidePdf: {
-      label: "Download the anatomy & physiology study guide.",
-      link: "guide.pdf",
-    },
-    sectionFlashcards: {
-      label: "Review medication flashcards to reinforce learning.",
-      cards: [
-        {
-          id: "1",
-          question: "What is the largest organ in the human body?",
-          answer: "Skin",
-        },
-        {
-          id: "2",
-          question: "What is the smallest bone in the human body?",
-          answer: "Stapes",
-        },
-        {
-          id: "3",
-          question: "What is the primary function of the respiratory system?",
-          answer: "Transport oxygen to cells",
-        },
-      ],
-    },
-    sectionSampleTest: {
-      label: "Test your knowledge with sample questions.",
-      questions: [
-        {
-          question: "What is the largest organ in the human body?",
-          answers: ["Liver", "Skin", "Heart", "Lungs"],
-          correctAnswer: "Skin",
-        },
-        {
-          question: "What is the smallest bone in the human body?",
-          answers: ["Stapes", "Malleus", "Incus", "Femur"],
-          correctAnswer: "Stapes",
-        },
-        {
-          question: "What is the primary function of the respiratory system?",
-          answers: [
-            "Transport oxygen to cells",
-            "Remove waste from the body",
-            "Regulate body temperature",
-            "Protect the body from pathogens",
-          ],
-          correctAnswer: "Transport oxygen to cells",
-        },
-      ],
-    },
-    sectionFinalTest: {
-      label: "Take a test to assess your knowledge.",
-      questions: [
-        {
-          question: "What is the largest organ in the human body?",
-          answers: ["Liver", "Skin", "Heart", "Lungs"],
-          correctAnswer: "Skin",
-        },
-        {
-          question: "What is the smallest bone in the human body?",
-          answers: ["Stapes", "Malleus", "Incus", "Femur"],
-          correctAnswer: "Stapes",
-        },
-        {
-          question: "What is the primary function of the respiratory system?",
-          answers: [
-            "Transport oxygen to cells",
-            "Remove waste from the body",
-            "Regulate body temperature",
-            "Protect the body from pathogens",
-          ],
-          correctAnswer: "Transport oxygen to cells",
-        },
-      ],
-    },
-    sectionUserNotes: [],
-  },
-  {
-    sectionTitle: "Pharmacology",
-    sectionDescription:
-      "Learn about the principles of pharmacology, including drug classifications, side effects, and more.",
-    sectionGuidePdf: {
-      label: "Download the pharmacology study guide.",
-      link: "guide.pdf",
-    },
-    sectionFlashcards: {
-      label: "Review medication flashcards to reinforce learning.",
-      cards: [
-        {
-          id: "1",
-          question: "What is the primary function of an analgesic?",
-          answer: "Relieve pain",
-        },
-        {
-          id: "2",
-          question: "What is the primary function of an antibiotic?",
-          answer: "Treat infection",
-        },
-        {
-          id: "3",
-          question: "What is the primary function of an antihypertensive?",
-          answer: "Lower blood pressure",
-        },
-      ],
-    },
-    sectionSampleTest: {
-      label: "Test your knowledge with sample questions.",
-      questions: [
-        {
-          question: "What is the primary function of an analgesic?",
-          answers: [
-            "Reduce fever",
-            "Relieve pain",
-            "Treat infection",
-            "Lower blood pressure",
-          ],
-          correctAnswer: "Relieve pain",
-        },
-        {
-          question: "What is the primary function of an antibiotic?",
-          answers: [
-            "Reduce fever",
-            "Relieve pain",
-            "Treat infection",
-            "Lower blood pressure",
-          ],
-          correctAnswer: "Treat infection",
-        },
-        {
-          question: "What is the primary function of an antihypertensive?",
-          answers: [
-            "Reduce fever",
-            "Relieve pain",
-            "Treat infection",
-            "Lower blood pressure",
-          ],
-          correctAnswer: "Lower blood pressure",
-        },
-      ],
-    },
-    sectionFinalTest: {
-      label: "Take a test to assess your knowledge.",
-      questions: [
-        {
-          question: "What is the primary function of an analgesic?",
-          answers: [
-            "Reduce fever",
-            "Relieve pain",
-            "Treat infection",
-            "Lower blood pressure",
-          ],
-          correctAnswer: "Relieve pain",
-        },
-        {
-          question: "What is the primary function of an antibiotic?",
-          answers: [
-            "Reduce fever",
-            "Relieve pain",
-            "Treat infection",
-            "Lower blood pressure",
-          ],
-          correctAnswer: "Treat infection",
-        },
-        {
-          question: "What is the primary function of an antihypertensive?",
-          answers: [
-            "Reduce fever",
-            "Relieve pain",
-            "Treat infection",
-            "Lower blood pressure",
-          ],
-          correctAnswer: "Lower blood pressure",
-        },
-      ],
-    },
-    sectionUserNotes: [
-      {
-        id: "1",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies. Nullam nec purus et enim lacinia fermentum. Sed nec nunc nec purus placerat ultricies.",
-      },
-    ],
-  },
-  {
-    sectionTitle: "Mental Health",
-    sectionDescription:
-      "Study the mental health nursing concepts, including therapeutic communication, mental health disorders, and more.",
-    sectionGuidePdf: {
-      label: "Download the mental health study guide.",
-      link: "guide.pdf",
-    },
-    sectionFlashcards: {
-      label: "Review medication flashcards to reinforce learning.",
-      cards: [
-        {
-          id: "1",
-          question: "What is the primary symptom of depression?",
-          answer: "Anhedonia",
-        },
-        {
-          id: "2",
-          question: "What is the primary symptom of anxiety?",
-          answer: "Anhedonia",
-        },
-        {
-          id: "3",
-          question: "What is the primary symptom of schizophrenia?",
-          answer: "Hallucinations",
-        },
-      ],
-    },
-    sectionSampleTest: {
-      label: "Test your knowledge with sample questions.",
-      questions: [
-        {
-          question: "What is the primary symptom of depression?",
-          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
-          correctAnswer: "Anhedonia",
-        },
-        {
-          question: "What is the primary symptom of anxiety?",
-          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
-          correctAnswer: "Anhedonia",
-        },
-        {
-          question: "What is the primary symptom of schizophrenia?",
-          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
-          correctAnswer: "Hallucinations",
-        },
-      ],
-    },
-    sectionFinalTest: {
-      label: "Take a test to assess your knowledge.",
-      questions: [
-        {
-          question: "What is the primary symptom of depression?",
-          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
-          correctAnswer: "Anhedonia",
-        },
-        {
-          question: "What is the primary symptom of anxiety?",
-          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
-          correctAnswer: "Anhedonia",
-        },
-        {
-          question: "What is the primary symptom of schizophrenia?",
-          answers: ["Euphoria", "Mania", "Anhedonia", "Hallucinations"],
-          correctAnswer: "Hallucinations",
-        },
-      ],
-    },
-    sectionUserNotes: [],
-  },
-];
+interface SectionUserNote {
+  id: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Section {
+  id: string;
+  sectionTitle: string;
+  sectionDescription: string;
+  guideLabel: string;
+  guideLink: string;
+  flashcardsLabel: string;
+  sampleTestLabel: string;
+  finalTestLabel: string;
+  flashcards: Flashcard[];
+  sampleTestQuestions: TestQuestion[];
+  finalTestQuestions: TestQuestion[];
+  sectionUserNotes: SectionUserNote[];
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export default function DashboardPage() {
+  const { token } = useUserContext();
+
+  const { data: sectionsQueryResult, isSuccess: sectionsQueryIsSuccess } =
+    useQuery({
+      queryKey: ["sections"],
+      queryFn: async () => {
+        const response = await axios.get(paths.api.sections.root(), {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        });
+
+        return response.data as { data: { sections: Section[] } };
+      },
+    });
+
   const [currentStep, setCurrentStep] = useState(1);
-  const [content, setContent] = useState(data[currentStep - 1]);
-  const [flashcards, setFlashcards] = useState(
-    data[currentStep - 1].sectionFlashcards.cards,
+  const [content, setContent] = useState<Section | undefined>(
+    sectionsQueryResult?.data.sections[currentStep - 1],
+  );
+  const [flashcards, setFlashcards] = useState<Flashcard[]>(
+    sectionsQueryResult?.data.sections[currentStep - 1]?.flashcards || [],
   );
   const [showFlashcard, setShowFlashcard] = useState(false);
-  const [sampleTestQuestions, setSampleTestQuestions] = useState<Question[]>(
-    [],
-  );
+  const [sampleTestQuestions, setSampleTestQuestions] = useState<
+    TestQuestion[]
+  >([]);
   const [sampleTestAnswers, setSampleTestAnswers] = useState<
     Array<string | null>
   >([]);
-  const [finalTestQuestions, setFinalTestQuestions] = useState<Question[]>([]);
+  const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
+    [],
+  );
   const [finalTestAnswers, setFinalTestAnswers] = useState<
     Array<string | null>
   >([]);
@@ -400,15 +114,15 @@ export default function DashboardPage() {
   const [noteValue, setNoteValue] = useState("");
 
   useEffect(() => {
-    setContent(data[currentStep - 1]);
-  }, [currentStep]);
+    setContent(sectionsQueryResult?.data.sections[currentStep - 1]);
+  }, [currentStep, sectionsQueryResult?.data.sections[currentStep - 1]]);
 
   useEffect(() => {
-    setFlashcards(content.sectionFlashcards.cards);
+    setFlashcards(content?.flashcards || []);
   }, [content]);
 
   useEffect(() => {
-    setSampleTestQuestions(content.sectionSampleTest.questions);
+    setSampleTestQuestions(content?.sampleTestQuestions || []);
   }, [content]);
 
   useEffect(() => {
@@ -424,14 +138,17 @@ export default function DashboardPage() {
   }, [finalTestQuestions]);
 
   useEffect(() => {
-    setFinalTestQuestions(content.sectionFinalTest.questions);
+    setFinalTestQuestions(content?.finalTestQuestions || []);
   }, [content]);
 
   useEffect(() => {
-    setNoteValue(content.sectionUserNotes[isEditing]?.content);
+    setNoteValue(content?.sectionUserNotes[isEditing]?.content || "");
   }, [content, isEditing]);
 
-  const steps = [1, 2, 3, 4];
+  const steps = Array.from(
+    { length: sectionsQueryResult?.data.sections.length || 0 },
+    (_, index) => index + 1,
+  );
 
   const handlePrev = () => {
     if (currentStep > 1) {
@@ -445,6 +162,10 @@ export default function DashboardPage() {
     }
   };
 
+  if (!sectionsQueryIsSuccess) {
+    return null;
+  }
+
   return (
     <>
       <section
@@ -453,7 +174,9 @@ export default function DashboardPage() {
         )}
       >
         <aside>
-          <Steps steps={steps} currentStep={currentStep} />
+          {sectionsQueryResult.data.sections.length > 1 && (
+            <Steps steps={steps} currentStep={currentStep} />
+          )}
         </aside>
         <main
           className={cn("flex-1 py-4 lg:py-0 lg:px-8 flex flex-col gap-12")}
@@ -478,11 +201,11 @@ export default function DashboardPage() {
                   Study Guide
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {content?.sectionGuidePdf?.label}
+                  {content?.guideLabel}
                 </p>
                 <Button
                   onClick={() => {
-                    window.open(content?.sectionGuidePdf?.link, "_blank");
+                    window.open(content?.guideLink, "_blank");
                   }}
                   size="sm"
                 >
@@ -494,7 +217,7 @@ export default function DashboardPage() {
                   Flashcards
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {content?.sectionFlashcards?.label}
+                  {content?.flashcardsLabel}
                 </p>
                 <Dialog>
                   <DialogTrigger asChild>
@@ -575,7 +298,7 @@ export default function DashboardPage() {
                   Sample Questions
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {content?.sectionSampleTest?.label}
+                  {content?.sampleTestLabel}
                 </p>
                 <Dialog>
                   <DialogTrigger asChild>
@@ -676,7 +399,7 @@ export default function DashboardPage() {
                   Test
                 </h3>
                 <p className={cn("text-gray-600 text-sm")}>
-                  {content?.sectionFinalTest?.label}
+                  {content?.finalTestLabel}
                 </p>
                 <Dialog>
                   <DialogTrigger asChild>
@@ -785,26 +508,34 @@ export default function DashboardPage() {
                   <Button
                     onClick={() => {
                       if (
-                        content.sectionUserNotes[
-                          content.sectionUserNotes.length - 1
-                        ]?.content.trim() !== ""
+                        content?.sectionUserNotes[
+                          content?.sectionUserNotes.length - 1
+                        ]?.content?.trim() !== ""
                       ) {
-                        setContent((prev) => ({
-                          ...prev,
-                          sectionUserNotes: [
-                            ...prev.sectionUserNotes,
-                            {
-                              id: String(
-                                prev.sectionUserNotes[
-                                  prev.sectionUserNotes.length - 1
-                                ]?.id + 1,
-                              ),
-                              content: "",
-                            },
-                          ],
-                        }));
+                        setContent((prev) => {
+                          if (!prev) return prev;
 
-                        setIsEditing(content.sectionUserNotes.length);
+                          return {
+                            ...prev,
+                            sectionUserNotes: [
+                              ...prev.sectionUserNotes,
+                              {
+                                id: String(
+                                  Number(
+                                    prev.sectionUserNotes[
+                                      prev.sectionUserNotes.length - 1
+                                    ]?.id,
+                                  ) + 1,
+                                ),
+                                content: "",
+                                createdAt: new Date(),
+                                updatedAt: new Date(),
+                              },
+                            ],
+                          };
+                        });
+
+                        setIsEditing(content?.sectionUserNotes?.length || 0);
                       }
                     }}
                     variant="outline"
@@ -843,26 +574,34 @@ export default function DashboardPage() {
                               if (event.key === "Enter") {
                                 setIsEditing(-1);
                                 if (event.currentTarget.value.trim() === "") {
-                                  setContent((prev) => ({
-                                    ...prev,
-                                    sectionUserNotes:
-                                      prev.sectionUserNotes.filter(
-                                        (n) => n.id !== note.id,
-                                      ),
-                                  }));
+                                  setContent((prev) => {
+                                    if (!prev) return prev;
+
+                                    return {
+                                      ...prev,
+                                      sectionUserNotes:
+                                        prev.sectionUserNotes.filter(
+                                          (n) => n.id !== note.id,
+                                        ),
+                                    };
+                                  });
                                 } else {
-                                  setContent((prev) => ({
-                                    ...prev,
-                                    sectionUserNotes: prev.sectionUserNotes.map(
-                                      (n) =>
-                                        n.id === note.id
-                                          ? {
-                                              ...n,
-                                              content: noteValue,
-                                            }
-                                          : n,
-                                    ),
-                                  }));
+                                  setContent((prev) => {
+                                    if (!prev) return prev;
+
+                                    return {
+                                      ...prev,
+                                      sectionUserNotes:
+                                        prev.sectionUserNotes.map((n) =>
+                                          n.id === note.id
+                                            ? {
+                                                ...n,
+                                                content: noteValue,
+                                              }
+                                            : n,
+                                        ),
+                                    };
+                                  });
                                 }
                               }
                             }}
@@ -883,13 +622,17 @@ export default function DashboardPage() {
                             </Button>
                             <Button
                               onClick={() => {
-                                setContent((prev) => ({
-                                  ...prev,
-                                  sectionUserNotes:
-                                    prev.sectionUserNotes.filter(
-                                      (n) => n.id !== note.id,
-                                    ),
-                                }));
+                                setContent((prev) => {
+                                  if (!prev) return prev;
+
+                                  return {
+                                    ...prev,
+                                    sectionUserNotes:
+                                      prev.sectionUserNotes.filter(
+                                        (n) => n.id !== note.id,
+                                      ),
+                                  };
+                                });
                               }}
                               variant="link"
                               size="icon"
@@ -930,7 +673,7 @@ export default function DashboardPage() {
               </Button>
               <Button
                 onClick={handleNext}
-                disabled={currentStep === steps.length}
+                disabled={steps.length === 0 || currentStep === steps.length}
                 size="icon"
                 className={cn("rounded-full")}
               >

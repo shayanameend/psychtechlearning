@@ -74,8 +74,8 @@ model Section {
   finalTestLabel     String
 
   flashcards          Flashcard[]
-  sampleTestQuestions Question[]  @relation("SampleTestQuestions")
-  finalTestQuestions  Question[]  @relation("FinalTestQuestions")
+  sampleTestQuestions SampleTestQuestion[]
+  finalTestQuestions  FinalTestQuestion[]
   sectionUserNotes    UserNote[]
 
   createdAt DateTime @default(now())
@@ -95,7 +95,7 @@ model Flashcard {
   updatedAt DateTime @updatedAt
 }
 
-model Question {
+model SampleTestQuestion {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   question      String
@@ -103,8 +103,21 @@ model Question {
   correctAnswer String
 
   sectionId String  @db.ObjectId
-  section   Section @relation(name: "SampleTestQuestions", fields: [sectionId], references: [id])
-  Section   Section @relation(name: "FinalTestQuestions", fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FinalTestQuestion {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  question      String
+  answers       String[]
+  correctAnswer String
+
+  sectionId String  @db.ObjectId
+  section   Section @relation(fields: [sectionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

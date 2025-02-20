@@ -13,6 +13,9 @@ export const paths = {
       refresh: () => "/api/auth/refresh",
       profile: () => "/api/auth/profile",
     },
+    sections: {
+      root: () => "/api/sections",
+    },
   },
   app: {
     root: () => "/",
