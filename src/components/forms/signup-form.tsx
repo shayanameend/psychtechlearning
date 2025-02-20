@@ -42,7 +42,10 @@ const SignUpFormSchema = zod.object({
 });
 
 async function signUp({ email, password }: zod.infer<typeof SignUpFormSchema>) {
-  const response = await axios.post("/api/auth/sign-up", { email, password });
+  const response = await axios.post(paths.api.auth.signUp(), {
+    email,
+    password,
+  });
 
   return response.data;
 }
@@ -58,14 +61,14 @@ export function SignUpForm() {
     },
   });
 
-  const mutation = useMutation({
+  const signUpMutation = useMutation({
     mutationFn: signUp,
     onSuccess: ({ data, info }) => {
       toast.success(info.message);
 
       sessionStorage.setItem("token", data.token);
 
-      router.push(paths.auth.verifyOTP());
+      router.push(paths.app.auth.verifyOTP());
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -78,7 +81,7 @@ export function SignUpForm() {
   });
 
   const onSubmit = (data: zod.infer<typeof SignUpFormSchema>) => {
-    mutation.mutate(data);
+    signUpMutation.mutate(data);
   };
 
   return (
@@ -113,7 +116,7 @@ export function SignUpForm() {
                 <FormMessage />
                 <FormDescription className={cn("text-right")}>
                   <Link
-                    href={paths.auth.forgotPassword()}
+                    href={paths.app.auth.forgotPassword()}
                     className={cn("underline underline-offset-4")}
                   >
                     Forgot password?
@@ -123,7 +126,7 @@ export function SignUpForm() {
             )}
           />
           <Button type="submit" className={cn("w-full")}>
-            {mutation.isPending && (
+            {signUpMutation.isPending && (
               <Loader2Icon className={cn("animate-spin")} />
             )}
             <span>Sign Up</span>
@@ -133,7 +136,7 @@ export function SignUpForm() {
           <p className={cn("text-sm text-center text-muted-foreground")}>
             Already have an account?{" "}
             <Link
-              href={paths.auth.signIn()}
+              href={paths.app.auth.signIn()}
               className={cn("underline underline-offset-4")}
             >
               Sign In

@@ -42,7 +42,10 @@ const SignInFormSchema = zod.object({
 });
 
 async function signIn({ email, password }: zod.infer<typeof SignInFormSchema>) {
-  const response = await axios.post("/api/auth/sign-in", { email, password });
+  const response = await axios.post(paths.api.auth.signIn(), {
+    email,
+    password,
+  });
 
   return response.data;
 }
@@ -58,7 +61,7 @@ export function SignInForm() {
     },
   });
 
-  const mutation = useMutation({
+  const signInMutation = useMutation({
     mutationFn: signIn,
     onSuccess: ({ data, info }) => {
       switch (info.message) {
@@ -67,14 +70,14 @@ export function SignInForm() {
 
           sessionStorage.setItem("token", data.token);
 
-          router.push(paths.auth.verifyOTP());
+          router.push(paths.app.auth.verifyOTP());
           break;
         case "Sign In Successful!":
           toast.success(info.message);
 
           localStorage.setItem("token", data.token);
 
-          router.push(paths.app.dashboard());
+          router.push(paths.app.dashboard.root());
           break;
       }
     },
@@ -89,7 +92,7 @@ export function SignInForm() {
   });
 
   const onSubmit = (data: zod.infer<typeof SignInFormSchema>) => {
-    mutation.mutate(data);
+    signInMutation.mutate(data);
   };
 
   return (
@@ -124,7 +127,7 @@ export function SignInForm() {
                 <FormMessage />
                 <FormDescription className={cn("text-right")}>
                   <Link
-                    href={paths.auth.forgotPassword()}
+                    href={paths.app.auth.forgotPassword()}
                     className={cn("underline underline-offset-4")}
                   >
                     Forgot password?
@@ -134,11 +137,11 @@ export function SignInForm() {
             )}
           />
           <Button
-            disabled={!form.formState.isValid || mutation.isPending}
+            disabled={!form.formState.isValid || signInMutation.isPending}
             type="submit"
             className={cn("w-full")}
           >
-            {mutation.isPending && (
+            {signInMutation.isPending && (
               <Loader2Icon className={cn("animate-spin")} />
             )}
             <span>Sign In</span>
@@ -148,7 +151,7 @@ export function SignInForm() {
           <p className={cn("text-sm text-center text-muted-foreground")}>
             Don&apos;t have an account?{" "}
             <Link
-              href={paths.auth.signUp()}
+              href={paths.app.auth.signUp()}
               className={cn("underline underline-offset-4")}
             >
               Sign Up

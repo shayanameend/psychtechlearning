@@ -8,6 +8,7 @@ import {
   ForbiddenResponse,
   NotFoundResponse,
   UnauthorizedResponse,
+  handleErrors,
 } from "~/lib/error";
 import { verifyToken } from "~/lib/jwt";
 import { prisma } from "~/lib/prisma";
@@ -65,6 +66,8 @@ async function verifyRequest({
     if (error instanceof JsonWebTokenError) {
       throw new UnauthorizedResponse("Invalid Token!");
     }
+
+    handleErrors({ error });
   }
 }
 

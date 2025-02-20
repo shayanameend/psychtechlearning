@@ -6,7 +6,7 @@ import { paths } from "~/routes/paths";
 
 export default async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname === paths.root()) {
-    return NextResponse.redirect(new URL(paths.auth.signIn(), req.url));
+    return NextResponse.redirect(new URL(paths.app.auth.signIn(), req.url));
   }
 
   return NextResponse.next();

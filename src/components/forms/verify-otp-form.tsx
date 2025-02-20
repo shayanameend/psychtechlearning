@@ -1,7 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError, default as axios } from "axios";
+import { Loader2Icon } from "lucide-react";
+import { default as Link } from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { default as zod } from "zod";
 
 import { Button } from "~/components/ui/button";
@@ -15,6 +21,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
+import { paths } from "~/routes/paths";
 
 const VerifyOTPFormSchema = zod.object({
   otp: zod
@@ -26,7 +33,41 @@ const VerifyOTPFormSchema = zod.object({
     }),
 });
 
+async function verifyOTP({ otp }: zod.infer<typeof VerifyOTPFormSchema>) {
+  const token = sessionStorage.getItem("token");
+
+  const response = await axios.post(
+    paths.api.auth.verifyOTP(),
+    { otp },
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
+async function resendOTP() {
+  const token = sessionStorage.getItem("token");
+
+  const response = await axios.post(
+    paths.api.auth.resendOTP(),
+    {},
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
 export function VerifyOTPForm() {
+  const router = useRouter();
+
   const form = useForm<zod.infer<typeof VerifyOTPFormSchema>>({
     resolver: zodResolver(VerifyOTPFormSchema),
     defaultValues: {
@@ -34,8 +75,42 @@ export function VerifyOTPForm() {
     },
   });
 
+  const verifyOTPMutation = useMutation({
+    mutationFn: verifyOTP,
+    onSuccess: ({ data, info }) => {
+      toast.success(info.message);
+
+      localStorage.setItem("token", data.token);
+
+      router.push(paths.app.profile.create());
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+    onSettled: () => {
+      form.reset();
+    },
+  });
+
+  const resendOTPMutation = useMutation({
+    mutationFn: resendOTP,
+    onSuccess: ({ info }) => {
+      toast.success(info.message);
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+    onSettled: () => {
+      form.reset();
+    },
+  });
+
   const onSubmit = (data: zod.infer<typeof VerifyOTPFormSchema>) => {
-    console.log(form.getValues());
+    verifyOTPMutation.mutate(data);
   };
 
   return (
@@ -66,6 +141,7 @@ export function VerifyOTPForm() {
           <p className={cn("text-sm text-center text-muted-foreground")}>
             Didn&apos;t get an OTP?{" "}
             <Button
+              onClick={() => resendOTPMutation.mutate()}
               type="button"
               variant="link"
               className={cn("p-0 text-inherit underline underline-offset-4")}

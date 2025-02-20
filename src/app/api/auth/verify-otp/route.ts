@@ -11,7 +11,11 @@ import { verifyOtpSchema } from "~/validators/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const decodedUser = await verifyRequest({ request, isVerified: true });
+    const decodedUser = await verifyRequest({
+      request,
+      role: "ADMIN",
+      isVerified: false,
+    });
 
     if (!decodedUser) {
       throw new UnauthorizedResponse("Unauthorized!");

@@ -33,10 +33,10 @@ const ForgotPasswordFormSchema = zod.object({
     }),
 });
 
-async function forgotPassword({
+async function resetPassword({
   email,
 }: zod.infer<typeof ForgotPasswordFormSchema>) {
-  const response = await axios.post("/api/auth/reset-password", { email });
+  const response = await axios.post(paths.api.auth.resetPassword(), { email });
 
   return response.data;
 }
@@ -51,14 +51,14 @@ export function ForgotPasswordForm() {
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: forgotPassword,
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
     onSuccess: ({ data, info }) => {
       toast.success(info.message);
 
       sessionStorage.setItem("token", data.token);
 
-      router.push(paths.auth.verifyOTP());
+      router.push(paths.app.auth.verifyOTP());
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -71,7 +71,7 @@ export function ForgotPasswordForm() {
   });
 
   const onSubmit = (data: zod.infer<typeof ForgotPasswordFormSchema>) => {
-    mutation.mutate(data);
+    resetPasswordMutation.mutate(data);
   };
 
   return (
@@ -95,7 +95,7 @@ export function ForgotPasswordForm() {
             )}
           />
           <Button type="submit" className={cn("w-full")}>
-            {mutation.isPending && (
+            {resetPasswordMutation.isPending && (
               <Loader2Icon className={cn("animate-spin")} />
             )}
             <span>Forgot Password</span>
@@ -105,7 +105,7 @@ export function ForgotPasswordForm() {
           <p className={cn("text-sm text-center text-muted-foreground")}>
             Don&apos;t have an account?{" "}
             <Link
-              href={paths.auth.signUp()}
+              href={paths.app.auth.signUp()}
               className={cn("underline underline-offset-4")}
             >
               Sign Up
