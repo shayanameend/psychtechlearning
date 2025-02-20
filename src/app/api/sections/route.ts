@@ -19,6 +19,9 @@ export async function GET(request: NextRequest) {
     }
 
     const sections = await prisma.section.findMany({
+      orderBy: {
+        sectionOrder: "asc",
+      },
       select: {
         id: true,
         sectionTitle: true,
