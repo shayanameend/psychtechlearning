@@ -10,7 +10,7 @@ import { prisma } from "~/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const decodedUser = await verifyRequest({ request, isVerified: true });
+    const decodedUser = await verifyRequest({ request, isVerified: false });
 
     if (!decodedUser) {
       throw new UnauthorizedResponse("Unauthorized!");

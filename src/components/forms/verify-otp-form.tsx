@@ -80,6 +80,7 @@ export function VerifyOTPForm() {
     onSuccess: ({ data, info }) => {
       toast.success(info.message);
 
+      sessionStorage.removeItem("token");
       localStorage.setItem("token", data.token);
 
       router.push(paths.app.profile.create());
