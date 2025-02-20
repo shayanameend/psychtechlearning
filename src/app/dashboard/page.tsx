@@ -266,8 +266,8 @@ export default function DashboardPage() {
                         onClick={() => {
                           if (questionIndex > 0) {
                             setQuestionIndex(questionIndex - 1);
-                            setShowFlashcard(false);
                           }
+                          setShowFlashcard(false);
                         }}
                         disabled={questionIndex === 0}
                         size="sm"
@@ -279,8 +279,8 @@ export default function DashboardPage() {
                         onClick={() => {
                           if (questionIndex < sampleTestQuestions.length - 1) {
                             setQuestionIndex(questionIndex + 1);
-                            setShowFlashcard(false);
                           }
+                          setShowFlashcard(false);
                         }}
                         size="sm"
                         variant="outline"
