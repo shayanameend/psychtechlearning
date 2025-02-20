@@ -115,15 +115,25 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
   useEffect(() => {
     const localToken = localStorage.getItem("token");
 
-    if (!localToken) {
+    if (!localToken && !pathname.includes(paths.app.auth.root())) {
       return router.push(paths.app.auth.signIn());
     }
 
-    if (!isLoading && !token && !user) {
+    if (
+      !isLoading &&
+      !token &&
+      !user &&
+      !pathname.includes(paths.app.auth.root())
+    ) {
       return router.push(paths.app.auth.signIn());
     }
 
-    if (!isLoading && token && !user?.profile) {
+    if (
+      !isLoading &&
+      token &&
+      !user?.profile &&
+      pathname.includes(paths.app.auth.root())
+    ) {
       return router.push(paths.app.auth.profile.create());
     }
 

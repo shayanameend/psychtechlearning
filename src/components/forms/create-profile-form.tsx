@@ -20,6 +20,13 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
@@ -115,6 +122,54 @@ export function CreateProfileForm() {
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Doe" type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isStudent"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Are you a student?</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={String(field.value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={String(true)}>Yes</SelectItem>
+                      <SelectItem value={String(false)}>No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="notify"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notify me about new features</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={String(field.value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={String(true)}>Yes</SelectItem>
+                      <SelectItem value={String(false)}>No</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
