@@ -15,13 +15,17 @@ import { paths } from "~/routes/paths";
 export default function AuthLayout({ children }: Readonly<PropsWithChildren>) {
   const router = useRouter();
 
-  const { isLoading, token } = useUserContext();
+  const { isLoading, token, user } = useUserContext();
 
   useEffect(() => {
     if (!isLoading && token) {
-      router.push(paths.app.dashboard.root());
+      if (user?.profile) {
+        router.push(paths.app.dashboard.root());
+      } else {
+        router.push(paths.app.auth.profile.create());
+      }
     }
-  }, [isLoading, token, router.push]);
+  }, [isLoading, token, user, router.push]);
 
   if (isLoading) {
     return (

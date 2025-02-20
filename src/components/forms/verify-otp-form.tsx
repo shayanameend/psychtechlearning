@@ -83,7 +83,7 @@ export function VerifyOTPForm() {
       sessionStorage.removeItem("token");
       localStorage.setItem("token", data.token);
 
-      router.push(paths.app.profile.create());
+      router.push(paths.app.auth.profile.create());
     },
     onError: (error) => {
       if (error instanceof AxiosError) {

@@ -9,6 +9,7 @@ export const paths = {
       verifyOTP: () => "/api/auth/verify-otp",
       updatePassword: () => "/api/auth/update-password",
       refresh: () => "/api/auth/refresh",
+      profile: () => "/api/auth/profile",
     },
   },
   app: {
@@ -17,10 +18,10 @@ export const paths = {
       signIn: () => "/auth/sign-in",
       forgotPassword: () => "/auth/forgot-password",
       verifyOTP: () => "/auth/verify-otp",
-    },
-    profile: {
-      create: () => "/profile/create",
-      update: () => "/profile/update",
+      profile: {
+        create: () => "/auth/profile/create",
+        update: () => "/auth/profile/update",
+      },
     },
     dashboard: {
       root: () => "/dashboard",

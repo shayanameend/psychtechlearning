@@ -27,7 +27,7 @@ export default function DashboardLayout({
     }
 
     if (!isLoading && token && !user?.profile) {
-      router.push(paths.app.profile.create());
+      router.push(paths.app.auth.profile.create());
     }
   }, [isLoading, token, user, router.push]);
 
