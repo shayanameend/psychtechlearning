@@ -105,9 +105,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // @ts-ignore
+    user.password = undefined;
+
     return NextResponse.json(
       {
-        data: { token },
+        data: { token, user },
         info: {
           message: "Sign In Successful!",
         },

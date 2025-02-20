@@ -1,7 +1,7 @@
 "use client";
 
 import type { Role } from "@prisma/client";
-import type { PropsWithChildren } from "react";
+import type { Dispatch, PropsWithChildren, SetStateAction } from "react";
 
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
@@ -34,10 +34,16 @@ export const UserContext = createContext<{
   isLoading: boolean;
   token: string | null;
   user: User | null;
+  setIsLoading: Dispatch<SetStateAction<boolean>> | null;
+  setToken: Dispatch<SetStateAction<string | null>> | null;
+  setUser: Dispatch<SetStateAction<User | null>> | null;
 }>({
   isLoading: false,
   token: null,
   user: null,
+  setIsLoading: null,
+  setToken: null,
+  setUser: null,
 });
 
 export const useUserContext = () => {
@@ -100,6 +106,8 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
 
     if (token) {
       refreshMutation.mutate();
+    } else {
+      setIsLoading(false);
     }
   }, [refreshMutation.mutate]);
 
@@ -109,6 +117,9 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
         isLoading,
         token,
         user,
+        setIsLoading,
+        setToken,
+        setUser,
       }}
     >
       {children}

@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         data: {
-          user: decodedUser,
           token,
+          user: decodedUser,
         },
         info: {
           message: "Token Refreshed Successfully!",

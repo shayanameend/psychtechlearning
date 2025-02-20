@@ -22,6 +22,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
+import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 
 const SignInFormSchema = zod.object({
@@ -53,6 +54,8 @@ async function signIn({ email, password }: zod.infer<typeof SignInFormSchema>) {
 export function SignInForm() {
   const router = useRouter();
 
+  const { setIsLoading, setToken, setUser } = useUserContext();
+
   const form = useForm<zod.infer<typeof SignInFormSchema>>({
     resolver: zodResolver(SignInFormSchema),
     defaultValues: {
@@ -74,6 +77,10 @@ export function SignInForm() {
           break;
         case "Sign In Successful!":
           toast.success(info.message);
+
+          setIsLoading?.(false);
+          setToken?.(data.token);
+          setUser?.(data.user);
 
           localStorage.setItem("token", data.token);
 
