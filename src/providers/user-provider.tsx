@@ -143,7 +143,22 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
       user?.profile &&
       pathname.includes(paths.app.auth.root())
     ) {
+      if (user.role === "ADMIN") {
+        return router.push(paths.app.admin.root());
+      }
+
       return router.push(paths.app.dashboard.root());
+    }
+
+    if (
+      !isLoading &&
+      token &&
+      user?.profile &&
+      pathname.includes(paths.app.admin.root())
+    ) {
+      if (user.role !== "ADMIN") {
+        return router.push(paths.app.dashboard.root());
+      }
     }
   }, [isLoading, token, user, router.push, pathname]);
 

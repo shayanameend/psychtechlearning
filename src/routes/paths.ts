@@ -33,5 +33,8 @@ export const paths = {
     dashboard: {
       root: () => "/dashboard",
     },
+    admin: {
+      root: () => "/admin",
+    },
   },
 };
