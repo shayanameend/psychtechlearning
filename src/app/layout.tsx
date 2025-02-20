@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import { Toaster } from "~/components/ui/sonner";
 
 import { QueryProvider } from "~/providers/query-provider";
+import { UserProvider } from "~/providers/user-provider";
 
 import "~/styles/globals.css";
 
@@ -15,8 +16,10 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
   return (
     <html lang="en">
       <body>
-        <QueryProvider>{children}</QueryProvider>
-        <Toaster />
+        <QueryProvider>
+          <UserProvider>{children}</UserProvider>
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   );

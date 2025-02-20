@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
   try {
     const decodedUser = await verifyRequest({
       request,
-      role: "ADMIN",
       isVerified: false,
     });
 

@@ -51,6 +51,27 @@ async function verifyRequest({
       where: {
         id: decodedUser.id,
       },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        role: true,
+        isVerified: true,
+        isDeleted: true,
+        createdAt: true,
+        updatedAt: true,
+        profile: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            isStudent: true,
+            notify: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
     });
 
     if (!user) {
