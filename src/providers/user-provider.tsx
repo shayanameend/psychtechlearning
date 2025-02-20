@@ -47,8 +47,6 @@ export const useUserContext = () => {
 async function refresh() {
   const token = localStorage.getItem("token");
 
-  console.log(token);
-
   const response = await axios.post(
     paths.api.auth.refresh(),
     {},
