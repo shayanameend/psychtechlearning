@@ -67,42 +67,16 @@ model Section {
 
   sectionTitle       String
   sectionDescription String
+  guideLabel         String
+  guideLink          String
+  flashcardsLabel    String
+  sampleTestLabel    String
+  finalTestLabel     String
 
-  sectionGuidePdfId   String?     @db.ObjectId
-  sectionGuidePdf     GuidePdf?
-  sectionFlashcardsId String?     @db.ObjectId
-  sectionFlashcards   Flashcards?
-  sectionSampleTestId String?     @db.ObjectId
-  sectionSampleTest   SampleTest?
-  sectionFinalTestId  String?     @db.ObjectId
-  sectionFinalTest    FinalTest?
+  flashcards          Flashcard[]
+  sampleTestQuestions Question[]  @relation("SampleTestQuestions")
+  finalTestQuestions  Question[]  @relation("FinalTestQuestions")
   sectionUserNotes    UserNote[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model GuidePdf {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  label String
-  link  String
-
-  sectionId String  @unique @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Flashcards {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  label String
-
-  cards     Flashcard[]
-  sectionId String      @unique @db.ObjectId
-  section   Section     @relation(fields: [sectionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -114,62 +88,23 @@ model Flashcard {
   question String
   answer   String
 
-  flashcardsId String     @db.ObjectId
-  flashcards   Flashcards @relation(fields: [flashcardsId], references: [id])
+  sectionId String  @db.ObjectId
+  section   Section @relation(fields: [sectionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model SampleTest {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  label String
-
-  questions SampleQuestion[]
-  sectionId String           @unique @db.ObjectId
-  section   Section          @relation(fields: [sectionId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model FinalTest {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  label String
-
-  questions FinalQuestion[]
-  sectionId String          @unique @db.ObjectId
-  section   Section         @relation(fields: [sectionId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model SampleQuestion {
+model Question {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   question      String
   answers       String[]
   correctAnswer String
 
-  testId String     @db.ObjectId
-  test   SampleTest @relation(fields: [testId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model FinalQuestion {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  question      String
-  answers       String[]
-  correctAnswer String
-
-  testId String    @db.ObjectId
-  test   FinalTest @relation(fields: [testId], references: [id])
+  sectionId String  @db.ObjectId
+  section   Section @relation(name: "SampleTestQuestions", fields: [sectionId], references: [id])
+  Section   Section @relation(name: "FinalTestQuestions", fields: [sectionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
