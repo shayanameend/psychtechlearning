@@ -15,6 +15,7 @@ export const paths = {
     },
     sections: {
       root: () => "/api/sections",
+      id: (id: string) => `/api/sections/${id}`,
     },
   },
   app: {
