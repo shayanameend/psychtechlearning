@@ -79,32 +79,6 @@ const CreateSectionSchema = zod.object({
   }),
 });
 
-const UpdateSectionSchema = zod.object({
-  id: zod.string(),
-  sectionTitle: zod.string().optional(),
-  sectionDescription: zod.string().optional(),
-  guideLabel: zod.string().optional(),
-  guideLink: zod.string().url(),
-  flashcardsLabel: zod.string().optional(),
-  sampleTestLabel: zod.string().optional(),
-  finalTestLabel: zod.string().optional(),
-  createFlashcards: zod.array(FlashcardSchema),
-  createSampleTestQuestions: zod.array(QuestionSchema),
-  createFinalTestQuestions: zod.array(QuestionSchema),
-  deleteFlashcards: zod.array(zod.string()),
-  deleteSampleTestQuestions: zod.array(zod.string()),
-  deleteFinalTestQuestions: zod.array(zod.string()),
-  updateFlashcards: zod.array(FlashcardSchema.setKey("id", zod.string())),
-  updateSampleTestQuestions: zod.array(
-    QuestionSchema.setKey("id", zod.string()),
-  ),
-  updateFinalTestQuestions: zod.array(
-    QuestionSchema.setKey("id", zod.string()),
-  ),
-});
+const UpdateSectionSchema = CreateSectionSchema;
 
-const DeleteSectionSchema = zod.object({
-  id: zod.string(),
-});
-
-export { CreateSectionSchema, UpdateSectionSchema, DeleteSectionSchema };
+export { CreateSectionSchema, UpdateSectionSchema };

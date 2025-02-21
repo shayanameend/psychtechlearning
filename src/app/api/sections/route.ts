@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { verifyRequest } from "~/lib/auth";
 import { UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { CreateSectionSchema, UpdateSectionSchema } from "~/validators/section";
+import { CreateSectionSchema } from "~/validators/section";
 
 export async function GET(request: NextRequest) {
   try {
