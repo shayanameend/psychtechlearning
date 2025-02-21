@@ -460,59 +460,69 @@ export default function DashboardPage() {
               </DialogContent>
             </Dialog>
           </header>
-          <div className={cn("flex flex-col gap-6")}>
-            {content.map((section) => (
-              <section
-                key={section.id}
-                className={cn(
-                  "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm",
-                )}
-              >
-                <header
+          <div className={cn("flex-1 flex flex-col gap-6")}>
+            {content.length > 0 ? (
+              content.map((section) => (
+                <section
+                  key={section.id}
                   className={cn(
-                    "flex items-center justify-between border-b border-gray-200 pb-2",
+                    "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm",
                   )}
                 >
-                  <h3 className={cn("text-lg font-semibold text-gray-800")}>
-                    {section.sectionOrder}. {section.sectionTitle}
-                  </h3>
-                  <div className={cn("flex gap-2")}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={cn("flex items-center gap-2")}
-                    >
-                      <EditIcon className={cn("w-4 h-4")} />
-                      <span>Edit</span>
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        deleteSectionMutation.mutate(section.id);
-                      }}
-                      variant="outline"
-                      size="icon"
-                      className={cn(
-                        "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
-                      )}
-                    >
-                      <Trash2Icon className={cn("w-4 h-4")} />
-                    </Button>
-                  </div>
-                </header>
-                <div className={cn("flex flex-col gap-4")}>
-                  {section.sectionDescription && (
-                    <div className={cn("flex flex-col gap-2")}>
-                      <Label className={cn("font-bold")}>
-                        Section Description
-                      </Label>
-                      <p className={cn("text-sm text-gray-600")}>
-                        {section.sectionDescription}
-                      </p>
+                  <header
+                    className={cn(
+                      "flex items-center justify-between border-b border-gray-200 pb-2",
+                    )}
+                  >
+                    <h3 className={cn("text-lg font-semibold text-gray-800")}>
+                      {section.sectionOrder}. {section.sectionTitle}
+                    </h3>
+                    <div className={cn("flex gap-2")}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn("flex items-center gap-2")}
+                      >
+                        <EditIcon className={cn("w-4 h-4")} />
+                        <span>Edit</span>
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          deleteSectionMutation.mutate(section.id);
+                        }}
+                        variant="outline"
+                        size="icon"
+                        className={cn(
+                          "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
+                        )}
+                      >
+                        <Trash2Icon className={cn("w-4 h-4")} />
+                      </Button>
                     </div>
-                  )}
-                </div>
+                  </header>
+                  <article className={cn("flex flex-col gap-4")}>
+                    {section.sectionDescription && (
+                      <div className={cn("flex flex-col gap-2")}>
+                        <Label className={cn("font-bold")}>
+                          Section Description
+                        </Label>
+                        <p className={cn("text-sm text-gray-600")}>
+                          {section.sectionDescription}
+                        </p>
+                      </div>
+                    )}
+                  </article>
+                </section>
+              ))
+            ) : (
+              <section
+                className={cn(
+                  "flex items-center justify-center flex-1 text-gray-500",
+                )}
+              >
+                <p className={cn("text-lg")}>No sections found.</p>
               </section>
-            ))}
+            )}
           </div>
         </main>
       </section>
