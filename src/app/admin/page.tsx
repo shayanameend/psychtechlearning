@@ -451,7 +451,14 @@ export default function DashboardPage() {
                       </div>
                     </main>
                     <DialogFooter>
-                      <Button variant="outline" size="sm" type="submit">
+                      <Button
+                        onClick={() => {
+                          form.setValue("sectionOrder", content.length + 1);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        type="submit"
+                      >
                         Save
                       </Button>
                     </DialogFooter>
