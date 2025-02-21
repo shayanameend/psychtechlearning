@@ -35,6 +35,8 @@ export async function DELETE(
       },
     });
 
+    console.log("id", id);
+
     if (!section) {
       throw new BadResponse("Section Not Found!");
     }

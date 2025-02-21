@@ -41,7 +41,7 @@ model Otp {
   type OtpType @default(VERIFY_EMAIL)
 
   userId String @unique @map("user_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
@@ -90,7 +90,7 @@ model Flashcard {
   answer   String
 
   sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -104,7 +104,7 @@ model SampleTestQuestion {
   correctAnswer String
 
   sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -118,7 +118,7 @@ model FinalTestQuestion {
   correctAnswer String
 
   sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,9 +130,9 @@ model UserNote {
   content String
 
   sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   userId    String  @db.ObjectId
-  user      User    @relation(fields: [userId], references: [id])
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
