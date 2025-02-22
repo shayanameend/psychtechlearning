@@ -585,6 +585,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                         }
 
                         setIsQuestionEditing(-1);
+                        setIsCorrectAnswerEditing(-1);
                       }}
                       disabled={questionIndex === 0}
                       size="sm"
@@ -602,6 +603,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                         }
 
                         setIsQuestionEditing(-1);
+                        setIsCorrectAnswerEditing(-1);
 
                         if (
                           questionIndex ===
@@ -954,6 +956,8 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                         }
 
                         setIsQuestionEditing(-1);
+                        setIsCorrectAnswerEditing(-1);
+                        setIsAnswersEditing([-1, -1]);
                       }}
                       disabled={questionIndex === 0}
                       size="sm"
@@ -973,6 +977,8 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                         }
 
                         setIsQuestionEditing(-1);
+                        setIsCorrectAnswerEditing(-1);
+                        setIsAnswersEditing([-1, -1]);
 
                         if (
                           questionIndex ===
@@ -1329,6 +1335,8 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                         }
 
                         setIsQuestionEditing(-1);
+                        setIsCorrectAnswerEditing(-1);
+                        setIsAnswersEditing([-1, -1]);
                       }}
                       disabled={questionIndex === 0}
                       size="sm"
@@ -1348,6 +1356,8 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                         }
 
                         setIsQuestionEditing(-1);
+                        setIsCorrectAnswerEditing(-1);
+                        setIsAnswersEditing([-1, -1]);
 
                         if (
                           questionIndex ===
