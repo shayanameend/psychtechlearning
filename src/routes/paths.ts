@@ -1,7 +1,6 @@
 export const paths = {
   root: () => "/",
   api: {
-    root: () => "/api",
     auth: {
       root: () => "/api/auth",
       signUp: () => "/api/auth/sign-up",
@@ -15,11 +14,16 @@ export const paths = {
     },
     sections: {
       root: () => "/api/sections",
-      id: (id: string) => `/api/sections/${id}`,
+      id: {
+        root: ({ id }: { id: string }) => `/api/sections/${id}`,
+        flashcards: {
+          bulk: ({ id }: { id: string }) =>
+            `/api/sections/${id}/flashcards/bulk`,
+        },
+      },
     },
   },
   app: {
-    root: () => "/",
     auth: {
       root: () => "/auth",
       signUp: () => "/auth/sign-up",

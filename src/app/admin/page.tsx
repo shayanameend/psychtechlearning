@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
+import { CourseSection } from "./_components/course-section";
 import { NewSectionButton } from "./_components/new-section-button";
-import { CourseSection } from "./_components/section";
 
 interface Flashcard {
   id: string;

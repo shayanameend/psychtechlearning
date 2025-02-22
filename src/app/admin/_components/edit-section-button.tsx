@@ -31,7 +31,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { CreateSectionSchema } from "~/validators/section";
+import { UpdateSectionSchema } from "~/validators/section";
 
 interface Flashcard {
   id: string;
@@ -75,7 +75,7 @@ interface Section {
   updatedAt: Date;
 }
 
-const UpdateSectionFormSchema = CreateSectionSchema;
+const UpdateSectionFormSchema = UpdateSectionSchema;
 
 export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
   const queryClient = useQueryClient();
@@ -90,7 +90,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
   const updateSectionMutation = useMutation({
     mutationFn: async (data: zod.infer<typeof UpdateSectionFormSchema>) => {
       const response = await axios.put(
-        paths.api.sections.id(section.id),
+        paths.api.sections.id.root({ id: section.id }),
         data,
         {
           headers: {

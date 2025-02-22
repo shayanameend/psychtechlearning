@@ -1,14 +1,46 @@
 import { default as zod } from "zod";
 
 const FlashcardSchema = zod.object({
-  question: zod.string(),
-  answer: zod.string(),
+  question: zod
+    .string({
+      message: "Question is required!",
+    })
+    .min(3, {
+      message: "Question must be at least 3 characters long!",
+    }),
+  answer: zod
+    .string({
+      message: "Answer is required!",
+    })
+    .min(3, {
+      message: "Answer must be at least 3 characters long!",
+    }),
 });
 
 const QuestionSchema = zod.object({
-  question: zod.string(),
-  answers: zod.array(zod.string()),
-  correctAnswer: zod.string(),
+  question: zod
+    .string({
+      message: "Question is required!",
+    })
+    .min(3, {
+      message: "Question must be at least 3 characters long!",
+    }),
+  answers: zod.array(
+    zod
+      .string({
+        message: "Answer is required!",
+      })
+      .min(3, {
+        message: "Answer must be at least 3 characters long!",
+      }),
+  ),
+  correctAnswer: zod
+    .string({
+      message: "Correct answer is required!",
+    })
+    .min(3, {
+      message: "Correct answer must be at least 3 characters long!",
+    }),
 });
 
 const CreateSectionSchema = zod.object({
@@ -79,6 +111,30 @@ const CreateSectionSchema = zod.object({
   }),
 });
 
+const BulkUpdateFlashcardsSchema = zod.object({
+  flashcards: zod.array(
+    FlashcardSchema.extend({
+      id: zod
+        .string({
+          message: "Flashcard id is required!",
+        })
+        .min(3, {
+          message: "Flashcard id must be at least 3 characters long!",
+        }),
+    }),
+  ),
+  deletedFlashcards: zod.array(
+    zod
+      .string({
+        message: "Flashcard id is required!",
+      })
+      .min(3, {
+        message: "Flashcard id must be at least 3 characters long!",
+      }),
+  ),
+  newFlashcards: zod.array(FlashcardSchema),
+});
+
 const UpdateSectionSchema = CreateSectionSchema;
 
-export { CreateSectionSchema, UpdateSectionSchema };
+export { CreateSectionSchema, UpdateSectionSchema, BulkUpdateFlashcardsSchema };

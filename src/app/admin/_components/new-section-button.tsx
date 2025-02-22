@@ -215,9 +215,9 @@ export function NewSectionButton({
                               "flashcards",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answer: `Answer ${index + 1}`,
                               })),
                             );
                           }}
@@ -261,10 +261,15 @@ export function NewSectionButton({
                               "sampleTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answers: [
+                                  "Option 1",
+                                  "Option 2",
+                                  "Option 3",
+                                  "Option 4",
+                                ],
+                                correctAnswer: "Correct Answer 1",
                               })),
                             );
                           }}
@@ -308,10 +313,15 @@ export function NewSectionButton({
                               "finalTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answers: [
+                                  "Option 1",
+                                  "Option 2",
+                                  "Option 3",
+                                  "Option 4",
+                                ],
+                                correctAnswer: "Correct Answer 1",
                               })),
                             );
                           }}
