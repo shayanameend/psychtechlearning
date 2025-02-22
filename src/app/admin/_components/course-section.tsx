@@ -1012,9 +1012,371 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
             </p>
           </div>
           <div>
-            <Button variant="outline" size="sm">
-              View
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  onClick={() => {
+                    setQuestionIndex(0);
+                  }}
+                  variant="outline"
+                  size="sm"
+                >
+                  View
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-[384px] lg:max-w-[512px]">
+                <DialogHeader>
+                  <DialogTitle>
+                    Final Questions: {section.sectionTitle}
+                  </DialogTitle>
+                  <DialogDescription>
+                    This is a set of final questions to help you practice and
+                    reinforce your knowledge on {section.sectionTitle}. The
+                    questions consist of multiple choice questions.
+                  </DialogDescription>
+                </DialogHeader>
+                <article className={cn("space-y-3")}>
+                  <div className={cn("space-y-1")}>
+                    <h4 className={cn("text-lg font-medium")}>
+                      Question {questionIndex + 1}
+                    </h4>
+                    {questionIsEditing === questionIndex ? (
+                      <Textarea
+                        value={question}
+                        onChange={(event) => {
+                          setQuestion(event.currentTarget.value);
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            setIsQuestionEditing(-1);
+
+                            if (questionIndex < finalTestQuestions.length) {
+                              setFinalTestQuestions(
+                                finalTestQuestions.map(
+                                  (finaltestQuestion, index) =>
+                                    index === questionIndex
+                                      ? {
+                                          ...finaltestQuestion,
+                                          question: finaltestQuestion.question,
+                                        }
+                                      : finaltestQuestion,
+                                ),
+                              );
+                            } else {
+                              setNewFinalTestQuestions(
+                                newFinalTestQuestions.map(
+                                  (finaltestQuestion, index) =>
+                                    index ===
+                                    questionIndex - finalTestQuestions.length
+                                      ? {
+                                          ...finaltestQuestion,
+                                          question: finaltestQuestion.question,
+                                        }
+                                      : finaltestQuestion,
+                                ),
+                              );
+                            }
+                          }
+                        }}
+                        className={cn("resize-none min-h-14")}
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <p className={cn("text-gray-600 text-sm")}>
+                          {(questionIndex >= finalTestQuestions.length
+                            ? newFinalTestQuestions[
+                                questionIndex - finalTestQuestions.length
+                              ]
+                            : finalTestQuestions[questionIndex]
+                          )?.question || "Empty Question"}
+                        </p>
+                        <Button
+                          onClick={() => {
+                            setIsQuestionEditing(questionIndex);
+                            setQuestion(
+                              (questionIndex >= finalTestQuestions.length
+                                ? newFinalTestQuestions[
+                                    questionIndex - finalTestQuestions.length
+                                  ]
+                                : finalTestQuestions[questionIndex]
+                              ).question,
+                            );
+                          }}
+                          variant="link"
+                          size="icon"
+                          className={cn("ml-1 size-6")}
+                        >
+                          <EditIcon />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  <RadioGroup>
+                    {(questionIndex >= finalTestQuestions.length
+                      ? newFinalTestQuestions[
+                          questionIndex - finalTestQuestions.length
+                        ]
+                      : finalTestQuestions[questionIndex]
+                    )?.answers.map((option, optionIndex) => {
+                      return (
+                        <div
+                          // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                          key={optionIndex}
+                          className="flex items-center space-x-2"
+                        >
+                          <RadioGroupItem
+                            value={option}
+                            id={option}
+                            checked={
+                              (questionIndex >= finalTestQuestions.length
+                                ? newFinalTestQuestions[
+                                    questionIndex - finalTestQuestions.length
+                                  ]
+                                : finalTestQuestions[questionIndex]
+                              ).correctAnswer === option
+                            }
+                            onClick={() => {
+                              if (questionIndex < finalTestQuestions.length) {
+                                setFinalTestQuestions(
+                                  finalTestQuestions.map((question, index) =>
+                                    index === questionIndex
+                                      ? {
+                                          ...question,
+                                          correctAnswer: option,
+                                        }
+                                      : question,
+                                  ),
+                                );
+                              } else {
+                                setNewFinalTestQuestions(
+                                  newFinalTestQuestions.map(
+                                    (question, index) =>
+                                      index ===
+                                      questionIndex - finalTestQuestions.length
+                                        ? {
+                                            ...question,
+                                            correctAnswer: option,
+                                          }
+                                        : question,
+                                  ),
+                                );
+                              }
+                            }}
+                          />
+                          {answersIsEditing[0] === questionIndex &&
+                          answersIsEditing[1] === optionIndex ? (
+                            <Textarea
+                              value={answers[optionIndex]}
+                              onChange={(event) => {
+                                const newAnswers = [...answers];
+                                newAnswers[optionIndex] =
+                                  event.currentTarget.value;
+                                setAnswers(newAnswers);
+                              }}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                  setIsAnswersEditing([-1, -1]);
+
+                                  if (
+                                    questionIndex < finalTestQuestions.length
+                                  ) {
+                                    setFinalTestQuestions(
+                                      finalTestQuestions.map(
+                                        (question, index) =>
+                                          index === questionIndex
+                                            ? {
+                                                ...question,
+                                                answers: question.answers.map(
+                                                  (answer, answerIndex) =>
+                                                    answerIndex === optionIndex
+                                                      ? answers[optionIndex]
+                                                      : answer,
+                                                ),
+                                              }
+                                            : question,
+                                      ),
+                                    );
+                                  } else {
+                                    setNewFinalTestQuestions(
+                                      newFinalTestQuestions.map(
+                                        (question, index) =>
+                                          index ===
+                                          questionIndex -
+                                            finalTestQuestions.length
+                                            ? {
+                                                ...question,
+                                                answers: question.answers.map(
+                                                  (answer, answerIndex) =>
+                                                    answerIndex === optionIndex
+                                                      ? answers[optionIndex]
+                                                      : answer,
+                                                ),
+                                              }
+                                            : question,
+                                      ),
+                                    );
+                                  }
+                                }
+                              }}
+                              className={cn("resize-none min-h-8")}
+                            />
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor={option}>{option}</Label>
+                              <Button
+                                onClick={() => {
+                                  setIsAnswersEditing([
+                                    questionIndex,
+                                    optionIndex,
+                                  ]);
+                                  const newAnswers = [...answers];
+                                  newAnswers[optionIndex] = option;
+                                  setAnswers(newAnswers);
+                                }}
+                                variant="link"
+                                size="icon"
+                                className={cn("ml-1 size-6")}
+                              >
+                                <EditIcon />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </RadioGroup>
+                </article>
+                <DialogFooter className={cn("justify-between")}>
+                  <div className={cn("flex gap-2")}>
+                    <Button
+                      onClick={() => {
+                        setNewFinalTestQuestions([
+                          ...newFinalTestQuestions,
+                          {
+                            question: `Question ${finalTestQuestions.length - deletedFinalTestQuestions.length + newFinalTestQuestions.length + 1}`,
+                            answers: [
+                              "Option 1",
+                              "Option 2",
+                              "Option 3",
+                              "Option 4",
+                            ],
+                            correctAnswer: "Option 1",
+                          },
+                        ]);
+
+                        setQuestionIndex(
+                          finalTestQuestions.length -
+                            deletedFinalTestQuestions.length +
+                            newFinalTestQuestions.length,
+                        );
+                      }}
+                      size="sm"
+                      variant="outline"
+                      className={cn("px-2 height-8 gap-1")}
+                    >
+                      <PlusIcon />
+                      New Question
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (questionIndex < finalTestQuestions.length) {
+                          setDeletedFinalTestQuestions([
+                            ...deletedFinalTestQuestions,
+                            finalTestQuestions[questionIndex].id,
+                          ]);
+
+                          setFinalTestQuestions(
+                            finalTestQuestions.filter(
+                              (_, index) => index !== questionIndex,
+                            ),
+                          );
+                        } else {
+                          setNewFinalTestQuestions(
+                            newFinalTestQuestions.filter(
+                              (_, index) =>
+                                index !==
+                                questionIndex - finalTestQuestions.length,
+                            ),
+                          );
+                        }
+
+                        if (questionIndex !== 0) {
+                          setQuestionIndex(questionIndex - 1);
+                        }
+                      }}
+                      disabled={
+                        (finalTestQuestions.length +
+                          newFinalTestQuestions.length <
+                          2 && questionIndex) ===
+                        finalTestQuestions.length +
+                          newFinalTestQuestions.length -
+                          1
+                      }
+                      variant="outline"
+                      size="icon"
+                      className={cn(
+                        "size-8 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
+                      )}
+                    >
+                      <Trash2Icon className={cn("w-4 h-4")} />
+                    </Button>
+                  </div>
+                  <div className={cn("flex gap-2")}>
+                    <Button
+                      onClick={() => {
+                        if (questionIndex > 0) {
+                          setQuestionIndex(questionIndex - 1);
+                        }
+
+                        setIsQuestionEditing(-1);
+                      }}
+                      disabled={questionIndex === 0}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (
+                          questionIndex <
+                          finalTestQuestions.length +
+                            newFinalTestQuestions.length -
+                            1
+                        ) {
+                          setQuestionIndex(questionIndex + 1);
+                        }
+
+                        setIsQuestionEditing(-1);
+
+                        if (
+                          questionIndex ===
+                          finalTestQuestions.length +
+                            newFinalTestQuestions.length -
+                            1
+                        ) {
+                          updateFinalTestQuestionsMutation.mutate({
+                            sectionId: section.id,
+                            finalTestQuestions,
+                            deletedFinalTestQuestions,
+                            newFinalTestQuestions,
+                          });
+                        }
+                      }}
+                      size="sm"
+                      variant="outline"
+                    >
+                      {questionIndex ===
+                      finalTestQuestions.length +
+                        newSampleTestQuestions.length -
+                        1
+                        ? "Save"
+                        : "Next"}
+                    </Button>
+                  </div>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </article>
