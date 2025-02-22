@@ -66,16 +66,22 @@ export function CourseSection({
   const [showFlashcard, setShowFlashcard] = useState(false);
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
     TestQuestion[]
-  >([]);
+  >(section.sampleTestQuestions);
+  const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
+    section.finalTestQuestions,
+  );
   const [sampleTestAnswers, setSampleTestAnswers] = useState<
     Array<string | null>
   >([]);
-  const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
-    [],
-  );
   const [finalTestAnswers, setFinalTestAnswers] = useState<
     Array<string | null>
   >([]);
+  const [showResults, setShowResults] = useState(false);
+  const [testScore, setTestScore] = useState<{
+    correct: number;
+    total: number;
+    percentage: number;
+  } | null>(null);
 
   const [questionIndex, setQuestionIndex] = useState(0);
 
@@ -90,6 +96,25 @@ export function CourseSection({
       Array.from({ length: finalTestQuestions.length }, () => null),
     );
   }, [finalTestQuestions]);
+
+  const calculateTestScore = (
+    answers: (string | null)[],
+    questions: TestQuestion[],
+  ) => {
+    const correct = answers.reduce((acc, answer, index) => {
+      return answer === questions[index]?.correctAnswer ? acc + 1 : acc;
+    }, 0);
+
+    return {
+      correct,
+      total: questions.length,
+      percentage: Math.round((correct / questions.length) * 100),
+    };
+  };
+
+  const currentFlashcard = flashcards[questionIndex];
+  const currentSampleQuestion = sampleTestQuestions[questionIndex];
+  const currentFinalQuestion = finalTestQuestions[questionIndex];
 
   return (
     <section className={cn("flex-1 flex")}>
@@ -147,17 +172,21 @@ export function CourseSection({
                   learning on {section.sectionTitle}.
                 </DialogDescription>
               </DialogHeader>
-              <article className={cn("space-y-2")}>
-                <p className={cn("text-gray-600 text-sm")}>
-                  <span className={cn("mr-1")}>{questionIndex + 1}.</span>
-                  {flashcards[questionIndex]?.question}
-                  {showFlashcard && (
-                    <span className={cn("ml-1 text-primary")}>
-                      {flashcards[questionIndex]?.answer}
-                    </span>
-                  )}
-                </p>
-              </article>
+              {currentFlashcard ? (
+                <article className={cn("space-y-2")}>
+                  <p className={cn("text-gray-600 text-sm")}>
+                    <span className={cn("mr-1")}>{questionIndex + 1}.</span>
+                    {currentFlashcard.question}
+                    {showFlashcard && (
+                      <span className={cn("ml-1 text-primary")}>
+                        {currentFlashcard.answer}
+                      </span>
+                    )}
+                  </p>
+                </article>
+              ) : (
+                <p>No flashcards available</p>
+              )}
               <DialogFooter>
                 <Button
                   onClick={() => {
@@ -233,7 +262,7 @@ export function CourseSection({
                     Question {questionIndex + 1}
                   </h4>
                   <p className={cn("text-gray-600 text-sm")}>
-                    {sampleTestQuestions[questionIndex]?.question}
+                    {currentSampleQuestion?.question}
                   </p>
                 </div>
                 <RadioGroup
@@ -247,54 +276,81 @@ export function CourseSection({
                     });
                   }}
                 >
-                  {sampleTestQuestions[questionIndex]?.answers.map(
-                    (option, index) => {
-                      return (
-                        <div
-                          // biome-ignore lint/suspicious/noArrayIndexKey: <>
-                          key={index}
-                          className="flex items-center space-x-2"
-                        >
-                          <RadioGroupItem
-                            checked={
-                              sampleTestAnswers[questionIndex] === option
-                            }
-                            value={option}
-                            id={option}
-                          />
-                          <Label htmlFor={option}>{option}</Label>
-                        </div>
-                      );
-                    },
-                  )}
+                  {currentSampleQuestion?.answers.map((option, index) => {
+                    return (
+                      <div
+                        // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                        key={index}
+                        className="flex items-center space-x-2"
+                      >
+                        <RadioGroupItem
+                          checked={sampleTestAnswers[questionIndex] === option}
+                          value={option}
+                          id={option}
+                        />
+                        <Label htmlFor={option}>{option}</Label>
+                      </div>
+                    );
+                  })}
                 </RadioGroup>
               </article>
               <DialogFooter>
-                <Button
-                  onClick={() => {
-                    if (questionIndex > 0) {
-                      setQuestionIndex(questionIndex - 1);
-                    }
-                  }}
-                  disabled={questionIndex === 0}
-                  size="sm"
-                  variant="outline"
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (questionIndex < sampleTestQuestions.length - 1) {
-                      setQuestionIndex(questionIndex + 1);
-                    }
-                  }}
-                  size="sm"
-                  variant="outline"
-                >
-                  {questionIndex === sampleTestQuestions.length - 1
-                    ? "Submit"
-                    : "Next"}
-                </Button>
+                {showResults ? (
+                  <>
+                    <p className="mr-auto text-sm">
+                      Score: {testScore?.correct}/{testScore?.total} (
+                      {testScore?.percentage}%)
+                    </p>
+                    <Button
+                      onClick={() => {
+                        setShowResults(false);
+                        setQuestionIndex(0);
+                        setSampleTestAnswers(
+                          Array(sampleTestQuestions.length).fill(null),
+                        );
+                      }}
+                      size="sm"
+                    >
+                      Try Again
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={() => {
+                        if (questionIndex > 0) {
+                          setQuestionIndex(questionIndex - 1);
+                        }
+                      }}
+                      disabled={questionIndex === 0}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (questionIndex < sampleTestQuestions.length - 1) {
+                          setQuestionIndex(questionIndex + 1);
+                        } else {
+                          setTestScore(
+                            calculateTestScore(
+                              sampleTestAnswers,
+                              sampleTestQuestions,
+                            ),
+                          );
+                          setShowResults(true);
+                        }
+                      }}
+                      size="sm"
+                      variant="outline"
+                    >
+                      {questionIndex === sampleTestQuestions.length - 1
+                        ? "Submit"
+                        : "Next"}
+                    </Button>
+                  </>
+                )}
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -330,7 +386,7 @@ export function CourseSection({
                     Question {questionIndex + 1}
                   </h4>
                   <p className={cn("text-gray-600 text-sm")}>
-                    {finalTestQuestions[questionIndex]?.question}
+                    {currentFinalQuestion?.question}
                   </p>
                 </div>
                 <RadioGroup
@@ -344,52 +400,81 @@ export function CourseSection({
                     });
                   }}
                 >
-                  {finalTestQuestions[questionIndex]?.answers.map(
-                    (option, index) => {
-                      return (
-                        <div
-                          // biome-ignore lint/suspicious/noArrayIndexKey: <>
-                          key={index}
-                          className="flex items-center space-x-2"
-                        >
-                          <RadioGroupItem
-                            checked={finalTestAnswers[questionIndex] === option}
-                            value={option}
-                            id={option}
-                          />
-                          <Label htmlFor={option}>{option}</Label>
-                        </div>
-                      );
-                    },
-                  )}
+                  {currentFinalQuestion?.answers.map((option, index) => {
+                    return (
+                      <div
+                        // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                        key={index}
+                        className="flex items-center space-x-2"
+                      >
+                        <RadioGroupItem
+                          checked={finalTestAnswers[questionIndex] === option}
+                          value={option}
+                          id={option}
+                        />
+                        <Label htmlFor={option}>{option}</Label>
+                      </div>
+                    );
+                  })}
                 </RadioGroup>
               </article>
               <DialogFooter>
-                <Button
-                  onClick={() => {
-                    if (questionIndex > 0) {
-                      setQuestionIndex(questionIndex - 1);
-                    }
-                  }}
-                  disabled={questionIndex === 0}
-                  size="sm"
-                  variant="outline"
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (questionIndex < finalTestQuestions.length - 1) {
-                      setQuestionIndex(questionIndex + 1);
-                    }
-                  }}
-                  size="sm"
-                  variant="outline"
-                >
-                  {questionIndex === finalTestQuestions.length - 1
-                    ? "Submit"
-                    : "Next"}
-                </Button>
+                {showResults ? (
+                  <>
+                    <p className="mr-auto text-sm">
+                      Score: {testScore?.correct}/{testScore?.total} (
+                      {testScore?.percentage}%)
+                    </p>
+                    <Button
+                      onClick={() => {
+                        setShowResults(false);
+                        setQuestionIndex(0);
+                        setFinalTestAnswers(
+                          Array(finalTestQuestions.length).fill(null),
+                        );
+                      }}
+                      size="sm"
+                    >
+                      Try Again
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={() => {
+                        if (questionIndex > 0) {
+                          setQuestionIndex(questionIndex - 1);
+                        }
+                      }}
+                      disabled={questionIndex === 0}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (questionIndex < finalTestQuestions.length - 1) {
+                          setQuestionIndex(questionIndex + 1);
+                        } else {
+                          setTestScore(
+                            calculateTestScore(
+                              finalTestAnswers,
+                              finalTestQuestions,
+                            ),
+                          );
+                          setShowResults(true);
+                        }
+                      }}
+                      size="sm"
+                      variant="outline"
+                    >
+                      {questionIndex === finalTestQuestions.length - 1
+                        ? "Submit"
+                        : "Next"}
+                    </Button>
+                  </>
+                )}
               </DialogFooter>
             </DialogContent>
           </Dialog>
