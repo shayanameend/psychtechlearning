@@ -74,7 +74,9 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
   const [newFlashcards, setNewFlashcards] = useState<
     Omit<Omit<Omit<Flashcard, "updatedAt">, "createdAt">, "id">[]
   >([]);
+
   const [questionIsEditing, setIsQuestionEditing] = useState(-1);
+
   const [question, setQuestion] = useState("");
   const [correctAnswerIsEditing, setIsCorrectAnswerEditing] = useState(-1);
   const [correctAnswer, setCorrectAnswer] = useState("");
@@ -116,6 +118,9 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
       toast.success(info.message);
 
       queryClient.invalidateQueries({ queryKey: ["sections"] });
+
+      setDeletedFlashcards([]);
+      setNewFlashcards([]);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -124,6 +129,12 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
     },
     onSettled: () => {
       setQuestionIndex(0);
+      setQuestion("");
+      setCorrectAnswer("");
+      setAnswers(Array(4).fill(""));
+      setIsQuestionEditing(-1);
+      setIsCorrectAnswerEditing(-1);
+      setIsAnswersEditing([-1, -1]);
     },
   });
 
