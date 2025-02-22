@@ -269,7 +269,7 @@ export function NewSectionButton({
                                   "Option 3",
                                   "Option 4",
                                 ],
-                                correctAnswer: "Correct Answer 1",
+                                correctAnswer: "Option 1",
                               })),
                             );
                           }}
@@ -321,7 +321,7 @@ export function NewSectionButton({
                                   "Option 3",
                                   "Option 4",
                                 ],
-                                correctAnswer: "Correct Answer 1",
+                                correctAnswer: "Option 1",
                               })),
                             );
                           }}

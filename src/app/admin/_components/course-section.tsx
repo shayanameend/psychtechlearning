@@ -649,7 +649,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                   View
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-[320px] lg:max-w-[512px]">
+              <DialogContent className="max-w-[384px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle>
                     Sample Questions: {section.sectionTitle}
@@ -677,25 +677,27 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
                             if (questionIndex < sampleTestQuestions.length) {
                               setSampleTestQuestions(
-                                sampleTestQuestions.map((question, index) =>
-                                  index === questionIndex
-                                    ? {
-                                        ...question,
-                                        question: question,
-                                      }
-                                    : question,
+                                sampleTestQuestions.map(
+                                  (sampletestQuestion, index) =>
+                                    index === questionIndex
+                                      ? {
+                                          ...sampletestQuestion,
+                                          question: sampletestQuestion.question,
+                                        }
+                                      : sampletestQuestion,
                                 ),
                               );
                             } else {
                               setNewSampleTestQuestions(
-                                newSampleTestQuestions.map((question, index) =>
-                                  index ===
-                                  questionIndex - sampleTestQuestions.length
-                                    ? {
-                                        ...question,
-                                        question: question,
-                                      }
-                                    : question,
+                                newSampleTestQuestions.map(
+                                  (sampletestQuestion, index) =>
+                                    index ===
+                                    questionIndex - sampleTestQuestions.length
+                                      ? {
+                                          ...sampletestQuestion,
+                                          question: sampletestQuestion.question,
+                                        }
+                                      : sampletestQuestion,
                                 ),
                               );
                             }
@@ -938,7 +940,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                       variant="outline"
                       size="icon"
                       className={cn(
-                        "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
+                        "size-8 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
                       )}
                     >
                       <Trash2Icon className={cn("w-4 h-4")} />
