@@ -20,6 +20,14 @@ export const paths = {
           bulk: ({ id }: { id: string }) =>
             `/api/sections/${id}/flashcards/bulk`,
         },
+        sampleTestQuestions: {
+          bulk: ({ id }: { id: string }) =>
+            `/api/sections/${id}/sample-test-questions/bulk`,
+        },
+        finalTestQuestions: {
+          bulk: ({ id }: { id: string }) =>
+            `/api/sections/${id}/final-test-questions/bulk`,
+        },
       },
     },
   },
