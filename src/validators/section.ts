@@ -43,6 +43,16 @@ const QuestionSchema = zod.object({
     }),
 });
 
+const UserNoteSchema = zod.object({
+  content: zod
+    .string({
+      message: "Content is required!",
+    })
+    .min(3, {
+      message: "Content must be at least 3 characters long!",
+    }),
+});
+
 const CreateSectionSchema = zod.object({
   sectionOrder: zod
     .number({
@@ -135,6 +145,85 @@ const BulkUpdateFlashcardsSchema = zod.object({
   newFlashcards: zod.array(FlashcardSchema),
 });
 
+const BulkUpdateSampleTestQuestionsSchema = zod.object({
+  sampleTestQuestions: zod.array(
+    QuestionSchema.extend({
+      id: zod
+        .string({
+          message: "Question id is required!",
+        })
+        .min(3, {
+          message: "Question id must be at least 3 characters long!",
+        }),
+    }),
+  ),
+  deletedSampleTestQuestions: zod.array(
+    zod
+      .string({
+        message: "Question id is required!",
+      })
+      .min(3, {
+        message: "Question id must be at least 3 characters long!",
+      }),
+  ),
+  newSampleTestQuestions: zod.array(QuestionSchema),
+});
+
+const BulkUpdateFinalTestQuestionsSchema = zod.object({
+  finalTestQuestions: zod.array(
+    QuestionSchema.extend({
+      id: zod
+        .string({
+          message: "Question id is required!",
+        })
+        .min(3, {
+          message: "Question id must be at least 3 characters long!",
+        }),
+    }),
+  ),
+  deletedFinalTestQuestions: zod.array(
+    zod
+      .string({
+        message: "Question id is required!",
+      })
+      .min(3, {
+        message: "Question id must be at least 3 characters long!",
+      }),
+  ),
+  newFinalTestQuestions: zod.array(QuestionSchema),
+});
+
+const BulkUpdateUserNotesSchema = zod.object({
+  Notes: zod.array(
+    UserNoteSchema.extend({
+      id: zod
+        .string({
+          message: "User note id is required!",
+        })
+        .min(3, {
+          message: "User note id must be at least 3 characters long!",
+        }),
+    }),
+  ),
+  deletedNotes: zod.array(
+    zod
+      .string({
+        message: "User note id is required!",
+      })
+      .min(3, {
+        message: "User note id must be at least 3 characters long!",
+      }),
+  ),
+  newNotes: zod.array(UserNoteSchema),
+});
+
 const UpdateSectionSchema = CreateSectionSchema;
 
-export { CreateSectionSchema, UpdateSectionSchema, BulkUpdateFlashcardsSchema };
+export {
+  CreateSectionSchema,
+  UpdateSectionSchema,
+  BulkUpdateFlashcardsSchema,
+  BulkUpdateSampleTestQuestionsSchema,
+  BulkUpdateFinalTestQuestionsSchema,
+  BulkUpdateUserNotesSchema,
+};
