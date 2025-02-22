@@ -184,7 +184,7 @@ export function CourseSection({
                 </Button>
                 <Button
                   onClick={() => {
-                    if (questionIndex < sampleTestQuestions.length - 1) {
+                    if (questionIndex < flashcards.length - 1) {
                       setQuestionIndex(questionIndex + 1);
                     }
                     setShowFlashcard(false);
@@ -192,9 +192,7 @@ export function CourseSection({
                   size="sm"
                   variant="outline"
                 >
-                  {questionIndex === sampleTestQuestions.length - 1
-                    ? "Submit"
-                    : "Next"}
+                  {questionIndex === flashcards.length - 1 ? "Submit" : "Next"}
                 </Button>
               </DialogFooter>
             </DialogContent>
