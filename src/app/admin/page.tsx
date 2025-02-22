@@ -99,7 +99,7 @@ export default function AdminPage() {
             <h2 className={cn("text-xl font-semibold text-gray-800")}>
               Course Sections
             </h2>
-            <NewSectionButton newSectionOrder={content.length + 1} />
+            <NewSectionButton />
           </header>
           <div className={cn("flex-1 flex flex-col gap-6")}>
             {content.length > 0 ? (

@@ -35,9 +35,7 @@ import { CreateSectionSchema } from "~/validators/section";
 
 const CreateSectionFormSchema = CreateSectionSchema;
 
-export function NewSectionButton({
-  newSectionOrder,
-}: Readonly<{ newSectionOrder: number }>) {
+export function NewSectionButton() {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
@@ -45,7 +43,7 @@ export function NewSectionButton({
   const createSectionform = useForm<zod.infer<typeof CreateSectionFormSchema>>({
     resolver: zodResolver(CreateSectionFormSchema),
     defaultValues: {
-      sectionOrder: newSectionOrder,
+      sectionOrder: 1,
       sectionTitle: "Nursing Science",
       sectionDescription:
         "Learn about essential nursing skills, including how to take blood pressure, perform CPR, and more.",
@@ -113,12 +111,25 @@ export function NewSectionButton({
               <DialogTitle>New Section</DialogTitle>
             </DialogHeader>
             <main className={cn("flex flex-col gap-2")}>
-              <div className={cn("flex gap-4 flex-row-reverse-reverse")}>
+              <div className={cn("flex gap-4")}>
+                <FormField
+                  control={createSectionform.control}
+                  name="sectionOrder"
+                  render={({ field }) => (
+                    <FormItem className={cn("w-2/12")}>
+                      <FormLabel>Section Order</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="1" type="text" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={createSectionform.control}
                   name="sectionTitle"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-2/12")}>
                       <FormLabel>Section Title</FormLabel>
                       <FormControl>
                         <Input
@@ -135,7 +146,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="sectionDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-8/12")}>
                       <FormLabel>Section Description</FormLabel>
                       <FormControl>
                         <Textarea
@@ -154,7 +165,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="guideLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Guide Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -171,7 +182,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="guideLink"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Guide Link</FormLabel>
                       <FormControl>
                         <Input
@@ -189,7 +200,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="flashcardsLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Flashcards Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -206,7 +217,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="flashcards"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Flashcards</FormLabel>
                       <FormControl>
                         <Input
@@ -235,7 +246,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="sampleTestLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Sample Test Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -252,7 +263,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="sampleTestQuestions"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Sample Test Questions</FormLabel>
                       <FormControl>
                         <Input
@@ -287,7 +298,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="finalTestLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Final Test Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -304,7 +315,7 @@ export function NewSectionButton({
                   control={createSectionform.control}
                   name="finalTestQuestions"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Final Test Questions</FormLabel>
                       <FormControl>
                         <Input

@@ -144,12 +144,25 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
               <DialogTitle>Edit Section</DialogTitle>
             </DialogHeader>
             <main className={cn("flex flex-col gap-2")}>
-              <div className={cn("flex gap-4 flex-row-reverse-reverse")}>
+              <div className={cn("flex gap-4")}>
+                <FormField
+                  control={updateSectionform.control}
+                  name="sectionOrder"
+                  render={({ field }) => (
+                    <FormItem className={cn("w-2/12")}>
+                      <FormLabel>Section Order</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="1" type="text" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={updateSectionform.control}
                   name="sectionTitle"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-2/12")}>
                       <FormLabel>Section Title</FormLabel>
                       <FormControl>
                         <Input
@@ -166,7 +179,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="sectionDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-8/12")}>
                       <FormLabel>Section Description</FormLabel>
                       <FormControl>
                         <Textarea
@@ -185,7 +198,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="guideLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Guide Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -202,7 +215,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="guideLink"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Guide Link</FormLabel>
                       <FormControl>
                         <Input
@@ -220,7 +233,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="flashcardsLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Flashcards Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -237,7 +250,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="flashcards"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Flashcards</FormLabel>
                       <FormControl>
                         <Input
@@ -267,7 +280,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="sampleTestLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Sample Test Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -284,7 +297,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="sampleTestQuestions"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Sample Test Questions</FormLabel>
                       <FormControl>
                         <Input
@@ -315,7 +328,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="finalTestLabel"
                   render={({ field }) => (
-                    <FormItem className={cn("w-4/6")}>
+                    <FormItem className={cn("w-9/12")}>
                       <FormLabel>Final Test Label</FormLabel>
                       <FormControl>
                         <Textarea
@@ -332,7 +345,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   control={updateSectionform.control}
                   name="finalTestQuestions"
                   render={({ field }) => (
-                    <FormItem className={cn("w-2/6")}>
+                    <FormItem className={cn("w-3/12")}>
                       <FormLabel>Final Test Questions</FormLabel>
                       <FormControl>
                         <Input

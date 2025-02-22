@@ -75,6 +75,12 @@ export function CourseSectionNotes({
   const queryClient = useQueryClient();
   const { token } = useUserContext();
 
+  console.log("notes", section.sectionUserNotes, notes);
+
+  useEffect(() => {
+    setNotes(section.sectionUserNotes);
+  }, [section.sectionUserNotes]);
+
   useEffect(() => {
     if (isEditing >= 0) {
       const note =
@@ -192,7 +198,7 @@ export function CourseSectionNotes({
       <article>
         {notes.length + newNotes.length < 1 ? (
           <p className={cn("text-gray-600 text-sm")}>No notes added by you.</p>
-        ) : (
+        ) : !updateNotesMutation.isPending ? (
           <ul className={cn("space-y-2 pl-3")}>
             {/* Existing Notes */}
             {notes.map((note, index) => (
@@ -321,6 +327,8 @@ export function CourseSectionNotes({
               </li>
             ))}
           </ul>
+        ) : (
+          <p className={cn("text-gray-600 text-sm")}>Syncing notes...</p>
         )}
       </article>
     </div>

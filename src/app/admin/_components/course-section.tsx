@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
 import { toast } from "sonner";
 
-import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { EditIcon, Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -103,6 +103,25 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
   const [correctAnswer, setCorrectAnswer] = useState("");
   const [answersIsEditing, setIsAnswersEditing] = useState([-1, -1]);
   const [answers, setAnswers] = useState<string[]>(Array(4).fill(""));
+
+  useEffect(() => {
+    setFlashcards(section.flashcards);
+    setDeletedFlashcards([]);
+    setNewFlashcards([]);
+    setSampleTestQuestions(section.sampleTestQuestions);
+    setDeletedSampleTestQuestions([]);
+    setNewSampleTestQuestions([]);
+    setFinalTestQuestions(section.finalTestQuestions);
+    setDeletedFinalTestQuestions([]);
+    setNewFinalTestQuestions([]);
+    setQuestionIndex(0);
+    setQuestion("");
+    setCorrectAnswer("");
+    setAnswers(Array(4).fill(""));
+    setIsQuestionEditing(-1);
+    setIsCorrectAnswerEditing(-1);
+    setIsAnswersEditing([-1, -1]);
+  }, [section]);
 
   const updateFlashcardsMutation = useMutation({
     mutationFn: async ({
@@ -620,10 +639,15 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                       size="sm"
                       variant="outline"
                     >
-                      {questionIndex ===
-                      flashcards.length + newFlashcards.length - 1
-                        ? "Save"
-                        : "Next"}
+                      {updateFlashcardsMutation.isPending && (
+                        <Loader2Icon className={cn("animate-spin")} />
+                      )}
+                      <span>
+                        {questionIndex ===
+                        flashcards.length + newFlashcards.length - 1
+                          ? "Save"
+                          : "Next"}
+                      </span>
                     </Button>
                   </div>
                 </DialogFooter>
@@ -997,12 +1021,17 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                       size="sm"
                       variant="outline"
                     >
-                      {questionIndex ===
-                      sampleTestQuestions.length +
-                        newSampleTestQuestions.length -
-                        1
-                        ? "Save"
-                        : "Next"}
+                      {updateSampleTestQuestionsMutation.isPending && (
+                        <Loader2Icon className={cn("animate-spin")} />
+                      )}
+                      <span>
+                        {questionIndex ===
+                        sampleTestQuestions.length +
+                          newSampleTestQuestions.length -
+                          1
+                          ? "Save"
+                          : "Next"}
+                      </span>
                     </Button>
                   </div>
                 </DialogFooter>
@@ -1376,12 +1405,17 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                       size="sm"
                       variant="outline"
                     >
-                      {questionIndex ===
-                      finalTestQuestions.length +
-                        newSampleTestQuestions.length -
-                        1
-                        ? "Save"
-                        : "Next"}
+                      {updateFinalTestQuestionsMutation.isPending && (
+                        <Loader2Icon className={cn("animate-spin")} />
+                      )}
+                      <span>
+                        {questionIndex ===
+                        finalTestQuestions.length +
+                          newFinalTestQuestions.length -
+                          1
+                          ? "Save"
+                          : "Next"}
+                      </span>
                     </Button>
                   </div>
                 </DialogFooter>

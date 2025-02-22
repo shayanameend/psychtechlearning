@@ -54,7 +54,7 @@ const UserNoteSchema = zod.object({
 });
 
 const CreateSectionSchema = zod.object({
-  sectionOrder: zod
+  sectionOrder: zod.coerce
     .number({
       message: "Section order is required!",
     })

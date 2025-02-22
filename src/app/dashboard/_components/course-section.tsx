@@ -86,6 +86,12 @@ export function CourseSection({
   const [questionIndex, setQuestionIndex] = useState(0);
 
   useEffect(() => {
+    setFlashcards(section.flashcards);
+    setSampleTestQuestions(section.sampleTestQuestions);
+    setFinalTestQuestions(section.finalTestQuestions);
+  }, [section]);
+
+  useEffect(() => {
     setSampleTestAnswers(
       Array.from({ length: sampleTestQuestions.length }, () => null),
     );
