@@ -194,7 +194,7 @@ const BulkUpdateFinalTestQuestionsSchema = zod.object({
 });
 
 const BulkUpdateUserNotesSchema = zod.object({
-  Notes: zod.array(
+  notes: zod.array(
     UserNoteSchema.extend({
       id: zod
         .string({
