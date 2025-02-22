@@ -377,10 +377,16 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                         setNewFlashcards([
                           ...newFlashcards,
                           {
-                            question: "",
-                            answer: "",
+                            question: `Question ${flashcards.length - deletedFlashcards.length + newFlashcards.length + 1}`,
+                            answer: `Answer ${flashcards.length - deletedFlashcards.length + newFlashcards.length + 1}`,
                           },
                         ]);
+
+                        setQuestionIndex(
+                          flashcards.length -
+                            deletedFlashcards.length +
+                            newFlashcards.length,
+                        );
                       }}
                       size="sm"
                       variant="outline"
@@ -392,20 +398,21 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                     <Button
                       onClick={() => {
                         if (questionIndex < flashcards.length) {
+                          setDeletedFlashcards([
+                            ...deletedFlashcards,
+                            flashcards[questionIndex].id,
+                          ]);
+
                           setFlashcards(
                             flashcards.filter(
                               (_, index) => index !== questionIndex,
                             ),
                           );
-
-                          setDeletedFlashcards([
-                            ...deletedFlashcards,
-                            flashcards[questionIndex].id,
-                          ]);
                         } else {
                           setNewFlashcards(
                             newFlashcards.filter(
-                              (_, index) => index !== questionIndex,
+                              (_, index) =>
+                                index !== questionIndex - flashcards.length,
                             ),
                           );
                         }
