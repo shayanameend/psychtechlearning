@@ -114,9 +114,7 @@ export default function DashboardPage() {
             <Steps steps={steps} currentStep={currentStep} />
           )}
         </aside>
-        <main
-          className={cn("flex-1 py-4 lg:py-0 lg:px-8 flex flex-col gap-12")}
-        >
+        <main className={cn("flex-1 py-4 lg:py-0 lg:px-8 flex flex-col gap-6")}>
           {sectionsQueryResult.data.sections.length > 0 && content ? (
             <CourseSection section={content} showNotes={showNotes} />
           ) : (

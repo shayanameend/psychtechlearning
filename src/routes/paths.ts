@@ -28,6 +28,10 @@ export const paths = {
           bulk: ({ id }: { id: string }) =>
             `/api/sections/${id}/final-test-questions/bulk`,
         },
+        userNotes: {
+          bulk: ({ id }: { id: string }) =>
+            `/api/sections/${id}/user-notes/bulk`,
+        },
       },
     },
   },

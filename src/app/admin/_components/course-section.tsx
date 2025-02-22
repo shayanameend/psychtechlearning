@@ -15,12 +15,12 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 import { EditSectionButton } from "./edit-section-button";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 
 interface Flashcard {
   id: string;

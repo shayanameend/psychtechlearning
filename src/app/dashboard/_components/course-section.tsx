@@ -480,10 +480,7 @@ export function CourseSection({
           </Dialog>
         </article>
       </div>
-      <CourseSectionNotes
-        sectionUserNotes={section.sectionUserNotes}
-        showNotes={showNotes}
-      />
+      <CourseSectionNotes showNotes={showNotes} section={section} />
     </section>
   );
 }

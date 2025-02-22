@@ -1,11 +1,19 @@
 "use client";
 
-import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError, default as axios } from "axios";
+import { EditIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
+import { useUserContext } from "~/providers/user-provider";
+import { paths } from "~/routes/paths";
+
+const MAX_NOTES = 5;
+const MAX_NOTE_LENGTH = 210;
 
 interface Flashcard {
   id: string;
@@ -50,16 +58,80 @@ interface Section {
 }
 
 export function CourseSectionNotes({
-  sectionUserNotes,
+  section,
   showNotes,
-}: Readonly<{ sectionUserNotes: SectionUserNote[]; showNotes: boolean }>) {
-  const [notes, setNotes] = useState<SectionUserNote[]>(sectionUserNotes);
+}: Readonly<{ section: Section; showNotes: boolean }>) {
+  const [notes, setNotes] = useState<SectionUserNote[]>(
+    section.sectionUserNotes,
+  );
+  const [deletedNotes, setDeletedNotes] = useState<string[]>([]);
+  const [newNotes, setNewNotes] = useState<
+    Omit<Omit<Omit<SectionUserNote, "updatedAt">, "createdAt">, "id">[]
+  >([]);
+
   const [isEditing, setIsEditing] = useState(-1);
   const [noteValue, setNoteValue] = useState("");
 
+  const queryClient = useQueryClient();
+  const { token } = useUserContext();
+
   useEffect(() => {
-    setNoteValue(notes[isEditing]?.content || "");
-  }, [isEditing, notes[isEditing]?.content]);
+    if (isEditing >= 0) {
+      const note =
+        isEditing < notes.length
+          ? notes[isEditing]
+          : newNotes[isEditing - notes.length];
+      setNoteValue(note?.content || "");
+    }
+  }, [isEditing, notes, newNotes]);
+
+  const updateNotesMutation = useMutation({
+    mutationFn: async ({
+      sectionId,
+      notes,
+      deletedNotes,
+      newNotes,
+    }: {
+      sectionId: string;
+      notes: SectionUserNote[];
+      deletedNotes: string[];
+      newNotes: Omit<
+        Omit<Omit<SectionUserNote, "updatedAt">, "createdAt">,
+        "id"
+      >[];
+    }) => {
+      const response = await axios.put(
+        paths.api.sections.id.userNotes.bulk({ id: sectionId }),
+        {
+          notes,
+          deletedNotes,
+          newNotes,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data;
+    },
+    onSuccess: ({ info }) => {
+      toast.success(info.message);
+      queryClient.invalidateQueries({ queryKey: ["sections"] });
+      setDeletedNotes([]);
+      setNewNotes([]);
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+    onSettled: () => {
+      setIsEditing(-1);
+      setNoteValue("");
+    },
+  });
 
   return (
     <div
@@ -71,43 +143,58 @@ export function CourseSectionNotes({
       <article>
         <div className={cn("flex justify-between items-center")}>
           <h3 className={cn("text-primary text-lg font-medium")}>Your Notes</h3>
-          <Button
-            onClick={() => {
-              if (notes[notes.length - 1]?.content.trim() !== "") {
-                setNotes((prev) => [
-                  ...prev,
-                  {
-                    id: String(new Date().getTime()),
-                    content: "",
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                  },
-                ]);
-
-                setIsEditing(notes.length || 0);
-              }
-            }}
-            variant="outline"
-            size="icon"
-            className={cn("size-5 rounded-sm")}
-          >
-            <PlusIcon />
-          </Button>
+          <div className={cn("flex items-center gap-2")}>
+            <Button
+              onClick={() => {
+                const totalNotes = notes.length + newNotes.length;
+                if (totalNotes < MAX_NOTES) {
+                  setNewNotes([
+                    ...newNotes,
+                    {
+                      content: "",
+                    },
+                  ]);
+                  setIsEditing(notes.length + newNotes.length);
+                }
+              }}
+              variant="outline"
+              size="icon"
+              disabled={notes.length + newNotes.length >= MAX_NOTES}
+              className={cn("rounded-sm size-5 [&_svg]:size-3")}
+            >
+              <PlusIcon />
+            </Button>
+            <Button
+              onClick={() => {
+                updateNotesMutation.mutate({
+                  sectionId: section.id,
+                  notes,
+                  deletedNotes,
+                  newNotes,
+                });
+              }}
+              variant="outline"
+              size="icon"
+              className={cn("rounded-sm size-5 [&_svg]:size-3")}
+            >
+              <RefreshCwIcon />
+            </Button>
+          </div>
         </div>
         <p className={cn("text-gray-600 text-sm")}>
           Here you can find the notes you've taken while studying this section.
+          (Max {MAX_NOTES} notes, each up to {MAX_NOTE_LENGTH} characters).
           These notes are personal to you and can help reinforce your learning.
           Feel free to add, edit, or delete any notes as you progress through
           the material.
         </p>
       </article>
       <article>
-        {notes.length < 1 ? (
-          <p className={cn("text-gray-600 text-sm")}>
-            No notes added by users.
-          </p>
+        {notes.length + newNotes.length < 1 ? (
+          <p className={cn("text-gray-600 text-sm")}>No notes added by you.</p>
         ) : (
           <ul className={cn("space-y-2 pl-3")}>
+            {/* Existing Notes */}
             {notes.map((note, index) => (
               <li
                 key={note.id}
@@ -117,27 +204,24 @@ export function CourseSectionNotes({
                   <Textarea
                     value={noteValue}
                     onChange={(event) => {
-                      setNoteValue(event.currentTarget.value);
+                      const newVal = event.currentTarget.value.slice(
+                        0,
+                        MAX_NOTE_LENGTH,
+                      );
+                      setNoteValue(newVal);
                     }}
                     onKeyDown={(event) => {
                       if (event.key === "Enter") {
                         setIsEditing(-1);
-                        if (event.currentTarget.value.trim() === "") {
-                          setNotes((prev) =>
-                            prev ? prev.filter((n) => n.id !== note.id) : prev,
-                          );
-                        } else {
-                          setNotes((prev) =>
-                            prev.map((n) => {
-                              if (n.id === note.id) {
-                                return {
-                                  ...n,
-                                  content: noteValue,
-                                };
-                              }
 
-                              return n;
-                            }),
+                        if (event.currentTarget.value.trim() === "") {
+                          setDeletedNotes([...deletedNotes, note.id]);
+                          setNotes(notes.filter((_, i) => i !== index));
+                        } else {
+                          setNotes(
+                            notes.map((n, i) =>
+                              i === index ? { ...n, content: noteValue } : n,
+                            ),
                           );
                         }
                       }
@@ -159,9 +243,72 @@ export function CourseSectionNotes({
                     </Button>
                     <Button
                       onClick={() => {
-                        setNotes((prev) =>
-                          prev ? prev.filter((n) => n.id !== note.id) : prev,
-                        );
+                        setDeletedNotes([...deletedNotes, note.id]);
+                        setNotes(notes.filter((_, i) => i !== index));
+                      }}
+                      variant="link"
+                      size="icon"
+                      className={cn("ml-1 size-6")}
+                    >
+                      <Trash2Icon className={cn("text-red-500")} />
+                    </Button>
+                  </>
+                )}
+              </li>
+            ))}
+
+            {/* New Notes */}
+            {newNotes.map((note, index) => (
+              <li
+                key={`new-${
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                  index
+                }`}
+                className={cn("text-gray-600 text-sm list-disc")}
+              >
+                {isEditing === notes.length + index ? (
+                  <Textarea
+                    value={noteValue}
+                    onChange={(event) => {
+                      const newVal = event.currentTarget.value.slice(
+                        0,
+                        MAX_NOTE_LENGTH,
+                      );
+                      setNoteValue(newVal);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        setIsEditing(-1);
+
+                        if (event.currentTarget.value.trim() === "") {
+                          setNewNotes(newNotes.filter((_, i) => i !== index));
+                        } else {
+                          setNewNotes(
+                            newNotes.map((n, i) =>
+                              i === index ? { ...n, content: noteValue } : n,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    className={cn("resize-none")}
+                  />
+                ) : (
+                  <>
+                    <span>{note.content}</span>
+                    <Button
+                      onClick={() => {
+                        setIsEditing(notes.length + index);
+                      }}
+                      variant="link"
+                      size="icon"
+                      className={cn("ml-1 size-6")}
+                    >
+                      <EditIcon />
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setNewNotes(newNotes.filter((_, i) => i !== index));
                       }}
                       variant="link"
                       size="icon"
