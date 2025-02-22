@@ -49,7 +49,7 @@ interface Section {
   updatedAt: Date;
 }
 
-export function CourseNotes({
+export function CourseSectionNotes({
   sectionUserNotes,
   showNotes,
 }: Readonly<{ sectionUserNotes: SectionUserNote[]; showNotes: boolean }>) {

@@ -14,7 +14,7 @@ import {
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { cn } from "~/lib/utils";
-import { CourseNotes } from "./course-section-notes";
+import { CourseSectionNotes } from "./course-section-notes";
 
 interface Flashcard {
   id: string;
@@ -397,7 +397,7 @@ export function CourseSection({
           </Dialog>
         </article>
       </div>
-      <CourseNotes
+      <CourseSectionNotes
         sectionUserNotes={section.sectionUserNotes}
         showNotes={showNotes}
       />
