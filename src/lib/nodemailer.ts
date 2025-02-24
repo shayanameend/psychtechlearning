@@ -19,22 +19,28 @@ async function sendOTP({
   to: string;
   code: string;
 }) {
-  nodemailerTransporter.sendMail(
-    {
-      from: {
-        name: env.APP_NAME,
-        address: env.APP_SUPPORT_EMAIL,
+  await new Promise<void>((resolve, reject) => {
+    nodemailerTransporter.sendMail(
+      {
+        from: {
+          name: env.APP_NAME,
+          address: env.APP_SUPPORT_EMAIL,
+        },
+        to,
+        subject: "Verify Your Email",
+        text: `Your OTP Code is: ${code}`,
       },
-      to,
-      subject: "Verify Your Email",
-      text: `Your OTP Code is: ${code}`,
-    },
-    (err) => {
-      if (err) {
-        console.error(err);
-      }
-    },
-  );
+      (err) => {
+        if (err) {
+          console.error(err);
+
+          reject(err);
+        }
+
+        resolve();
+      },
+    );
+  });
 }
 
 export { sendOTP };
