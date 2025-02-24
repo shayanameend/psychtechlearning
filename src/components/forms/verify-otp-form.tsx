@@ -3,8 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
-import { Loader2Icon } from "lucide-react";
-import { default as Link } from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -21,6 +19,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
+import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 
 const VerifyOTPFormSchema = zod.object({
@@ -68,6 +67,8 @@ async function resendOTP() {
 export function VerifyOTPForm() {
   const router = useRouter();
 
+  const { setIsLoading, setToken, setUser } = useUserContext();
+
   const form = useForm<zod.infer<typeof VerifyOTPFormSchema>>({
     resolver: zodResolver(VerifyOTPFormSchema),
     defaultValues: {
@@ -80,8 +81,13 @@ export function VerifyOTPForm() {
     onSuccess: ({ data, info }) => {
       toast.success(info.message);
 
-      sessionStorage.removeItem("token");
+      setToken?.(data.token);
+      setUser?.(data.user);
+      setIsLoading?.(false);
+
       localStorage.setItem("token", data.token);
+
+      sessionStorage.removeItem("token");
 
       router.push(paths.app.auth.profile.create());
     },

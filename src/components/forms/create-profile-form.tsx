@@ -135,7 +135,7 @@ export function CreateProfileForm() {
                 <FormLabel>Are you a student?</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => field.onChange(value === "true")}
                     defaultValue={String(field.value)}
                   >
                     <SelectTrigger>
@@ -159,7 +159,7 @@ export function CreateProfileForm() {
                 <FormLabel>Notify me about new features</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => field.onChange(value === "true")}
                     defaultValue={String(field.value)}
                   >
                     <SelectTrigger>
