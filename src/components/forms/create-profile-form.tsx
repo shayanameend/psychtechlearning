@@ -42,8 +42,8 @@ export function CreateProfileForm() {
   const form = useForm<zod.infer<typeof CreateProfileFormSchema>>({
     resolver: zodResolver(CreateProfileFormSchema),
     defaultValues: {
-      firstName: "Shayan",
-      lastName: "Ameen",
+      firstName: "",
+      lastName: "",
       isStudent: true,
       notify: true,
     },

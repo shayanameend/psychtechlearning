@@ -27,19 +27,18 @@ import { updateProfileSchema } from "~/validators/profile";
 
 const UpdateProfileFormSchema = updateProfileSchema;
 
-export function UpdateProfileForm() {
+export function UpdateProfileForm({
+  profile,
+}: {
+  profile: zod.infer<typeof UpdateProfileFormSchema>;
+}) {
   const router = useRouter();
 
   const { token } = useUserContext();
 
   const form = useForm<zod.infer<typeof UpdateProfileFormSchema>>({
     resolver: zodResolver(UpdateProfileFormSchema),
-    defaultValues: {
-      firstName: "Shayan",
-      lastName: "Ameen",
-      isStudent: true,
-      notify: true,
-    },
+    defaultValues: profile,
   });
 
   async function updateProfile({
