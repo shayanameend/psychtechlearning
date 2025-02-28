@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
 import { EditIcon, Loader2Icon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -87,8 +87,36 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
 
   const updateSectionform = useForm<zod.infer<typeof UpdateSectionFormSchema>>({
     resolver: zodResolver(UpdateSectionFormSchema),
-    defaultValues: section,
+    defaultValues: {
+      sectionOrder: section.sectionOrder,
+      sectionTitle: section.sectionTitle,
+      sectionDescription: section.sectionDescription,
+      guideLabel: section.guideLabel,
+      guideLink: section.guideLink,
+      flashcardsLabel: section.flashcardsLabel,
+      sampleTestLabel: section.sampleTestLabel,
+      finalTestLabel: section.finalTestLabel,
+      flashcards: section.flashcards,
+      sampleTestQuestions: section.sampleTestQuestions,
+      finalTestQuestions: section.finalTestQuestions,
+    },
   });
+
+  useEffect(() => {
+    updateSectionform.reset({
+      sectionOrder: section.sectionOrder,
+      sectionTitle: section.sectionTitle,
+      sectionDescription: section.sectionDescription,
+      guideLabel: section.guideLabel,
+      guideLink: section.guideLink,
+      flashcardsLabel: section.flashcardsLabel,
+      sampleTestLabel: section.sampleTestLabel,
+      finalTestLabel: section.finalTestLabel,
+      flashcards: section.flashcards,
+      sampleTestQuestions: section.sampleTestQuestions,
+      finalTestQuestions: section.finalTestQuestions,
+    });
+  }, [updateSectionform.reset, section]);
 
   const updateSectionMutation = useMutation({
     mutationFn: async (data: zod.infer<typeof UpdateSectionFormSchema>) => {
