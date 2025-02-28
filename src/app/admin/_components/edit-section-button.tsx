@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
 import { EditIcon, Loader2Icon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -82,6 +83,8 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
 
   const { token } = useUserContext();
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const updateSectionform = useForm<zod.infer<typeof UpdateSectionFormSchema>>({
     resolver: zodResolver(UpdateSectionFormSchema),
     defaultValues: section,
@@ -105,6 +108,8 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
       toast.success(info.message);
 
       queryClient.invalidateQueries({ queryKey: ["sections"] });
+
+      setIsDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -123,7 +128,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
   };
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button
           variant="default"

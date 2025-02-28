@@ -69,6 +69,8 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
   const { token } = useUserContext();
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const [flashcards, setFlashcards] = useState<Flashcard[]>(section.flashcards);
   const [deletedFlashcards, setDeletedFlashcards] = useState<string[]>([]);
   const [newFlashcards, setNewFlashcards] = useState<
@@ -161,6 +163,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
       setDeletedFlashcards([]);
       setNewFlashcards([]);
+      setIsDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -216,6 +219,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
       setDeletedSampleTestQuestions([]);
       setNewSampleTestQuestions([]);
+      setIsDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -271,6 +275,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
       setDeletedFinalTestQuestions([]);
       setNewFinalTestQuestions([]);
+      setIsDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -370,7 +375,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
             </p>
           </div>
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   onClick={() => {
@@ -663,7 +668,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
             </p>
           </div>
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   onClick={() => {
@@ -1047,7 +1052,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
             </p>
           </div>
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   onClick={() => {
