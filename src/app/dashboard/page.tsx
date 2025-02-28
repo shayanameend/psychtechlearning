@@ -5,12 +5,12 @@ import { default as axios } from "axios";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { CourseSection } from "~/app/dashboard/_components/course-section";
 import { Button } from "~/components/ui/button";
 import { Steps } from "~/components/ui/steps";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { CourseSection } from "./_components/course-section";
 
 interface Flashcard {
   id: string;

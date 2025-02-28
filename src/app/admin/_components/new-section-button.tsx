@@ -43,15 +43,13 @@ export function NewSectionButton() {
   const createSectionform = useForm<zod.infer<typeof CreateSectionFormSchema>>({
     resolver: zodResolver(CreateSectionFormSchema),
     defaultValues: {
-      sectionOrder: 1,
-      sectionTitle: "Nursing Science",
-      sectionDescription:
-        "Learn about essential nursing skills, including how to take blood pressure, perform CPR, and more.",
-      guideLabel: "Download the nursing science study guide.",
-      guideLink: "https://drive.google.com/nursing.pdf",
-      flashcardsLabel: "Review medication flashcards to reinforce learning.",
-      sampleTestLabel: "Test your knowledge with sample questions.",
-      finalTestLabel: "Take a test to assess your knowledge.",
+      sectionTitle: "",
+      sectionDescription: "",
+      guideLabel: "",
+      guideLink: "",
+      flashcardsLabel: "",
+      sampleTestLabel: "",
+      finalTestLabel: "",
       flashcards: [],
       sampleTestQuestions: [],
       finalTestQuestions: [],

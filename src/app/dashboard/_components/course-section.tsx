@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+import { CourseSectionNotes } from "~/app/dashboard/_components/course-section-notes";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -14,7 +16,6 @@ import {
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { cn } from "~/lib/utils";
-import { CourseSectionNotes } from "./course-section-notes";
 
 interface Flashcard {
   id: string;
