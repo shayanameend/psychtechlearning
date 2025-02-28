@@ -46,6 +46,7 @@ export function NewSectionButton() {
   const createSectionform = useForm<zod.infer<typeof CreateSectionFormSchema>>({
     resolver: zodResolver(CreateSectionFormSchema),
     defaultValues: {
+      sectionOrder: 0,
       sectionTitle: "",
       sectionDescription: "",
       guideLabel: "",
