@@ -721,7 +721,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                                     index === questionIndex
                                       ? {
                                           ...sampletestQuestion,
-                                          question: sampletestQuestion.question,
+                                          question,
                                         }
                                       : sampletestQuestion,
                                 ),
@@ -734,7 +734,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                                     questionIndex - sampleTestQuestions.length
                                       ? {
                                           ...sampletestQuestion,
-                                          question: sampletestQuestion.question,
+                                          question,
                                         }
                                       : sampletestQuestion,
                                 ),
@@ -1104,26 +1104,26 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
                             if (questionIndex < finalTestQuestions.length) {
                               setFinalTestQuestions(
                                 finalTestQuestions.map(
-                                  (finaltestQuestion, index) =>
+                                  (finalTestQuestion, index) =>
                                     index === questionIndex
                                       ? {
-                                          ...finaltestQuestion,
-                                          question: finaltestQuestion.question,
+                                          ...finalTestQuestion,
+                                          question,
                                         }
-                                      : finaltestQuestion,
+                                      : finalTestQuestion,
                                 ),
                               );
                             } else {
                               setNewFinalTestQuestions(
                                 newFinalTestQuestions.map(
-                                  (finaltestQuestion, index) =>
+                                  (finalTestQuestion, index) =>
                                     index ===
                                     questionIndex - finalTestQuestions.length
                                       ? {
-                                          ...finaltestQuestion,
-                                          question: finaltestQuestion.question,
+                                          ...finalTestQuestion,
+                                          question,
                                         }
-                                      : finaltestQuestion,
+                                      : finalTestQuestion,
                                 ),
                               );
                             }
