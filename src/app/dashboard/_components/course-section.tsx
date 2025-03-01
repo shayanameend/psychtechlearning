@@ -225,10 +225,11 @@ export function CourseSection({
                     }
                     setShowFlashcard(false);
                   }}
+                  disabled={questionIndex === flashcards.length - 1}
                   size="sm"
                   variant="outline"
                 >
-                  {questionIndex === flashcards.length - 1 ? "Submit" : "Next"}
+                  Next
                 </Button>
               </DialogFooter>
             </DialogContent>
