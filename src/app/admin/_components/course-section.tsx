@@ -69,7 +69,9 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
   const { token } = useUserContext();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFlashcardsDialogOpen, setIsFlashcardsDialogOpen] = useState(false);
+  const [isSampleTestDialogOpen, setIsSampleTestDialogOpen] = useState(false);
+  const [isFinalTestDialogOpen, setIsFinalTestDialogOpen] = useState(false);
 
   const [flashcards, setFlashcards] = useState<Flashcard[]>(section.flashcards);
   const [deletedFlashcards, setDeletedFlashcards] = useState<string[]>([]);
@@ -163,7 +165,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
       setDeletedFlashcards([]);
       setNewFlashcards([]);
-      setIsDialogOpen(false);
+      setIsFlashcardsDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -219,7 +221,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
       setDeletedSampleTestQuestions([]);
       setNewSampleTestQuestions([]);
-      setIsDialogOpen(false);
+      setIsSampleTestDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -275,7 +277,7 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
 
       setDeletedFinalTestQuestions([]);
       setNewFinalTestQuestions([]);
-      setIsDialogOpen(false);
+      setIsFinalTestDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -375,7 +377,10 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
             </p>
           </div>
           <div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog
+              open={isFlashcardsDialogOpen}
+              onOpenChange={setIsFlashcardsDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button
                   onClick={() => {
@@ -668,7 +673,10 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
             </p>
           </div>
           <div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog
+              open={isSampleTestDialogOpen}
+              onOpenChange={setIsSampleTestDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button
                   onClick={() => {
@@ -1052,7 +1060,14 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
             </p>
           </div>
           <div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog
+              open={isFinalTestDialogOpen}
+              onOpenChange={setIsFinalTestDialogOpen}
+            >
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae,
+              commodi sunt ipsum fuga ducimus odio molestiae. Non dignissimos
+              soluta deserunt, dolores vero fuga ratione minima architecto.
+              Doloribus quaerat harum iure?
               <DialogTrigger asChild>
                 <Button
                   onClick={() => {
