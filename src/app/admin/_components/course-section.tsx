@@ -1064,10 +1064,6 @@ export function CourseSection({ section }: Readonly<{ section: Section }>) {
               open={isFinalTestDialogOpen}
               onOpenChange={setIsFinalTestDialogOpen}
             >
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae,
-              commodi sunt ipsum fuga ducimus odio molestiae. Non dignissimos
-              soluta deserunt, dolores vero fuga ratione minima architecto.
-              Doloribus quaerat harum iure?
               <DialogTrigger asChild>
                 <Button
                   onClick={() => {
