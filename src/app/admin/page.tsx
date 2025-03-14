@@ -102,13 +102,13 @@ export default function AdminPage() {
             </h2>
             <NewWeekButton />
           </header>
-          <div className={cn("flex-1 flex flex-col gap-6")}>
+          <div className={cn("flex-1 grid gap-6 grid-cols-1 lg:grid-cols-2")}>
             {content.length > 0 ? (
               content.map((week) => <CourseWeek key={week.id} week={week} />)
             ) : (
               <section
                 className={cn(
-                  "flex items-center justify-center flex-1 text-gray-500",
+                  "flex items-center justify-center col-span-full h-40 text-gray-500",
                 )}
               >
                 <p className={cn("text-lg")}>No weeks found.</p>
