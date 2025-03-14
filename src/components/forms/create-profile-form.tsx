@@ -78,7 +78,7 @@ export function CreateProfileForm() {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      router.push(paths.app.dashboard.root());
+      router.push(paths.app.weeks.root());
     },
     onError: (error) => {
       if (error instanceof AxiosError) {

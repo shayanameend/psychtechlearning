@@ -1,11 +1,13 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { default as axios } from "axios";
-import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 
-import { CourseWeek } from "~/app/dashboard/_components/course-week";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
+
+import { CourseWeek } from "~/app/(dashboard)/_components/course-week";
 import { Button } from "~/components/ui/button";
 import { Steps } from "~/components/ui/steps";
 import { cn } from "~/lib/utils";
@@ -54,48 +56,38 @@ interface Week {
   updatedAt: Date;
 }
 
-export default function DashboardPage() {
+export function WeekSection({
+  id,
+  total,
+  on,
+}: {
+  id: string;
+  total: number;
+  on: number;
+}) {
+  const [content, setContent] = useState<Week | null>(null);
+  const [showNotes, setShowNotes] = useState(false);
+
   const { token } = useUserContext();
 
   const { data: weeksQueryResult, isSuccess: weeksQueryIsSuccess } = useQuery({
-    queryKey: ["weeks"],
+    queryKey: ["week", id],
     queryFn: async () => {
-      const response = await axios.get(paths.api.weeks.root(), {
+      const response = await axios.get(paths.api.weeks.id.root({ id }), {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
 
-      return response.data as { data: { weeks: Week[] } };
+      return response.data as { data: { week: Week } };
     },
   });
 
-  const [currentStep, setCurrentStep] = useState(1);
-  const [content, setContent] = useState<Week | undefined>(
-    weeksQueryResult?.data.weeks[currentStep - 1],
-  );
-  const [showNotes, setShowNotes] = useState(false);
-
   useEffect(() => {
-    setContent(weeksQueryResult?.data.weeks[currentStep - 1]);
-  }, [currentStep, weeksQueryResult?.data.weeks[currentStep - 1]]);
+    setContent(weeksQueryResult?.data.week ?? null);
+  }, [weeksQueryResult?.data.week]);
 
-  const steps = Array.from(
-    { length: weeksQueryResult?.data.weeks.length || 0 },
-    (_, index) => index + 1,
-  );
-
-  const handlePrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
+  const steps = Array.from({ length: total }, (_, index) => index + 1);
 
   if (!weeksQueryIsSuccess) {
     return null;
@@ -109,17 +101,15 @@ export default function DashboardPage() {
         )}
       >
         <aside>
-          {weeksQueryResult.data.weeks.length > 1 && (
-            <Steps steps={steps} currentStep={currentStep} />
-          )}
+          {steps.length > 1 && <Steps steps={steps} currentStep={on} />}
         </aside>
         <main className={cn("flex-1 py-4 lg:py-0 lg:px-8 flex flex-col gap-6")}>
-          {weeksQueryResult.data.weeks.length > 0 && content ? (
+          {content ? (
             <CourseWeek week={content} showNotes={showNotes} />
           ) : (
             <section className={cn("flex-1 flex justify-center items-center")}>
               <p className={cn("text-gray-600 text-sm")}>
-                No weeks available, Please check back later!
+                Week not found, Go back to calendar and try again.
               </p>
             </section>
           )}
@@ -134,28 +124,6 @@ export default function DashboardPage() {
                 className={cn("lg:hidden", showNotes && "rounded-full")}
               >
                 {!showNotes ? "Show Notes" : <XIcon />}
-              </Button>
-            </div>
-            <div className={cn("flex gap-4")}>
-              <Button
-                onClick={handlePrev}
-                disabled={currentStep === 1}
-                size="icon"
-                className={cn("rounded-full")}
-              >
-                <ChevronLeftIcon />
-              </Button>
-              <Button
-                onClick={handleNext}
-                disabled={steps.length === 0 || currentStep === steps.length}
-                size="icon"
-                className={cn("rounded-full")}
-              >
-                {currentStep === steps.length ? (
-                  <ChevronRightIcon />
-                ) : (
-                  <ChevronRightIcon />
-                )}
               </Button>
             </div>
           </footer>

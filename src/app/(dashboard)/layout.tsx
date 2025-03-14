@@ -3,7 +3,7 @@ import type { PropsWithChildren } from "react";
 import { GalleryVerticalEndIcon } from "lucide-react";
 import { default as Link } from "next/link";
 
-import { HeaderButtons } from "~/app/dashboard/_components/header-buttons";
+import { HeaderButtons } from "~/app/(dashboard)/_components/header-buttons";
 import { cn } from "~/lib/utils";
 import { paths } from "~/routes/paths";
 
@@ -17,7 +17,7 @@ export default function DashboardLayout({
       >
         <div>
           <Link
-            href={paths.app.dashboard.root()}
+            href={paths.app.weeks.root()}
             className={cn("flex justify-center md:justify-start")}
           >
             <h1 className={cn("flex items-center gap-2 font-medium")}>

@@ -45,8 +45,11 @@ export const paths = {
         update: () => "/auth/profile/update",
       },
     },
-    dashboard: {
-      root: () => "/dashboard",
+    weeks: {
+      root: () => "/weeks",
+      id: {
+        root: ({ id }: { id: string }) => `/weeks/${id}`,
+      },
     },
     admin: {
       root: () => "/admin",

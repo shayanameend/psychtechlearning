@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { CourseWeekNotes } from "~/app/dashboard/_components/course-week-notes";
+import { CourseWeekNotes } from "~/app/(dashboard)/_components/course-week-notes";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,

@@ -15,7 +15,7 @@ export function HeaderButtons() {
     <div className={cn("flex gap-4 items-center")}>
       {user && user.role === "ADMIN" && (
         <Button variant="outline" size="icon" className={cn("size-6")}>
-          <Link href={paths.app.dashboard.root()}>
+          <Link href={paths.app.weeks.root()}>
             <EyeIcon className={cn("size-4")} />
           </Link>
         </Button>
