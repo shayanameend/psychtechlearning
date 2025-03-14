@@ -539,8 +539,30 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                     </div>
                   </div>
                 </article>
-                <DialogFooter className={cn("justify-between")}>
-                  <div className={cn("flex gap-2")}>
+                <DialogFooter
+                  className={cn("justify-between flex-row-reverse")}
+                >
+                  <div className={cn("flex flex-row-reverse gap-2")}>
+                    <Button
+                      onClick={() => {
+                        updateFlashcardsMutation.mutate({
+                          weekId: week.id,
+                          flashcards,
+                          deletedFlashcards,
+                          newFlashcards,
+                        });
+                      }}
+                      size="sm"
+                      variant="outline"
+                      disabled={updateFlashcardsMutation.isPending}
+                    >
+                      {updateFlashcardsMutation.isPending ? (
+                        <Loader2Icon
+                          className={cn("animate-spin mr-1 h-4 w-4")}
+                        />
+                      ) : null}
+                      Save
+                    </Button>
                     <Button
                       onClick={() => {
                         setNewFlashcards([
@@ -557,12 +579,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                             newFlashcards.length,
                         );
                       }}
+                      disabled={updateFlashcardsMutation.isPending}
                       size="sm"
                       variant="outline"
-                      className={cn("px-2 height-8 gap-1")}
+                      className={cn("px-2 height-8 gap-1 [&_svg]:size-5")}
                     >
                       <PlusIcon />
-                      New Card
                     </Button>
                     <Button
                       onClick={() => {
@@ -591,9 +613,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         }
                       }}
                       disabled={
+                        updateFlashcardsMutation.isPending ||
                         (flashcards.length + newFlashcards.length < 2 &&
                           questionIndex) ===
-                        flashcards.length + newFlashcards.length - 1
+                          flashcards.length + newFlashcards.length - 1
                       }
                       variant="outline"
                       size="icon"
@@ -614,7 +637,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         setIsQuestionEditing(-1);
                         setIsCorrectAnswerEditing(-1);
                       }}
-                      disabled={questionIndex === 0}
+                      disabled={
+                        updateFlashcardsMutation.isPending ||
+                        questionIndex === 0
+                      }
                       size="sm"
                       variant="outline"
                     >
@@ -631,31 +657,16 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
 
                         setIsQuestionEditing(-1);
                         setIsCorrectAnswerEditing(-1);
-
-                        if (
-                          questionIndex ===
-                          flashcards.length + newFlashcards.length - 1
-                        ) {
-                          updateFlashcardsMutation.mutate({
-                            weekId: week.id,
-                            flashcards,
-                            deletedFlashcards,
-                            newFlashcards,
-                          });
-                        }
                       }}
+                      disabled={
+                        updateFlashcardsMutation.isPending ||
+                        questionIndex ===
+                          flashcards.length + newFlashcards.length - 1
+                      }
                       size="sm"
                       variant="outline"
                     >
-                      {updateFlashcardsMutation.isPending && (
-                        <Loader2Icon className={cn("animate-spin")} />
-                      )}
-                      <span>
-                        {questionIndex ===
-                        flashcards.length + newFlashcards.length - 1
-                          ? "Save"
-                          : "Next"}
-                      </span>
+                      <span>Next</span>
                     </Button>
                   </div>
                 </DialogFooter>

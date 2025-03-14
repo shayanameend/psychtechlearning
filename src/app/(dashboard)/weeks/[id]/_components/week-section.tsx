@@ -71,7 +71,7 @@ export function WeekSection({
   const { token } = useUserContext();
 
   const { data: weeksQueryResult, isSuccess: weeksQueryIsSuccess } = useQuery({
-    queryKey: ["week", id],
+    queryKey: ["weeks", id],
     queryFn: async () => {
       const response = await axios.get(paths.api.weeks.id.root({ id }), {
         headers: {
