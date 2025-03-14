@@ -125,22 +125,6 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
   const [answersIsEditing, setIsAnswersEditing] = useState([-1, -1]);
   const [answers, setAnswers] = useState<string[]>(Array(4).fill(""));
 
-  // State for expanded text sections
-  const [expandedDescriptions, setExpandedDescriptions] = useState({
-    guide: false,
-    audio: false,
-    flashcards: false,
-    sampleTest: false,
-    finalTest: false,
-  });
-
-  const toggleDescription = (field: keyof typeof expandedDescriptions) => {
-    setExpandedDescriptions({
-      ...expandedDescriptions,
-      [field]: !expandedDescriptions[field],
-    });
-  };
-
   useEffect(() => {
     setFlashcards(week.flashcards);
     setDeletedFlashcards([]);
@@ -389,114 +373,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
           <Label className={cn("font-bold")}>Description</Label>
           <p className={cn("text-sm text-gray-600")}>{week.weekDescription}</p>
         </div>
-        <div className={cn("flex gap-4 justify-between")}>
-          <div className={cn("flex flex-col gap-2 flex-1")}>
-            <Label className={cn("font-bold")}>Study Guide</Label>
-            <div className={cn("text-sm text-gray-600")}>
-              <p>
-                {expandedDescriptions.guide
-                  ? week.guideDescription
-                  : truncateText(week.guideDescription, 100)}
-              </p>
-              {week.guideDescription.length > 100 && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 h-6"
-                  onClick={() => toggleDescription("guide")}
-                >
-                  {expandedDescriptions.guide ? (
-                    <span className="flex items-center gap-1">
-                      Show less <ChevronUpIcon className="h-4 w-4" />
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1">
-                      Show more <ChevronDownIcon className="h-4 w-4" />
-                    </span>
-                  )}
-                </Button>
-              )}
-            </div>
-          </div>
-          <div>
-            <a href={week.guideLink} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm">
-                <span>
-                  <ExternalLinkIcon />
-                </span>
-                <span>Open</span>
-              </Button>
-            </a>
-          </div>
-        </div>
-        <div className={cn("flex gap-4 justify-between")}>
-          <div className={cn("flex flex-col gap-2 flex-1")}>
-            <Label className={cn("font-bold")}>Summary</Label>
-            <div className={cn("text-sm text-gray-600")}>
-              <p>
-                {expandedDescriptions.audio
-                  ? week.audioDescription
-                  : truncateText(week.audioDescription, 100)}
-              </p>
-              {week.audioDescription.length > 100 && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 h-6"
-                  onClick={() => toggleDescription("audio")}
-                >
-                  {expandedDescriptions.audio ? (
-                    <span className="flex items-center gap-1">
-                      Show less <ChevronUpIcon className="h-4 w-4" />
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1">
-                      Show more <ChevronDownIcon className="h-4 w-4" />
-                    </span>
-                  )}
-                </Button>
-              )}
-            </div>
-          </div>
-          <div>
-            <a href={week.audioLink} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm">
-                <span>
-                  <ExternalLinkIcon />
-                </span>
-                <span>Open</span>
-              </Button>
-            </a>
-          </div>
-        </div>
-        <div className={cn("flex gap-4 justify-between")}>
+        <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Flashcards</Label>
-            <div className={cn("text-sm text-gray-600")}>
-              <p>
-                {expandedDescriptions.flashcards
-                  ? week.flashcardsDescription
-                  : truncateText(week.flashcardsDescription, 100)}
-              </p>
-              {week.flashcardsDescription.length > 100 && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 h-6"
-                  onClick={() => toggleDescription("flashcards")}
-                >
-                  {expandedDescriptions.flashcards ? (
-                    <span className="flex items-center gap-1">
-                      Show less <ChevronUpIcon className="h-4 w-4" />
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1">
-                      Show more <ChevronDownIcon className="h-4 w-4" />
-                    </span>
-                  )}
-                </Button>
-              )}
-            </div>
+            <p className={cn("text-sm text-gray-600")}>
+              {truncateText(week.flashcardsDescription, 150)}
+            </p>
           </div>
           <div>
             <Dialog
@@ -801,34 +683,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
             </Dialog>
           </div>
         </div>
-        <div className={cn("flex gap-4 justify-between")}>
+        <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Sample Test</Label>
-            <div className={cn("text-sm text-gray-600")}>
-              <p>
-                {expandedDescriptions.sampleTest
-                  ? week.sampleTestDescription
-                  : truncateText(week.sampleTestDescription, 100)}
-              </p>
-              {week.sampleTestDescription.length > 100 && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 h-6"
-                  onClick={() => toggleDescription("sampleTest")}
-                >
-                  {expandedDescriptions.sampleTest ? (
-                    <span className="flex items-center gap-1">
-                      Show less <ChevronUpIcon className="h-4 w-4" />
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1">
-                      Show more <ChevronDownIcon className="h-4 w-4" />
-                    </span>
-                  )}
-                </Button>
-              )}
-            </div>
+            <p className={cn("text-sm text-gray-600")}>
+              {truncateText(week.sampleTestDescription, 150)}
+            </p>
           </div>
           <div>
             <Dialog
@@ -1220,34 +1080,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
             </Dialog>
           </div>
         </div>
-        <div className={cn("flex gap-4 justify-between")}>
+        <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Final Test</Label>
-            <div className={cn("text-sm text-gray-600")}>
-              <p>
-                {expandedDescriptions.finalTest
-                  ? week.finalTestDescription
-                  : truncateText(week.finalTestDescription, 100)}
-              </p>
-              {week.finalTestDescription.length > 100 && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 h-6"
-                  onClick={() => toggleDescription("finalTest")}
-                >
-                  {expandedDescriptions.finalTest ? (
-                    <span className="flex items-center gap-1">
-                      Show less <ChevronUpIcon className="h-4 w-4" />
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1">
-                      Show more <ChevronDownIcon className="h-4 w-4" />
-                    </span>
-                  )}
-                </Button>
-              )}
-            </div>
+            <p className={cn("text-sm text-gray-600")}>
+              {truncateText(week.finalTestDescription, 150)}
+            </p>
           </div>
           <div>
             <Dialog
