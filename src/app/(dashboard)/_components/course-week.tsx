@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 import { CourseWeekNotes } from "~/app/(dashboard)/_components/course-week-notes";
 import { Button } from "~/components/ui/button";
@@ -16,6 +17,8 @@ import {
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { cn } from "~/lib/utils";
+import { Check, X, RefreshCcw, BookOpen } from "lucide-react";
+import { Progress } from "~/components/ui/progress";
 
 interface Flashcard {
   id: string;
@@ -127,18 +130,29 @@ export function CourseWeek({
     <section className={cn("flex-1 flex")}>
       <div
         className={cn(
-          "w-full lg:w-2/3 space-y-4 lg:space-y-8",
+          "w-full lg:w-2/3 space-y-4 lg:space-y-8 p-4",
           showNotes && "hidden",
         )}
       >
-        <article className={cn("space-y-2")}>
+        <article
+          className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
+        >
           <h3 className={cn("text-primary text-xl font-bold")}>
             {week.weekTitle}
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>{week.weekDescription}</p>
+          <p className={cn("text-gray-600 text-sm leading-relaxed")}>
+            {week.weekDescription}
+          </p>
         </article>
-        <article className={cn("space-y-2")}>
-          <h3 className={cn("text-foreground/70 text-lg font-medium")}>
+        <article
+          className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
+        >
+          <h3
+            className={cn(
+              "text-foreground/70 text-lg font-medium flex items-center",
+            )}
+          >
+            <BookOpen className="h-5 w-5 mr-2 text-primary/70" />
             Study Guide
           </h3>
           <p className={cn("text-gray-600 text-sm")}>{week.guideLabel}</p>
@@ -147,11 +161,14 @@ export function CourseWeek({
               window.open(week.guideLink, "_blank");
             }}
             size="sm"
+            className="transition-all hover:scale-105"
           >
             Download
           </Button>
         </article>
-        <article className={cn("space-y-2")}>
+        <article
+          className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
+        >
           <h3 className={cn("text-foreground/70 text-lg font-medium")}>
             Flashcards
           </h3>
@@ -164,13 +181,16 @@ export function CourseWeek({
                   setShowFlashcard(false);
                 }}
                 size="sm"
+                className="transition-all hover:scale-105"
               >
                 View Flashcards
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[320px] lg:max-w-[512px]">
               <DialogHeader>
-                <DialogTitle>Flashcards: {week.weekTitle}</DialogTitle>
+                <DialogTitle className="text-primary">
+                  Flashcards: {week.weekTitle}
+                </DialogTitle>
                 <DialogDescription>
                   This is a set of flashcards to help you reinforce your
                   learning on {week.weekTitle}.
@@ -178,9 +198,26 @@ export function CourseWeek({
               </DialogHeader>
               {currentFlashcard ? (
                 <article className={cn("relative")}>
+                  <div className="w-full mb-3">
+                    <Progress
+                      value={((questionIndex + 1) / flashcards.length) * 100}
+                      className="h-1"
+                    />
+                    <div className="flex justify-between mt-1 text-xs text-gray-500">
+                      <span>
+                        Card {questionIndex + 1} of {flashcards.length}
+                      </span>
+                      <span>
+                        {Math.round(
+                          ((questionIndex + 1) / flashcards.length) * 100,
+                        )}
+                        % complete
+                      </span>
+                    </div>
+                  </div>
                   <div
                     className={cn(
-                      "relative w-full min-h-[150px] perspective-[1000px] transition-transform duration-500",
+                      "relative w-full min-h-[200px] perspective-[1000px] transition-transform duration-500",
                     )}
                   >
                     <div
@@ -190,50 +227,61 @@ export function CourseWeek({
                       )}
                     >
                       {/* Front of card (question) */}
-                      <div
+                      <motion.div
+                        initial={{ opacity: 0.8 }}
+                        animate={{ opacity: 1 }}
                         className={cn(
-                          "absolute w-full h-full backface-hidden bg-white p-4 rounded-md border border-gray-200",
+                          "absolute w-full h-full backface-hidden bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl border border-blue-100 shadow-md flex flex-col justify-center",
                           showFlashcard ? "invisible" : "",
                         )}
                       >
-                        <p className={cn("text-gray-600")}>
-                          <span className={cn("mr-1 font-medium")}>
-                            Question {questionIndex + 1}:
-                          </span>
+                        <p
+                          className={cn(
+                            "text-gray-700 font-medium text-center",
+                          )}
+                        >
                           {currentFlashcard.question}
                         </p>
-                      </div>
+                        <div className="absolute bottom-3 left-0 right-0 text-center text-xs text-gray-400">
+                          Click "Show" to reveal the answer
+                        </div>
+                      </motion.div>
 
                       {/* Back of card (answer) */}
-                      <div
+                      <motion.div
+                        initial={{ opacity: 0.8 }}
+                        animate={{ opacity: 1 }}
                         className={cn(
-                          "absolute w-full h-full backface-hidden bg-white p-4 rounded-md border border-gray-200 rotate-y-180",
+                          "absolute w-full h-full backface-hidden bg-gradient-to-br from-white to-green-50 p-6 rounded-xl border border-green-100 shadow-md flex flex-col justify-center rotate-y-180",
                           !showFlashcard ? "invisible" : "",
                         )}
                       >
-                        <p className={cn("text-primary")}>
-                          <span
-                            className={cn("mr-1 font-medium text-gray-600")}
-                          >
-                            Answer:
-                          </span>
+                        <p className={cn("text-primary text-center")}>
                           {currentFlashcard.answer}
                         </p>
-                      </div>
+                        <div className="absolute bottom-3 left-0 right-0 text-center text-xs text-gray-400">
+                          Click "Hide" to see the question again
+                        </div>
+                      </motion.div>
                     </div>
                   </div>
                 </article>
               ) : (
-                <p>No flashcards available</p>
+                <p className="text-center py-8 text-gray-500">
+                  No flashcards available
+                </p>
               )}
-              <DialogFooter>
+              <DialogFooter className="flex justify-between space-x-2">
                 <Button
                   onClick={() => {
                     setShowFlashcard(!showFlashcard);
                   }}
                   size="sm"
                   variant="outline"
-                  className={cn("mr-auto")}
+                  className={cn(
+                    "mr-auto",
+                    showFlashcard ? "bg-blue-50" : "bg-green-50",
+                  )}
                 >
                   {showFlashcard ? "Hide" : "Show"}
                 </Button>
@@ -267,7 +315,9 @@ export function CourseWeek({
             </DialogContent>
           </Dialog>
         </article>
-        <article className={cn("space-y-2")}>
+        <article
+          className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
+        >
           <h3 className={cn("text-foreground/70 text-lg font-medium")}>
             Sample Questions
           </h3>
@@ -279,13 +329,16 @@ export function CourseWeek({
                   setQuestionIndex(0);
                 }}
                 size="sm"
+                className="transition-all hover:scale-105"
               >
                 View Questions
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[320px] lg:max-w-[512px]">
               <DialogHeader>
-                <DialogTitle>Sample Questions: {week.weekTitle}</DialogTitle>
+                <DialogTitle className="text-primary">
+                  Sample Questions: {week.weekTitle}
+                </DialogTitle>
                 <DialogDescription>
                   This is a set of sample questions to help you practice and
                   reinforce your knowledge on {week.weekTitle}. The questions
@@ -293,50 +346,111 @@ export function CourseWeek({
                 </DialogDescription>
               </DialogHeader>
               <article className={cn("space-y-3")}>
-                <div className={cn("space-y-1")}>
-                  <h4 className={cn("text-lg font-medium")}>
-                    Question {questionIndex + 1}
-                  </h4>
-                  <p className={cn("text-gray-600 text-sm")}>
-                    {currentSampleQuestion?.question}
-                  </p>
-                </div>
-                <RadioGroup
-                  onValueChange={(value) => {
-                    setSampleTestAnswers((prev) => {
-                      const answers = [...prev];
-
-                      answers[questionIndex] = value;
-
-                      return answers;
-                    });
-                  }}
-                >
-                  {currentSampleQuestion?.answers.map((option, index) => {
-                    return (
-                      <div
-                        // biome-ignore lint/suspicious/noArrayIndexKey: <>
-                        key={index}
-                        className="flex items-center space-x-2"
-                      >
-                        <RadioGroupItem
-                          checked={sampleTestAnswers[questionIndex] === option}
-                          value={option}
-                          id={option}
-                        />
-                        <Label htmlFor={option}>{option}</Label>
+                {!showResults && (
+                  <div className="w-full mb-3">
+                    <Progress
+                      value={
+                        ((questionIndex + 1) / sampleTestQuestions.length) * 100
+                      }
+                      className="h-1"
+                    />
+                    <div className="flex justify-between mt-1 text-xs text-gray-500">
+                      <span>
+                        Question {questionIndex + 1} of{" "}
+                        {sampleTestQuestions.length}
+                      </span>
+                      <span>
+                        {Math.round(
+                          ((questionIndex + 1) / sampleTestQuestions.length) *
+                            100,
+                        )}
+                        % complete
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {showResults ? (
+                  <div className="space-y-4 py-4">
+                    <div
+                      className={cn(
+                        "text-center p-4 rounded-lg",
+                        testScore && testScore.percentage >= 70
+                          ? "bg-green-50 border border-green-100"
+                          : "bg-amber-50 border border-amber-100",
+                      )}
+                    >
+                      <h3 className="text-xl font-bold mb-2">
+                        {testScore && testScore.percentage >= 70 ? (
+                          <span className="text-green-600">Well Done!</span>
+                        ) : (
+                          <span className="text-amber-600">
+                            Keep Practicing
+                          </span>
+                        )}
+                      </h3>
+                      <div className="text-lg font-medium">
+                        Score: {testScore?.correct}/{testScore?.total} (
+                        {testScore?.percentage}%)
                       </div>
-                    );
-                  })}
-                </RadioGroup>
+                      {testScore && testScore.percentage < 70 && (
+                        <p className="text-sm text-gray-600 mt-2">
+                          Review the material and try again!
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className={cn("space-y-1")}>
+                      <h4 className={cn("text-lg font-medium")}>
+                        Question {questionIndex + 1}
+                      </h4>
+                      <p className={cn("text-gray-600 text-sm")}>
+                        {currentSampleQuestion?.question}
+                      </p>
+                    </div>
+                    <RadioGroup
+                      onValueChange={(value) => {
+                        setSampleTestAnswers((prev) => {
+                          const answers = [...prev];
+
+                          answers[questionIndex] = value;
+
+                          return answers;
+                        });
+                      }}
+                      className="space-y-1" // Reduced from space-y-2
+                    >
+                      {currentSampleQuestion?.answers.map((option, index) => {
+                        return (
+                          <div
+                            // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                            key={index}
+                            className="flex items-center space-x-2 py-1 px-2 rounded-lg hover:bg-gray-50" // Reduced padding-y from p-2
+                          >
+                            <RadioGroupItem
+                              checked={
+                                sampleTestAnswers[questionIndex] === option
+                              }
+                              value={option}
+                              id={option}
+                            />
+                            <Label
+                              htmlFor={option}
+                              className="flex-1 cursor-pointer text-sm" // Added text-sm for more compact text
+                            >
+                              {option}
+                            </Label>
+                          </div>
+                        );
+                      })}
+                    </RadioGroup>
+                  </>
+                )}
               </article>
               <DialogFooter>
                 {showResults ? (
                   <>
-                    <p className="mr-auto text-sm">
-                      Score: {testScore?.correct}/{testScore?.total} (
-                      {testScore?.percentage}%)
-                    </p>
                     <Button
                       onClick={() => {
                         setShowResults(false);
@@ -346,7 +460,9 @@ export function CourseWeek({
                         );
                       }}
                       size="sm"
+                      className="ml-auto"
                     >
+                      <RefreshCcw className="h-4 w-4 mr-2" />
                       Try Again
                     </Button>
                   </>
@@ -379,7 +495,11 @@ export function CourseWeek({
                         }
                       }}
                       size="sm"
-                      variant="outline"
+                      variant={
+                        questionIndex === sampleTestQuestions.length - 1
+                          ? "default"
+                          : "outline"
+                      }
                     >
                       {questionIndex === sampleTestQuestions.length - 1
                         ? "Submit"
@@ -391,7 +511,9 @@ export function CourseWeek({
             </DialogContent>
           </Dialog>
         </article>
-        <article className={cn("space-y-2")}>
+        <article
+          className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
+        >
           <h3 className={cn("text-foreground/70 text-lg font-medium")}>Test</h3>
           <p className={cn("text-gray-600 text-sm")}>{week.finalTestLabel}</p>
           <Dialog>
@@ -401,13 +523,16 @@ export function CourseWeek({
                   setQuestionIndex(0);
                 }}
                 size="sm"
+                className="transition-all hover:scale-105"
               >
                 Take Test
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[320px] lg:max-w-[512px]">
               <DialogHeader>
-                <DialogTitle>Test: {week.weekTitle}</DialogTitle>
+                <DialogTitle className="text-primary">
+                  Test: {week.weekTitle}
+                </DialogTitle>
                 <DialogDescription>
                   This is a test to assess your knowledge on {week.weekTitle}.
                   The test consists of multiple choice questions and is timed.
@@ -415,50 +540,115 @@ export function CourseWeek({
                 </DialogDescription>
               </DialogHeader>
               <article className={cn("space-y-3")}>
-                <div className={cn("space-y-1")}>
-                  <h4 className={cn("text-lg font-medium")}>
-                    Question {questionIndex + 1}
-                  </h4>
-                  <p className={cn("text-gray-600 text-sm")}>
-                    {currentFinalQuestion?.question}
-                  </p>
-                </div>
-                <RadioGroup
-                  onValueChange={(value) => {
-                    setFinalTestAnswers((prev) => {
-                      const answers = [...prev];
-
-                      answers[questionIndex] = value;
-
-                      return answers;
-                    });
-                  }}
-                >
-                  {currentFinalQuestion?.answers.map((option, index) => {
-                    return (
-                      <div
-                        // biome-ignore lint/suspicious/noArrayIndexKey: <>
-                        key={index}
-                        className="flex items-center space-x-2"
-                      >
-                        <RadioGroupItem
-                          checked={finalTestAnswers[questionIndex] === option}
-                          value={option}
-                          id={option}
-                        />
-                        <Label htmlFor={option}>{option}</Label>
+                {!showResults && (
+                  <div className="w-full mb-3">
+                    <Progress
+                      value={
+                        ((questionIndex + 1) / finalTestQuestions.length) * 100
+                      }
+                      className="h-1"
+                    />
+                    <div className="flex justify-between mt-1 text-xs text-gray-500">
+                      <span>
+                        Question {questionIndex + 1} of{" "}
+                        {finalTestQuestions.length}
+                      </span>
+                      <span>
+                        {Math.round(
+                          ((questionIndex + 1) / finalTestQuestions.length) *
+                            100,
+                        )}
+                        % complete
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {showResults ? (
+                  <div className="space-y-4 py-4">
+                    <div
+                      className={cn(
+                        "text-center p-4 rounded-lg",
+                        testScore && testScore.percentage >= 70
+                          ? "bg-green-50 border border-green-100"
+                          : "bg-amber-50 border border-amber-100",
+                      )}
+                    >
+                      <h3 className="text-xl font-bold mb-2">
+                        {testScore && testScore.percentage >= 70 ? (
+                          <div className="flex items-center justify-center">
+                            <Check className="h-5 w-5 mr-2 text-green-600" />
+                            <span className="text-green-600">Passed!</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center">
+                            <X className="h-5 w-5 mr-2 text-amber-600" />
+                            <span className="text-amber-600">Not Passed</span>
+                          </div>
+                        )}
+                      </h3>
+                      <div className="text-lg font-medium">
+                        Score: {testScore?.correct}/{testScore?.total} (
+                        {testScore?.percentage}%)
                       </div>
-                    );
-                  })}
-                </RadioGroup>
+                      {testScore && testScore.percentage < 70 && (
+                        <p className="text-sm text-gray-600 mt-2">
+                          Review the material and try again!
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className={cn("space-y-1")}>
+                      <h4 className={cn("text-lg font-medium")}>
+                        Question {questionIndex + 1}
+                      </h4>
+                      <p className={cn("text-gray-600 text-sm")}>
+                        {currentFinalQuestion?.question}
+                      </p>
+                    </div>
+                    <RadioGroup
+                      onValueChange={(value) => {
+                        setFinalTestAnswers((prev) => {
+                          const answers = [...prev];
+
+                          answers[questionIndex] = value;
+
+                          return answers;
+                        });
+                      }}
+                      className="space-y-1" // Reduced from space-y-2
+                    >
+                      {currentFinalQuestion?.answers.map((option, index) => {
+                        return (
+                          <div
+                            // biome-ignore lint/suspicious/noArrayIndexKey: <>
+                            key={index}
+                            className="flex items-center space-x-2 py-1 px-2 rounded-lg hover:bg-gray-50" // Reduced padding-y from p-2
+                          >
+                            <RadioGroupItem
+                              checked={
+                                finalTestAnswers[questionIndex] === option
+                              }
+                              value={option}
+                              id={option}
+                            />
+                            <Label
+                              htmlFor={option}
+                              className="flex-1 cursor-pointer text-sm" // Added text-sm for more compact text
+                            >
+                              {option}
+                            </Label>
+                          </div>
+                        );
+                      })}
+                    </RadioGroup>
+                  </>
+                )}
               </article>
               <DialogFooter>
                 {showResults ? (
                   <>
-                    <p className="mr-auto text-sm">
-                      Score: {testScore?.correct}/{testScore?.total} (
-                      {testScore?.percentage}%)
-                    </p>
                     <Button
                       onClick={() => {
                         setShowResults(false);
@@ -468,7 +658,9 @@ export function CourseWeek({
                         );
                       }}
                       size="sm"
+                      className="ml-auto"
                     >
+                      <RefreshCcw className="h-4 w-4 mr-2" />
                       Try Again
                     </Button>
                   </>
@@ -501,7 +693,11 @@ export function CourseWeek({
                         }
                       }}
                       size="sm"
-                      variant="outline"
+                      variant={
+                        questionIndex === finalTestQuestions.length - 1
+                          ? "default"
+                          : "outline"
+                      }
                     >
                       {questionIndex === finalTestQuestions.length - 1
                         ? "Submit"
