@@ -138,7 +138,7 @@ export function CourseWeek({
     <section className={cn("flex-1 flex")}>
       <div
         className={cn(
-          "w-full lg:w-2/3 space-y-2 lg:space-y-4 p-4",
+          "w-full lg:w-2/3 space-y-2 lg:space-y-4 p-4 pt-0",
           showNotes && "hidden",
         )}
       >
