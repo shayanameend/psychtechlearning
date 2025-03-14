@@ -130,7 +130,7 @@ export function CourseWeek({
     <section className={cn("flex-1 flex")}>
       <div
         className={cn(
-          "w-full lg:w-2/3 space-y-4 lg:space-y-8 p-4",
+          "w-full lg:w-2/3 space-y-2 lg:space-y-4 p-4",
           showNotes && "hidden",
         )}
       >
@@ -419,7 +419,6 @@ export function CourseWeek({
                           return answers;
                         });
                       }}
-                      className="space-y-1" // Reduced from space-y-2
                     >
                       {currentSampleQuestion?.answers.map((option, index) => {
                         return (
@@ -617,7 +616,6 @@ export function CourseWeek({
                           return answers;
                         });
                       }}
-                      className="space-y-1" // Reduced from space-y-2
                     >
                       {currentFinalQuestion?.answers.map((option, index) => {
                         return (
