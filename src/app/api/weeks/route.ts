@@ -27,51 +27,6 @@ export async function GET(request: NextRequest) {
         weekOrder: true,
         weekTitle: true,
         weekDescription: true,
-        guideLabel: true,
-        guideLink: true,
-        flashcardsLabel: true,
-        sampleTestLabel: true,
-        finalTestLabel: true,
-        flashcards: {
-          select: {
-            id: true,
-            question: true,
-            answer: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        sampleTestQuestions: {
-          select: {
-            id: true,
-            question: true,
-            answers: true,
-            correctAnswer: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        finalTestQuestions: {
-          select: {
-            id: true,
-            question: true,
-            answers: true,
-            correctAnswer: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        weekUserNotes: {
-          where: {
-            userId: decodedUser.id,
-          },
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
         createdAt: true,
         updatedAt: true,
       },
