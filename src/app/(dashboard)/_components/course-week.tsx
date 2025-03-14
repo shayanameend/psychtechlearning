@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import {
   BookOpen,
@@ -11,6 +11,10 @@ import {
   FlipHorizontal,
   RefreshCcw,
   X,
+  Volume2,
+  Pause,
+  Play,
+  VolumeX,
 } from "lucide-react";
 import { CourseWeekNotes } from "~/app/(dashboard)/_components/course-week-notes";
 import { Button } from "~/components/ui/button";
@@ -57,11 +61,13 @@ interface Week {
   weekOrder: number;
   weekTitle: string;
   weekDescription: string;
-  guideLabel: string;
   guideLink: string;
-  flashcardsLabel: string;
-  sampleTestLabel: string;
-  finalTestLabel: string;
+  guideDescription: string;
+  audioLink: string;
+  audioDescription: string;
+  flashcardsDescription: string;
+  sampleTestDescription: string;
+  finalTestDescription: string;
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
@@ -96,6 +102,12 @@ export function CourseWeek({
   } | null>(null);
 
   const [questionIndex, setQuestionIndex] = useState(0);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     setFlashcards(week.flashcards);
@@ -134,6 +146,67 @@ export function CourseWeek({
   const currentSampleQuestion = sampleTestQuestions[questionIndex];
   const currentFinalQuestion = finalTestQuestions[questionIndex];
 
+  // Handle play/pause
+  const togglePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  // Handle mute/unmute
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  // Update audio time
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  // Set duration when metadata is loaded
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  // Format time in MM:SS
+  const formatTime = (time: number) => {
+    if (Number.isNaN(time)) return "00:00";
+
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  // Handle seek
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const seekTime = Number.parseFloat(e.target.value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = seekTime;
+      setCurrentTime(seekTime);
+    }
+  };
+
+  // Handle audio end
+  const handleAudioEnd = () => {
+    setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      setCurrentTime(0);
+    }
+  };
+
   return (
     <section className={cn("flex-1 flex")}>
       <div
@@ -160,10 +233,78 @@ export function CourseWeek({
               "text-foreground/70 text-lg font-medium flex items-center",
             )}
           >
+            <Volume2 className="h-5 w-5 mr-2 text-primary/70" />
+            Summary
+          </h3>
+          <p className={cn("text-gray-600 text-sm")}>{week.audioDescription}</p>
+          <div className="bg-white/80 rounded-lg p-3 shadow-sm">
+            {/* biome-ignore lint/a11y/useMediaCaption: <> */}
+            <audio
+              ref={audioRef}
+              src={week.audioLink}
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={handleLoadedMetadata}
+              onEnded={handleAudioEnd}
+              className="hidden"
+            />
+            <div className="flex items-center space-x-2 mb-2">
+              <Button
+                onClick={togglePlayPause}
+                size="sm"
+                variant="outline"
+                className="w-8 h-8 p-0 rounded-full"
+              >
+                {isPlaying ? (
+                  <Pause className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+              </Button>
+
+              <Button
+                onClick={toggleMute}
+                size="sm"
+                variant="ghost"
+                className="w-8 h-8 p-0"
+              >
+                {isMuted ? (
+                  <VolumeX className="h-4 w-4 text-gray-400" />
+                ) : (
+                  <Volume2 className="h-4 w-4 text-primary/70" />
+                )}
+              </Button>
+
+              <div className="flex-1 flex items-center space-x-2">
+                <span className="text-xs text-gray-500 w-10">
+                  {formatTime(currentTime)}
+                </span>
+                <input
+                  type="range"
+                  min="0"
+                  max={duration || 0}
+                  value={currentTime}
+                  onChange={handleSeek}
+                  className="flex-1 h-1 bg-gray-200 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+                />
+                <span className="text-xs text-gray-500 w-10">
+                  {formatTime(duration)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article
+          className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
+        >
+          <h3
+            className={cn(
+              "text-foreground/70 text-lg font-medium flex items-center",
+            )}
+          >
             <BookOpen className="h-5 w-5 mr-2 text-primary/70" />
             Study Guide
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>{week.guideLabel}</p>
+          <p className={cn("text-gray-600 text-sm")}>{week.guideDescription}</p>
           <Button
             onClick={() => {
               window.open(week.guideLink, "_blank");
@@ -185,7 +326,9 @@ export function CourseWeek({
             <FlipHorizontal className="h-5 w-5 mr-2 text-primary/70" />
             Flashcards
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>{week.flashcardsLabel}</p>
+          <p className={cn("text-gray-600 text-sm")}>
+            {week.flashcardsDescription}
+          </p>
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -339,7 +482,9 @@ export function CourseWeek({
             <ClipboardList className="h-5 w-5 mr-2 text-primary/70" />
             Sample Questions
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>{week.sampleTestLabel}</p>
+          <p className={cn("text-gray-600 text-sm")}>
+            {week.sampleTestDescription}
+          </p>
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -539,7 +684,9 @@ export function CourseWeek({
             <FileCheck className="h-5 w-5 mr-2 text-primary/70" />
             Test
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>{week.finalTestLabel}</p>
+          <p className={cn("text-gray-600 text-sm")}>
+            {week.finalTestDescription}
+          </p>
           <Dialog>
             <DialogTrigger asChild>
               <Button

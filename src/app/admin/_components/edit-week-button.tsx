@@ -63,11 +63,13 @@ interface Week {
   weekOrder: number;
   weekTitle: string;
   weekDescription: string;
-  guideLabel: string;
   guideLink: string;
-  flashcardsLabel: string;
-  sampleTestLabel: string;
-  finalTestLabel: string;
+  guideDescription: string;
+  audioLink: string;
+  audioDescription: string;
+  flashcardsDescription: string;
+  sampleTestDescription: string;
+  finalTestDescription: string;
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
@@ -91,11 +93,13 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
       weekOrder: week.weekOrder,
       weekTitle: week.weekTitle,
       weekDescription: week.weekDescription,
-      guideLabel: week.guideLabel,
       guideLink: week.guideLink,
-      flashcardsLabel: week.flashcardsLabel,
-      sampleTestLabel: week.sampleTestLabel,
-      finalTestLabel: week.finalTestLabel,
+      guideDescription: week.guideDescription,
+      audioLink: week.audioLink,
+      audioDescription: week.audioDescription,
+      flashcardsDescription: week.flashcardsDescription,
+      sampleTestDescription: week.sampleTestDescription,
+      finalTestDescription: week.finalTestDescription,
       flashcards: week.flashcards,
       sampleTestQuestions: week.sampleTestQuestions,
       finalTestQuestions: week.finalTestQuestions,
@@ -107,11 +111,13 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
       weekOrder: week.weekOrder,
       weekTitle: week.weekTitle,
       weekDescription: week.weekDescription,
-      guideLabel: week.guideLabel,
       guideLink: week.guideLink,
-      flashcardsLabel: week.flashcardsLabel,
-      sampleTestLabel: week.sampleTestLabel,
-      finalTestLabel: week.finalTestLabel,
+      guideDescription: week.guideDescription,
+      audioLink: week.audioLink,
+      audioDescription: week.audioDescription,
+      flashcardsDescription: week.flashcardsDescription,
+      sampleTestDescription: week.sampleTestDescription,
+      finalTestDescription: week.finalTestDescription,
       flashcards: week.flashcards,
       sampleTestQuestions: week.sampleTestQuestions,
       finalTestQuestions: week.finalTestQuestions,
@@ -229,10 +235,10 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={updateWeekform.control}
-                  name="guideLabel"
+                  name="guideDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Guide Label</FormLabel>
+                      <FormLabel>Guide Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -264,10 +270,45 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={updateWeekform.control}
-                  name="flashcardsLabel"
+                  name="audioDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Flashcards Label</FormLabel>
+                      <FormLabel>Audio Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Listen to the nursing science audio guide."
+                          className={cn("resize-none min-h-14")}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={updateWeekform.control}
+                  name="audioLink"
+                  render={({ field }) => (
+                    <FormItem className={cn("w-3/12")}>
+                      <FormLabel>Audio Link</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="https://drive.google.com/nursing.mp3"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className={cn("flex gap-4 flex-row-reverse")}>
+                <FormField
+                  control={updateWeekform.control}
+                  name="flashcardsDescription"
+                  render={({ field }) => (
+                    <FormItem className={cn("w-9/12")}>
+                      <FormLabel>Flashcards Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -311,10 +352,10 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={updateWeekform.control}
-                  name="sampleTestLabel"
+                  name="sampleTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Sample Test Label</FormLabel>
+                      <FormLabel>Sample Test Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -359,10 +400,10 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={updateWeekform.control}
-                  name="finalTestLabel"
+                  name="finalTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Final Test Label</FormLabel>
+                      <FormLabel>Final Test Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}

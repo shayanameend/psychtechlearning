@@ -65,14 +65,16 @@ model Profile {
 model Week {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  weekOrder       Int    @default(0)
-  weekTitle       String
-  weekDescription String
-  guideLabel      String
-  guideLink       String
-  flashcardsLabel String
-  sampleTestLabel String
-  finalTestLabel  String
+  weekOrder             Int
+  weekTitle             String
+  weekDescription       String
+  guideLink             String
+  guideDescription      String
+  audioLink             String
+  audioDescription      String
+  flashcardsDescription String
+  sampleTestDescription String
+  finalTestDescription  String
 
   flashcards          Flashcard[]
   sampleTestQuestions SampleTestQuestion[]

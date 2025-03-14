@@ -49,11 +49,13 @@ export function NewWeekButton() {
       weekOrder: 0,
       weekTitle: "",
       weekDescription: "",
-      guideLabel: "",
       guideLink: "",
-      flashcardsLabel: "",
-      sampleTestLabel: "",
-      finalTestLabel: "",
+      guideDescription: "",
+      audioLink: "",
+      audioDescription: "",
+      flashcardsDescription: "",
+      sampleTestDescription: "",
+      finalTestDescription: "",
       flashcards: [],
       sampleTestQuestions: [],
       finalTestQuestions: [],
@@ -167,10 +169,10 @@ export function NewWeekButton() {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={createWeekform.control}
-                  name="guideLabel"
+                  name="guideDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Guide Label</FormLabel>
+                      <FormLabel>Guide Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -202,10 +204,45 @@ export function NewWeekButton() {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={createWeekform.control}
-                  name="flashcardsLabel"
+                  name="audioDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Flashcards Label</FormLabel>
+                      <FormLabel>Audio Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Listen to nursing science audio lectures."
+                          className={cn("resize-none min-h-14")}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={createWeekform.control}
+                  name="audioLink"
+                  render={({ field }) => (
+                    <FormItem className={cn("w-3/12")}>
+                      <FormLabel>Audio Link</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="https://drive.google.com/nursing.mp3"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className={cn("flex gap-4 flex-row-reverse")}>
+                <FormField
+                  control={createWeekform.control}
+                  name="flashcardsDescription"
+                  render={({ field }) => (
+                    <FormItem className={cn("w-9/12")}>
+                      <FormLabel>Flashcards Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -248,10 +285,10 @@ export function NewWeekButton() {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={createWeekform.control}
-                  name="sampleTestLabel"
+                  name="sampleTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Sample Test Label</FormLabel>
+                      <FormLabel>Sample Test Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -300,10 +337,10 @@ export function NewWeekButton() {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={createWeekform.control}
-                  name="finalTestLabel"
+                  name="finalTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Final Test Label</FormLabel>
+                      <FormLabel>Final Test Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}

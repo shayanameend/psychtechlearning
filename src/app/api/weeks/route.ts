@@ -27,11 +27,13 @@ export async function GET(request: NextRequest) {
         weekOrder: true,
         weekTitle: true,
         weekDescription: true,
-        guideLabel: true,
         guideLink: true,
-        flashcardsLabel: true,
-        sampleTestLabel: true,
-        finalTestLabel: true,
+        guideDescription: true,
+        audioLink: true,
+        audioDescription: true,
+        flashcardsDescription: true,
+        sampleTestDescription: true,
+        finalTestDescription: true,
         flashcards: {
           select: {
             id: true,
@@ -109,13 +111,15 @@ export async function POST(request: NextRequest) {
       weekOrder,
       weekTitle,
       weekDescription,
-      guideLabel,
       guideLink,
-      flashcardsLabel,
+      guideDescription,
+      audioLink,
+      audioDescription,
+      flashcardsDescription,
       flashcards,
-      sampleTestLabel,
+      sampleTestDescription,
       sampleTestQuestions,
-      finalTestLabel,
+      finalTestDescription,
       finalTestQuestions,
     } = CreateWeekSchema.parse(body);
 
@@ -124,21 +128,23 @@ export async function POST(request: NextRequest) {
         weekOrder,
         weekTitle,
         weekDescription,
-        guideLabel,
         guideLink,
-        flashcardsLabel,
+        guideDescription,
+        audioLink,
+        audioDescription,
+        flashcardsDescription,
         flashcards: {
           createMany: {
             data: flashcards,
           },
         },
-        sampleTestLabel,
+        sampleTestDescription,
         sampleTestQuestions: {
           createMany: {
             data: sampleTestQuestions,
           },
         },
-        finalTestLabel,
+        finalTestDescription,
         finalTestQuestions: {
           createMany: {
             data: finalTestQuestions,
@@ -149,11 +155,13 @@ export async function POST(request: NextRequest) {
         id: true,
         weekTitle: true,
         weekDescription: true,
-        guideLabel: true,
+        guideDescription: true,
         guideLink: true,
-        flashcardsLabel: true,
-        sampleTestLabel: true,
-        finalTestLabel: true,
+        flashcardsDescription: true,
+        sampleTestDescription: true,
+        finalTestDescription: true,
+        audioLink: true,
+        audioDescription: true,
         flashcards: {
           select: {
             id: true,

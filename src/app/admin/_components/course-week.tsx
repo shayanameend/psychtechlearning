@@ -1,6 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
-import { EditIcon, Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
+import {
+  EditIcon,
+  ExternalLinkIcon,
+  Loader2Icon,
+  PlusIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -51,11 +57,13 @@ interface Week {
   weekOrder: number;
   weekTitle: string;
   weekDescription: string;
-  guideLabel: string;
   guideLink: string;
-  flashcardsLabel: string;
-  sampleTestLabel: string;
-  finalTestLabel: string;
+  guideDescription: string;
+  audioLink: string;
+  audioDescription: string;
+  flashcardsDescription: string;
+  sampleTestDescription: string;
+  finalTestDescription: string;
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
@@ -353,25 +361,50 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
       </header>
       <article className={cn("flex flex-col gap-4")}>
         <div className={cn("flex flex-col gap-2")}>
-          <Label className={cn("font-bold")}>Week Description</Label>
+          <Label className={cn("font-bold")}>Description</Label>
           <p className={cn("text-sm text-gray-600")}>{week.weekDescription}</p>
         </div>
-        <div className={cn("flex flex-col gap-2")}>
-          <Label className={cn("font-bold")}>Study Guide</Label>
-          <a
-            href={week.guideLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn("text-sm text-blue-600")}
-          >
-            {week.guideLabel}
-          </a>
+        <div className={cn("flex gap-4 justify-between")}>
+          <div className={cn("flex flex-col gap-2")}>
+            <Label className={cn("font-bold")}>Study Guide</Label>
+            <p className={cn("text-sm text-gray-600")}>
+              {week.guideDescription}
+            </p>
+          </div>
+          <div>
+            <a href={week.guideLink} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm">
+                <span>
+                  <ExternalLinkIcon />
+                </span>
+                <span>Open</span>
+              </Button>
+            </a>
+          </div>
+        </div>
+        <div className={cn("flex gap-4 justify-between")}>
+          <div className={cn("flex flex-col gap-2")}>
+            <Label className={cn("font-bold")}>Summary</Label>
+            <p className={cn("text-sm text-gray-600")}>
+              {week.audioDescription}
+            </p>
+          </div>
+          <div>
+            <a href={week.audioLink} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm">
+                <span>
+                  <ExternalLinkIcon />
+                </span>
+                <span>Open</span>
+              </Button>
+            </a>
+          </div>
         </div>
         <div className={cn("flex gap-4 justify-between")}>
           <div className={cn("flex flex-col gap-2")}>
             <Label className={cn("font-bold")}>Flashcards</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {week.flashcardsLabel}
+              {week.flashcardsDescription}
             </p>
           </div>
           <div>
@@ -387,7 +420,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                   variant="outline"
                   size="sm"
                 >
-                  View
+                  <span>
+                    <EditIcon />
+                  </span>
+                  <span>Edit</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
@@ -678,7 +714,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
           <div className={cn("flex flex-col gap-2")}>
             <Label className={cn("font-bold")}>Sample Test</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {week.sampleTestLabel}
+              {week.sampleTestDescription}
             </p>
           </div>
           <div>
@@ -694,7 +730,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                   variant="outline"
                   size="sm"
                 >
-                  View
+                  <span>
+                    <EditIcon />
+                  </span>
+                  <span>Edit</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
@@ -1071,7 +1110,9 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
         <div className={cn("flex gap-4 justify-between")}>
           <div className={cn("flex flex-col gap-2")}>
             <Label className={cn("font-bold")}>Final Test</Label>
-            <p className={cn("text-sm text-gray-600")}>{week.finalTestLabel}</p>
+            <p className={cn("text-sm text-gray-600")}>
+              {week.finalTestDescription}
+            </p>
           </div>
           <div>
             <Dialog
@@ -1086,7 +1127,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                   variant="outline"
                   size="sm"
                 >
-                  View
+                  <span>
+                    <EditIcon />
+                  </span>
+                  <span>Edit</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">

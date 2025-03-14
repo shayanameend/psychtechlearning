@@ -75,13 +75,6 @@ const CreateWeekSchema = zod.object({
     .min(32, {
       message: "Week description must be at least 32 characters long!",
     }),
-  guideLabel: zod
-    .string({
-      message: "Guide label is required!",
-    })
-    .min(3, {
-      message: "Guide label must be at least 3 characters long!",
-    }),
   guideLink: zod
     .string({
       message: "Guide link is required!",
@@ -89,26 +82,47 @@ const CreateWeekSchema = zod.object({
     .url({
       message: "Guide link must be a valid url!",
     }),
-  flashcardsLabel: zod
+  guideDescription: zod
     .string({
-      message: "Flashcards label is required!",
+      message: "Guide description is required!",
     })
     .min(3, {
-      message: "Flashcards label must be at least 3 characters long!",
+      message: "Guide description must be at least 3 characters long!",
     }),
-  sampleTestLabel: zod
+  audioLink: zod
     .string({
-      message: "Sample test label is required!",
+      message: "Audio link is required!",
     })
-    .min(3, {
-      message: "Sample test label must be at least 3 characters long!",
+    .url({
+      message: "Audio link must be a valid url!",
     }),
-  finalTestLabel: zod
+  audioDescription: zod
     .string({
-      message: "Final test label is required!",
+      message: "Audio description is required!",
     })
     .min(3, {
-      message: "Final test label must be at least 3 characters long!",
+      message: "Audio description must be at least 3 characters long!",
+    }),
+  flashcardsDescription: zod
+    .string({
+      message: "Flashcards description is required!",
+    })
+    .min(3, {
+      message: "Flashcards description must be at least 3 characters long!",
+    }),
+  sampleTestDescription: zod
+    .string({
+      message: "Sample test description is required!",
+    })
+    .min(3, {
+      message: "Sample test description must be at least 3 characters long!",
+    }),
+  finalTestDescription: zod
+    .string({
+      message: "Final test description is required!",
+    })
+    .min(3, {
+      message: "Final test description must be at least 3 characters long!",
     }),
   flashcards: zod.array(FlashcardSchema).min(1, {
     message: "Flashcards must have at least 1 item!",

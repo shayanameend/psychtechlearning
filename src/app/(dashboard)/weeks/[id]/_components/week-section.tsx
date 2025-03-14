@@ -42,11 +42,13 @@ interface Week {
   weekOrder: number;
   weekTitle: string;
   weekDescription: string;
-  guideLabel: string;
   guideLink: string;
-  flashcardsLabel: string;
-  sampleTestLabel: string;
-  finalTestLabel: string;
+  guideDescription: string;
+  audioLink: string;
+  audioDescription: string;
+  flashcardsDescription: string;
+  sampleTestDescription: string;
+  finalTestDescription: string;
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
@@ -112,7 +114,6 @@ export function WeekSection({
 
   const {
     data: weeksQueryResult,
-    isSuccess: weeksQueryIsSuccess,
     isLoading,
     isError,
     error,
