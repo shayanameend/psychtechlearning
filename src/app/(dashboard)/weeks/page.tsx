@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
+import { useRouter } from "next/navigation";
+import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { Button } from "~/components/ui/button";
-import { useRouter } from "next/navigation";
 
 interface Week {
   id: string;

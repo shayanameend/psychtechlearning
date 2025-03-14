@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 
 import { CourseWeek } from "~/app/(dashboard)/_components/course-week";
