@@ -159,7 +159,7 @@ export function WeekSection({
           ) : (
             <EmptyState />
           )}
-          <footer className={cn("flex justify-between items-center")}>
+          <footer className={cn("flex justify-end items-center")}>
             <div>
               <Button
                 onClick={() => {
