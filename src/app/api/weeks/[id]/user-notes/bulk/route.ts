@@ -31,8 +31,6 @@ export async function PUT(
     const { notes, deletedNotes, newNotes } =
       BulkUpdateUserNotesSchema.parse(body);
 
-    console.log({ notes, deletedNotes, newNotes });
-
     if (deletedNotes.length > 0) {
       await prisma.userNote.deleteMany({
         where: {

@@ -7,6 +7,105 @@ import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
 import { UpdateWeekSchema } from "~/validators/week";
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const decodedUser = await verifyRequest({
+      request,
+      isVerified: true,
+    });
+
+    if (!decodedUser) {
+      throw new UnauthorizedResponse("Unauthorized!");
+    }
+
+    const { id } = await params;
+
+    if (!id) {
+      throw new BadResponse("ID is required!");
+    }
+
+    const week = await prisma.week.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        weekOrder: true,
+        weekTitle: true,
+        weekDescription: true,
+        guideLabel: true,
+        guideLink: true,
+        flashcardsLabel: true,
+        sampleTestLabel: true,
+        finalTestLabel: true,
+        flashcards: {
+          select: {
+            id: true,
+            question: true,
+            answer: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        sampleTestQuestions: {
+          select: {
+            id: true,
+            question: true,
+            answers: true,
+            correctAnswer: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        finalTestQuestions: {
+          select: {
+            id: true,
+            question: true,
+            answers: true,
+            correctAnswer: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        weekUserNotes: {
+          where: {
+            userId: decodedUser.id,
+          },
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!week) {
+      throw new BadResponse("Week Not Found!");
+    }
+
+    return NextResponse.json(
+      {
+        data: { week },
+        info: {
+          message: "Week Fetched Successfully!",
+        },
+      },
+      {
+        status: 200,
+      },
+    );
+  } catch (error) {
+    return handleErrors({ error });
+  }
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -96,6 +195,10 @@ export async function PUT(
       },
     });
 
+    if (!week) {
+      throw new BadResponse("Week Not Found!");
+    }
+
     return NextResponse.json(
       {
         data: { week },
@@ -140,8 +243,6 @@ export async function DELETE(
         id: true,
       },
     });
-
-    console.log("id", id);
 
     if (!week) {
       throw new BadResponse("Week Not Found!");

@@ -73,8 +73,6 @@ export function CourseWeekNotes({
   const queryClient = useQueryClient();
   const { token } = useUserContext();
 
-  console.log("notes", week.weekUserNotes, notes);
-
   useEffect(() => {
     setNotes(week.weekUserNotes);
   }, [week.weekUserNotes]);
