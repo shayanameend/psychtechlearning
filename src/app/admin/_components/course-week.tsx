@@ -347,7 +347,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
               "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
             )}
           >
-            <Trash2Icon className={cn("w-4 h-4")} />
+            <Trash2Icon />
           </Button>
         </div>
       </header>
@@ -624,7 +624,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
                       )}
                     >
-                      <Trash2Icon className={cn("w-4 h-4")} />
+                      <Trash2Icon />
                     </Button>
                   </div>
                   <div className={cn("flex gap-2")}>
@@ -917,8 +917,30 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                     })}
                   </RadioGroup>
                 </article>
-                <DialogFooter className={cn("justify-between")}>
-                  <div className={cn("flex gap-2")}>
+                <DialogFooter
+                  className={cn("justify-between flex-row-reverse")}
+                >
+                  <div className={cn("flex gap-2 flex-row-reverse")}>
+                    <Button
+                      onClick={() => {
+                        updateSampleTestQuestionsMutation.mutate({
+                          weekId: week.id,
+                          sampleTestQuestions,
+                          deletedSampleTestQuestions,
+                          newSampleTestQuestions,
+                        });
+                      }}
+                      size="sm"
+                      variant="outline"
+                      disabled={updateFlashcardsMutation.isPending}
+                    >
+                      {updateFlashcardsMutation.isPending ? (
+                        <Loader2Icon
+                          className={cn("animate-spin mr-1 h-4 w-4")}
+                        />
+                      ) : null}
+                      Save
+                    </Button>
                     <Button
                       onClick={() => {
                         setNewSampleTestQuestions([
@@ -941,12 +963,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                             newSampleTestQuestions.length,
                         );
                       }}
+                      disabled={updateSampleTestQuestionsMutation.isPending}
                       size="sm"
                       variant="outline"
-                      className={cn("px-2 height-8 gap-1")}
+                      className={cn("px-2 height-8 gap-1 [&_svg]:size-5")}
                     >
                       <PlusIcon />
-                      New Question
                     </Button>
                     <Button
                       onClick={() => {
@@ -976,20 +998,21 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         }
                       }}
                       disabled={
+                        updateSampleTestQuestionsMutation.isPending ||
                         (sampleTestQuestions.length +
                           newSampleTestQuestions.length <
                           2 && questionIndex) ===
-                        sampleTestQuestions.length +
-                          newSampleTestQuestions.length -
-                          1
+                          sampleTestQuestions.length +
+                            newSampleTestQuestions.length -
+                            1
                       }
                       variant="outline"
                       size="icon"
                       className={cn(
-                        "size-8 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
+                        "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
                       )}
                     >
-                      <Trash2Icon className={cn("w-4 h-4")} />
+                      <Trash2Icon />
                     </Button>
                   </div>
                   <div className={cn("flex gap-2")}>
@@ -1003,7 +1026,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         setIsCorrectAnswerEditing(-1);
                         setIsAnswersEditing([-1, -1]);
                       }}
-                      disabled={questionIndex === 0}
+                      disabled={
+                        updateSampleTestQuestionsMutation.isPending ||
+                        questionIndex === 0
+                      }
                       size="sm"
                       variant="outline"
                     >
@@ -1023,35 +1049,18 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         setIsQuestionEditing(-1);
                         setIsCorrectAnswerEditing(-1);
                         setIsAnswersEditing([-1, -1]);
-
-                        if (
-                          questionIndex ===
+                      }}
+                      disabled={
+                        updateSampleTestQuestionsMutation.isPending ||
+                        questionIndex ===
                           sampleTestQuestions.length +
                             newSampleTestQuestions.length -
                             1
-                        ) {
-                          updateSampleTestQuestionsMutation.mutate({
-                            weekId: week.id,
-                            sampleTestQuestions,
-                            deletedSampleTestQuestions,
-                            newSampleTestQuestions,
-                          });
-                        }
-                      }}
+                      }
                       size="sm"
                       variant="outline"
                     >
-                      {updateSampleTestQuestionsMutation.isPending && (
-                        <Loader2Icon className={cn("animate-spin")} />
-                      )}
-                      <span>
-                        {questionIndex ===
-                        sampleTestQuestions.length +
-                          newSampleTestQuestions.length -
-                          1
-                          ? "Save"
-                          : "Next"}
-                      </span>
+                      <span>Next</span>
                     </Button>
                   </div>
                 </DialogFooter>
@@ -1300,8 +1309,30 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                     })}
                   </RadioGroup>
                 </article>
-                <DialogFooter className={cn("justify-between")}>
-                  <div className={cn("flex gap-2")}>
+                <DialogFooter
+                  className={cn("justify-between flex-row-reverse")}
+                >
+                  <div className={cn("flex gap-2 flex-row-reverse")}>
+                    <Button
+                      onClick={() => {
+                        updateFinalTestQuestionsMutation.mutate({
+                          weekId: week.id,
+                          finalTestQuestions,
+                          deletedFinalTestQuestions,
+                          newFinalTestQuestions,
+                        });
+                      }}
+                      size="sm"
+                      variant="outline"
+                      disabled={updateFinalTestQuestionsMutation.isPending}
+                    >
+                      {updateFinalTestQuestionsMutation.isPending ? (
+                        <Loader2Icon
+                          className={cn("animate-spin mr-1 h-4 w-4")}
+                        />
+                      ) : null}
+                      Save
+                    </Button>
                     <Button
                       onClick={() => {
                         setNewFinalTestQuestions([
@@ -1324,12 +1355,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                             newFinalTestQuestions.length,
                         );
                       }}
+                      disabled={updateFinalTestQuestionsMutation.isPending}
                       size="sm"
                       variant="outline"
-                      className={cn("px-2 height-8 gap-1")}
+                      className={cn("px-2 height-8 gap-1 [&_svg]:size-5")}
                     >
                       <PlusIcon />
-                      New Question
                     </Button>
                     <Button
                       onClick={() => {
@@ -1359,20 +1390,21 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         }
                       }}
                       disabled={
+                        updateFinalTestQuestionsMutation.isPending ||
                         (finalTestQuestions.length +
                           newFinalTestQuestions.length <
                           2 && questionIndex) ===
-                        finalTestQuestions.length +
-                          newFinalTestQuestions.length -
-                          1
+                          finalTestQuestions.length +
+                            newFinalTestQuestions.length -
+                            1
                       }
                       variant="outline"
                       size="icon"
                       className={cn(
-                        "size-8 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
+                        "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
                       )}
                     >
-                      <Trash2Icon className={cn("w-4 h-4")} />
+                      <Trash2Icon />
                     </Button>
                   </div>
                   <div className={cn("flex gap-2")}>
@@ -1386,7 +1418,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         setIsCorrectAnswerEditing(-1);
                         setIsAnswersEditing([-1, -1]);
                       }}
-                      disabled={questionIndex === 0}
+                      disabled={
+                        updateFinalTestQuestionsMutation.isPending ||
+                        questionIndex === 0
+                      }
                       size="sm"
                       variant="outline"
                     >
@@ -1406,35 +1441,18 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                         setIsQuestionEditing(-1);
                         setIsCorrectAnswerEditing(-1);
                         setIsAnswersEditing([-1, -1]);
-
-                        if (
-                          questionIndex ===
+                      }}
+                      disabled={
+                        updateFinalTestQuestionsMutation.isPending ||
+                        questionIndex ===
                           finalTestQuestions.length +
                             newFinalTestQuestions.length -
                             1
-                        ) {
-                          updateFinalTestQuestionsMutation.mutate({
-                            weekId: week.id,
-                            finalTestQuestions,
-                            deletedFinalTestQuestions,
-                            newFinalTestQuestions,
-                          });
-                        }
-                      }}
+                      }
                       size="sm"
                       variant="outline"
                     >
-                      {updateFinalTestQuestionsMutation.isPending && (
-                        <Loader2Icon className={cn("animate-spin")} />
-                      )}
-                      <span>
-                        {questionIndex ===
-                        finalTestQuestions.length +
-                          newFinalTestQuestions.length -
-                          1
-                          ? "Save"
-                          : "Next"}
-                      </span>
+                      <span>Next</span>
                     </Button>
                   </div>
                 </DialogFooter>
