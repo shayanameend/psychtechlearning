@@ -161,6 +161,7 @@ export function CourseWeek({
               <Button
                 onClick={() => {
                   setQuestionIndex(0);
+                  setShowFlashcard(false);
                 }}
                 size="sm"
               >
@@ -176,16 +177,51 @@ export function CourseWeek({
                 </DialogDescription>
               </DialogHeader>
               {currentFlashcard ? (
-                <article className={cn("space-y-2")}>
-                  <p className={cn("text-gray-600 text-sm")}>
-                    <span className={cn("mr-1")}>{questionIndex + 1}.</span>
-                    {currentFlashcard.question}
-                    {showFlashcard && (
-                      <span className={cn("ml-1 text-primary")}>
-                        {currentFlashcard.answer}
-                      </span>
+                <article className={cn("relative")}>
+                  <div
+                    className={cn(
+                      "relative w-full min-h-[150px] perspective-[1000px] transition-transform duration-500",
                     )}
-                  </p>
+                  >
+                    <div
+                      className={cn(
+                        "absolute w-full h-full transform-style-3d transition-all duration-500",
+                        showFlashcard ? "rotate-y-180" : "",
+                      )}
+                    >
+                      {/* Front of card (question) */}
+                      <div
+                        className={cn(
+                          "absolute w-full h-full backface-hidden bg-white p-4 rounded-md border border-gray-200",
+                          showFlashcard ? "invisible" : "",
+                        )}
+                      >
+                        <p className={cn("text-gray-600")}>
+                          <span className={cn("mr-1 font-medium")}>
+                            Question {questionIndex + 1}:
+                          </span>
+                          {currentFlashcard.question}
+                        </p>
+                      </div>
+
+                      {/* Back of card (answer) */}
+                      <div
+                        className={cn(
+                          "absolute w-full h-full backface-hidden bg-white p-4 rounded-md border border-gray-200 rotate-y-180",
+                          !showFlashcard ? "invisible" : "",
+                        )}
+                      >
+                        <p className={cn("text-primary")}>
+                          <span
+                            className={cn("mr-1 font-medium text-gray-600")}
+                          >
+                            Answer:
+                          </span>
+                          {currentFlashcard.answer}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </article>
               ) : (
                 <p>No flashcards available</p>
@@ -205,8 +241,8 @@ export function CourseWeek({
                   onClick={() => {
                     if (questionIndex > 0) {
                       setQuestionIndex(questionIndex - 1);
+                      setShowFlashcard(false);
                     }
-                    setShowFlashcard(false);
                   }}
                   disabled={questionIndex === 0}
                   size="sm"
@@ -218,8 +254,8 @@ export function CourseWeek({
                   onClick={() => {
                     if (questionIndex < flashcards.length - 1) {
                       setQuestionIndex(questionIndex + 1);
+                      setShowFlashcard(false);
                     }
-                    setShowFlashcard(false);
                   }}
                   disabled={questionIndex === flashcards.length - 1}
                   size="sm"

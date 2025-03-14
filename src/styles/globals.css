@@ -72,3 +72,20 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Add these CSS classes for the flashcard flip effect */
+.perspective-\[1000px\] {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
