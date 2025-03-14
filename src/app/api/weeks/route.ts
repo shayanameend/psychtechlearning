@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { verifyRequest } from "~/lib/auth";
 import { UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { CreateSectionSchema } from "~/validators/section";
+import { CreateWeekSchema } from "~/validators/week";
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,15 +18,15 @@ export async function GET(request: NextRequest) {
       throw new UnauthorizedResponse("Unauthorized!");
     }
 
-    const sections = await prisma.section.findMany({
+    const weeks = await prisma.week.findMany({
       orderBy: {
-        sectionOrder: "asc",
+        weekOrder: "asc",
       },
       select: {
         id: true,
-        sectionOrder: true,
-        sectionTitle: true,
-        sectionDescription: true,
+        weekOrder: true,
+        weekTitle: true,
+        weekDescription: true,
         guideLabel: true,
         guideLink: true,
         flashcardsLabel: true,
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
             updatedAt: true,
           },
         },
-        sectionUserNotes: {
+        weekUserNotes: {
           where: {
             userId: decodedUser.id,
           },
@@ -79,9 +79,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       {
-        data: { sections },
+        data: { weeks },
         info: {
-          message: "Sections Fetched Successfully!",
+          message: "Weeks Fetched Successfully!",
         },
       },
       {
@@ -106,9 +106,9 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const {
-      sectionOrder,
-      sectionTitle,
-      sectionDescription,
+      weekOrder,
+      weekTitle,
+      weekDescription,
       guideLabel,
       guideLink,
       flashcardsLabel,
@@ -117,13 +117,13 @@ export async function POST(request: NextRequest) {
       sampleTestQuestions,
       finalTestLabel,
       finalTestQuestions,
-    } = CreateSectionSchema.parse(body);
+    } = CreateWeekSchema.parse(body);
 
-    const section = await prisma.section.create({
+    const week = await prisma.week.create({
       data: {
-        sectionOrder,
-        sectionTitle,
-        sectionDescription,
+        weekOrder,
+        weekTitle,
+        weekDescription,
         guideLabel,
         guideLink,
         flashcardsLabel,
@@ -147,8 +147,8 @@ export async function POST(request: NextRequest) {
       },
       select: {
         id: true,
-        sectionTitle: true,
-        sectionDescription: true,
+        weekTitle: true,
+        weekDescription: true,
         guideLabel: true,
         guideLink: true,
         flashcardsLabel: true,
@@ -190,9 +190,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        data: { section },
+        data: { week },
         info: {
-          message: "Section Created Successfully!",
+          message: "Week Created Successfully!",
         },
       },
       {

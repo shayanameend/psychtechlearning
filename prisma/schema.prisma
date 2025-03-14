@@ -62,22 +62,22 @@ model Profile {
   updatedAt DateTime @updatedAt
 }
 
-model Section {
+model Week {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  sectionOrder       Int    @default(0)
-  sectionTitle       String
-  sectionDescription String
-  guideLabel         String
-  guideLink          String
-  flashcardsLabel    String
-  sampleTestLabel    String
-  finalTestLabel     String
+  weekOrder       Int    @default(0)
+  weekTitle       String
+  weekDescription String
+  guideLabel      String
+  guideLink       String
+  flashcardsLabel String
+  sampleTestLabel String
+  finalTestLabel  String
 
   flashcards          Flashcard[]
   sampleTestQuestions SampleTestQuestion[]
   finalTestQuestions  FinalTestQuestion[]
-  sectionUserNotes    UserNote[]
+  weekUserNotes       UserNote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,8 +89,8 @@ model Flashcard {
   question String
   answer   String
 
-  sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,8 +103,8 @@ model SampleTestQuestion {
   answers       String[]
   correctAnswer String
 
-  sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -117,8 +117,8 @@ model FinalTestQuestion {
   answers       String[]
   correctAnswer String
 
-  sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -129,10 +129,10 @@ model UserNote {
 
   content String
 
-  sectionId String  @db.ObjectId
-  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  userId    String  @db.ObjectId
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

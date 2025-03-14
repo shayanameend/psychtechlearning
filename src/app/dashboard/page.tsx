@@ -5,7 +5,7 @@ import { default as axios } from "axios";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { CourseSection } from "~/app/dashboard/_components/course-section";
+import { CourseWeek } from "~/app/dashboard/_components/course-week";
 import { Button } from "~/components/ui/button";
 import { Steps } from "~/components/ui/steps";
 import { cn } from "~/lib/utils";
@@ -29,18 +29,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface SectionUserNote {
+interface WeekUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Section {
+interface Week {
   id: string;
-  sectionOrder: number;
-  sectionTitle: string;
-  sectionDescription: string;
+  weekOrder: number;
+  weekTitle: string;
+  weekDescription: string;
   guideLabel: string;
   guideLink: string;
   flashcardsLabel: string;
@@ -49,7 +49,7 @@ interface Section {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  sectionUserNotes: SectionUserNote[];
+  weekUserNotes: WeekUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,32 +57,31 @@ interface Section {
 export default function DashboardPage() {
   const { token } = useUserContext();
 
-  const { data: sectionsQueryResult, isSuccess: sectionsQueryIsSuccess } =
-    useQuery({
-      queryKey: ["sections"],
-      queryFn: async () => {
-        const response = await axios.get(paths.api.sections.root(), {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        });
+  const { data: weeksQueryResult, isSuccess: weeksQueryIsSuccess } = useQuery({
+    queryKey: ["weeks"],
+    queryFn: async () => {
+      const response = await axios.get(paths.api.weeks.root(), {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-        return response.data as { data: { sections: Section[] } };
-      },
-    });
+      return response.data as { data: { weeks: Week[] } };
+    },
+  });
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [content, setContent] = useState<Section | undefined>(
-    sectionsQueryResult?.data.sections[currentStep - 1],
+  const [content, setContent] = useState<Week | undefined>(
+    weeksQueryResult?.data.weeks[currentStep - 1],
   );
   const [showNotes, setShowNotes] = useState(false);
 
   useEffect(() => {
-    setContent(sectionsQueryResult?.data.sections[currentStep - 1]);
-  }, [currentStep, sectionsQueryResult?.data.sections[currentStep - 1]]);
+    setContent(weeksQueryResult?.data.weeks[currentStep - 1]);
+  }, [currentStep, weeksQueryResult?.data.weeks[currentStep - 1]]);
 
   const steps = Array.from(
-    { length: sectionsQueryResult?.data.sections.length || 0 },
+    { length: weeksQueryResult?.data.weeks.length || 0 },
     (_, index) => index + 1,
   );
 
@@ -98,7 +97,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (!sectionsQueryIsSuccess) {
+  if (!weeksQueryIsSuccess) {
     return null;
   }
 
@@ -110,17 +109,17 @@ export default function DashboardPage() {
         )}
       >
         <aside>
-          {sectionsQueryResult.data.sections.length > 1 && (
+          {weeksQueryResult.data.weeks.length > 1 && (
             <Steps steps={steps} currentStep={currentStep} />
           )}
         </aside>
         <main className={cn("flex-1 py-4 lg:py-0 lg:px-8 flex flex-col gap-6")}>
-          {sectionsQueryResult.data.sections.length > 0 && content ? (
-            <CourseSection section={content} showNotes={showNotes} />
+          {weeksQueryResult.data.weeks.length > 0 && content ? (
+            <CourseWeek week={content} showNotes={showNotes} />
           ) : (
             <section className={cn("flex-1 flex justify-center items-center")}>
               <p className={cn("text-gray-600 text-sm")}>
-                No sections available, Please check back later!
+                No weeks available, Please check back later!
               </p>
             </section>
           )}

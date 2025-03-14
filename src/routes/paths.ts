@@ -12,25 +12,23 @@ export const paths = {
       refresh: () => "/api/auth/refresh",
       profile: () => "/api/auth/profile",
     },
-    sections: {
-      root: () => "/api/sections",
+    weeks: {
+      root: () => "/api/weeks",
       id: {
-        root: ({ id }: { id: string }) => `/api/sections/${id}`,
+        root: ({ id }: { id: string }) => `/api/weeks/${id}`,
         flashcards: {
-          bulk: ({ id }: { id: string }) =>
-            `/api/sections/${id}/flashcards/bulk`,
+          bulk: ({ id }: { id: string }) => `/api/weeks/${id}/flashcards/bulk`,
         },
         sampleTestQuestions: {
           bulk: ({ id }: { id: string }) =>
-            `/api/sections/${id}/sample-test-questions/bulk`,
+            `/api/weeks/${id}/sample-test-questions/bulk`,
         },
         finalTestQuestions: {
           bulk: ({ id }: { id: string }) =>
-            `/api/sections/${id}/final-test-questions/bulk`,
+            `/api/weeks/${id}/final-test-questions/bulk`,
         },
         userNotes: {
-          bulk: ({ id }: { id: string }) =>
-            `/api/sections/${id}/user-notes/bulk`,
+          bulk: ({ id }: { id: string }) => `/api/weeks/${id}/user-notes/bulk`,
         },
       },
     },

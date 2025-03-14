@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { CourseSection } from "./_components/course-section";
-import { NewSectionButton } from "./_components/new-section-button";
+import { CourseWeek } from "./_components/course-week";
+import { NewWeekButton } from "./_components/new-week-button";
 
 interface Flashcard {
   id: string;
@@ -27,18 +27,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface SectionUserNote {
+interface WeekUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Section {
+interface Week {
   id: string;
-  sectionOrder: number;
-  sectionTitle: string;
-  sectionDescription: string;
+  weekOrder: number;
+  weekTitle: string;
+  weekDescription: string;
   guideLabel: string;
   guideLink: string;
   flashcardsLabel: string;
@@ -47,7 +47,7 @@ interface Section {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  sectionUserNotes: SectionUserNote[];
+  weekUserNotes: WeekUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -55,29 +55,28 @@ interface Section {
 export default function AdminPage() {
   const { token } = useUserContext();
 
-  const { data: sectionsQueryResult, isSuccess: sectionsQueryIsSuccess } =
-    useQuery({
-      queryKey: ["sections"],
-      queryFn: async () => {
-        const response = await axios.get(paths.api.sections.root(), {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        });
+  const { data: weeksQueryResult, isSuccess: weeksQueryIsSuccess } = useQuery({
+    queryKey: ["weeks"],
+    queryFn: async () => {
+      const response = await axios.get(paths.api.weeks.root(), {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-        return response.data as { data: { sections: Section[] } };
-      },
-    });
+      return response.data as { data: { weeks: Week[] } };
+    },
+  });
 
-  const [content, setContent] = useState<Section[]>(
-    sectionsQueryResult?.data.sections || [],
+  const [content, setContent] = useState<Week[]>(
+    weeksQueryResult?.data.weeks || [],
   );
 
   useEffect(() => {
-    setContent(sectionsQueryResult?.data.sections || []);
-  }, [sectionsQueryResult?.data.sections]);
+    setContent(weeksQueryResult?.data.weeks || []);
+  }, [weeksQueryResult?.data.weeks]);
 
-  if (!sectionsQueryIsSuccess) {
+  if (!weeksQueryIsSuccess) {
     return null;
   }
 
@@ -97,22 +96,20 @@ export default function AdminPage() {
             )}
           >
             <h2 className={cn("text-xl font-semibold text-gray-800")}>
-              Course Sections
+              Course Weeks
             </h2>
-            <NewSectionButton />
+            <NewWeekButton />
           </header>
           <div className={cn("flex-1 flex flex-col gap-6")}>
             {content.length > 0 ? (
-              content.map((section) => (
-                <CourseSection key={section.id} section={section} />
-              ))
+              content.map((week) => <CourseWeek key={week.id} week={week} />)
             ) : (
               <section
                 className={cn(
                   "flex items-center justify-center flex-1 text-gray-500",
                 )}
               >
-                <p className={cn("text-lg")}>No sections found.</p>
+                <p className={cn("text-lg")}>No weeks found.</p>
               </section>
             )}
           </div>

@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { verifyRequest } from "~/lib/auth";
 import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { BulkUpdateFlashcardsSchema } from "~/validators/section";
+import { BulkUpdateUserNotesSchema } from "~/validators/week";
 
 export async function PUT(
   request: NextRequest,
@@ -28,39 +28,40 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { flashcards, deletedFlashcards, newFlashcards } =
-      BulkUpdateFlashcardsSchema.parse(body);
+    const { notes, deletedNotes, newNotes } =
+      BulkUpdateUserNotesSchema.parse(body);
 
-    if (deletedFlashcards.length > 0) {
-      await prisma.flashcard.deleteMany({
+    console.log({ notes, deletedNotes, newNotes });
+
+    if (deletedNotes.length > 0) {
+      await prisma.userNote.deleteMany({
         where: {
           id: {
-            in: deletedFlashcards,
+            in: deletedNotes,
           },
         },
       });
     }
 
-    if (newFlashcards.length > 0) {
-      await prisma.flashcard.createMany({
-        data: newFlashcards.map(({ question, answer }) => ({
-          question,
-          answer,
-          sectionId: id,
+    if (newNotes.length > 0) {
+      await prisma.userNote.createMany({
+        data: newNotes.map(({ content }) => ({
+          content,
+          weekId: id,
+          userId: decodedUser.id,
         })),
       });
     }
 
-    if (flashcards.length > 0) {
+    if (notes.length > 0) {
       await Promise.all(
-        flashcards.map(({ id: flashcardId, question, answer }) =>
-          prisma.flashcard.update({
+        notes.map(({ id: noteId, content }) =>
+          prisma.userNote.update({
             where: {
-              id: flashcardId,
+              id: noteId,
             },
             data: {
-              question,
-              answer,
+              content,
             },
           }),
         ),
@@ -71,7 +72,7 @@ export async function PUT(
       {
         data: {},
         info: {
-          message: "Flashcards updated successfully!",
+          message: "User notes updated successfully!",
         },
       },
       {

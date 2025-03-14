@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { verifyRequest } from "~/lib/auth";
 import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { UpdateSectionSchema } from "~/validators/section";
+import { UpdateWeekSchema } from "~/validators/week";
 
 export async function PUT(
   request: NextRequest,
@@ -29,24 +29,24 @@ export async function PUT(
 
     const body = await request.json();
     const {
-      sectionOrder,
-      sectionTitle,
-      sectionDescription,
+      weekOrder,
+      weekTitle,
+      weekDescription,
       guideLabel,
       guideLink,
       flashcardsLabel,
       sampleTestLabel,
       finalTestLabel,
-    } = UpdateSectionSchema.parse(body);
+    } = UpdateWeekSchema.parse(body);
 
-    const section = await prisma.section.update({
+    const week = await prisma.week.update({
       where: {
         id,
       },
       data: {
-        sectionOrder,
-        sectionTitle,
-        sectionDescription,
+        weekOrder,
+        weekTitle,
+        weekDescription,
         guideLabel,
         guideLink,
         flashcardsLabel,
@@ -55,8 +55,8 @@ export async function PUT(
       },
       select: {
         id: true,
-        sectionTitle: true,
-        sectionDescription: true,
+        weekTitle: true,
+        weekDescription: true,
         guideLabel: true,
         guideLink: true,
         flashcardsLabel: true,
@@ -98,9 +98,9 @@ export async function PUT(
 
     return NextResponse.json(
       {
-        data: { section },
+        data: { week },
         info: {
-          message: "Section Updated Successfully!",
+          message: "Week Updated Successfully!",
         },
       },
       {
@@ -132,7 +132,7 @@ export async function DELETE(
       throw new BadResponse("ID is required!");
     }
 
-    const section = await prisma.section.delete({
+    const week = await prisma.week.delete({
       where: {
         id,
       },
@@ -143,15 +143,15 @@ export async function DELETE(
 
     console.log("id", id);
 
-    if (!section) {
-      throw new BadResponse("Section Not Found!");
+    if (!week) {
+      throw new BadResponse("Week Not Found!");
     }
 
     return NextResponse.json(
       {
         data: {},
         info: {
-          message: "Section Deleted Successfully!",
+          message: "Week Deleted Successfully!",
         },
       },
       {

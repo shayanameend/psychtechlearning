@@ -5,8 +5,8 @@ import type { default as zod } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
-import { EditIcon, Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Loader2Icon, PlusIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -32,110 +32,48 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { UpdateSectionSchema } from "~/validators/section";
+import { CreateWeekSchema } from "~/validators/week";
 
-interface Flashcard {
-  id: string;
-  question: string;
-  answer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+const CreateWeekFormSchema = CreateWeekSchema;
 
-interface TestQuestion {
-  id: string;
-  question: string;
-  answers: string[];
-  correctAnswer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface SectionUserNote {
-  id: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Section {
-  id: string;
-  sectionOrder: number;
-  sectionTitle: string;
-  sectionDescription: string;
-  guideLabel: string;
-  guideLink: string;
-  flashcardsLabel: string;
-  sampleTestLabel: string;
-  finalTestLabel: string;
-  flashcards: Flashcard[];
-  sampleTestQuestions: TestQuestion[];
-  finalTestQuestions: TestQuestion[];
-  sectionUserNotes: SectionUserNote[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const UpdateSectionFormSchema = UpdateSectionSchema;
-
-export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
+export function NewWeekButton() {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const updateSectionform = useForm<zod.infer<typeof UpdateSectionFormSchema>>({
-    resolver: zodResolver(UpdateSectionFormSchema),
+  const createWeekform = useForm<zod.infer<typeof CreateWeekFormSchema>>({
+    resolver: zodResolver(CreateWeekFormSchema),
     defaultValues: {
-      sectionOrder: section.sectionOrder,
-      sectionTitle: section.sectionTitle,
-      sectionDescription: section.sectionDescription,
-      guideLabel: section.guideLabel,
-      guideLink: section.guideLink,
-      flashcardsLabel: section.flashcardsLabel,
-      sampleTestLabel: section.sampleTestLabel,
-      finalTestLabel: section.finalTestLabel,
-      flashcards: section.flashcards,
-      sampleTestQuestions: section.sampleTestQuestions,
-      finalTestQuestions: section.finalTestQuestions,
+      weekOrder: 0,
+      weekTitle: "",
+      weekDescription: "",
+      guideLabel: "",
+      guideLink: "",
+      flashcardsLabel: "",
+      sampleTestLabel: "",
+      finalTestLabel: "",
+      flashcards: [],
+      sampleTestQuestions: [],
+      finalTestQuestions: [],
     },
   });
 
-  useEffect(() => {
-    updateSectionform.reset({
-      sectionOrder: section.sectionOrder,
-      sectionTitle: section.sectionTitle,
-      sectionDescription: section.sectionDescription,
-      guideLabel: section.guideLabel,
-      guideLink: section.guideLink,
-      flashcardsLabel: section.flashcardsLabel,
-      sampleTestLabel: section.sampleTestLabel,
-      finalTestLabel: section.finalTestLabel,
-      flashcards: section.flashcards,
-      sampleTestQuestions: section.sampleTestQuestions,
-      finalTestQuestions: section.finalTestQuestions,
-    });
-  }, [updateSectionform.reset, section]);
-
-  const updateSectionMutation = useMutation({
-    mutationFn: async (data: zod.infer<typeof UpdateSectionFormSchema>) => {
-      const response = await axios.put(
-        paths.api.sections.id.root({ id: section.id }),
-        data,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+  const createWeekMutation = useMutation({
+    mutationFn: async (data: zod.infer<typeof CreateWeekFormSchema>) => {
+      const response = await axios.post(paths.api.weeks.root(), data, {
+        headers: {
+          authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       return response.data;
     },
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["sections"] });
+      queryClient.invalidateQueries({ queryKey: ["weeks"] });
 
       setIsDialogOpen(false);
     },
@@ -145,14 +83,14 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
       }
     },
     onSettled: () => {
-      updateSectionform.reset();
+      createWeekform.reset();
     },
   });
 
-  const onUpdateSectionSubmit = async (
-    data: zod.infer<typeof UpdateSectionFormSchema>,
+  const onCreateWeekSubmit = async (
+    data: zod.infer<typeof CreateWeekFormSchema>,
   ) => {
-    updateSectionMutation.mutate(data);
+    createWeekMutation.mutate(data);
   };
 
   return (
@@ -163,27 +101,27 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
           size="sm"
           className={cn("flex items-center gap-2")}
         >
-          <EditIcon className={cn("w-4 h-4")} />
-          <span>Edit</span>
+          <PlusIcon className={cn("w-4 h-4")} />
+          <span>New Week</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[512px] lg:max-w-[768px]">
-        <Form {...updateSectionform}>
+        <Form {...createWeekform}>
           <form
-            onSubmit={updateSectionform.handleSubmit(onUpdateSectionSubmit)}
+            onSubmit={createWeekform.handleSubmit(onCreateWeekSubmit)}
             className={cn("flex flex-col gap-6")}
           >
             <DialogHeader>
-              <DialogTitle>Edit Section</DialogTitle>
+              <DialogTitle>New Week</DialogTitle>
             </DialogHeader>
             <main className={cn("flex flex-col gap-2")}>
               <div className={cn("flex gap-4")}>
                 <FormField
-                  control={updateSectionform.control}
-                  name="sectionOrder"
+                  control={createWeekform.control}
+                  name="weekOrder"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Section Order</FormLabel>
+                      <FormLabel>Week Order</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="1" type="text" />
                       </FormControl>
@@ -192,11 +130,11 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   )}
                 />
                 <FormField
-                  control={updateSectionform.control}
-                  name="sectionTitle"
+                  control={createWeekform.control}
+                  name="weekTitle"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Section Title</FormLabel>
+                      <FormLabel>Week Title</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -209,11 +147,11 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   )}
                 />
                 <FormField
-                  control={updateSectionform.control}
-                  name="sectionDescription"
+                  control={createWeekform.control}
+                  name="weekDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-8/12")}>
-                      <FormLabel>Section Description</FormLabel>
+                      <FormLabel>Week Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -228,7 +166,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="guideLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -245,7 +183,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   )}
                 />
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="guideLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -263,7 +201,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="flashcardsLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -280,7 +218,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   )}
                 />
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="flashcards"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -288,17 +226,16 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateSectionform.setValue(
+                            createWeekform.setValue(
                               "flashcards",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answer: `Answer ${index + 1}`,
                               })),
                             );
                           }}
-                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -310,7 +247,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="sampleTestLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -327,7 +264,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   )}
                 />
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="sampleTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -335,18 +272,22 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateSectionform.setValue(
+                            createWeekform.setValue(
                               "sampleTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answers: [
+                                  "Option 1",
+                                  "Option 2",
+                                  "Option 3",
+                                  "Option 4",
+                                ],
+                                correctAnswer: "Option 1",
                               })),
                             );
                           }}
-                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -358,7 +299,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="finalTestLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -375,7 +316,7 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                   )}
                 />
                 <FormField
-                  control={updateSectionform.control}
+                  control={createWeekform.control}
                   name="finalTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -383,18 +324,22 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateSectionform.setValue(
+                            createWeekform.setValue(
                               "finalTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answers: [
+                                  "Option 1",
+                                  "Option 2",
+                                  "Option 3",
+                                  "Option 4",
+                                ],
+                                correctAnswer: "Option 1",
                               })),
                             );
                           }}
-                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -407,12 +352,12 @@ export function EditSectionButton({ section }: Readonly<{ section: Section }>) {
             </main>
             <DialogFooter>
               <Button
-                disabled={updateSectionMutation.isPending}
+                disabled={createWeekMutation.isPending}
                 variant="outline"
                 size="sm"
                 type="submit"
               >
-                {updateSectionMutation.isPending && (
+                {createWeekMutation.isPending && (
                   <Loader2Icon className={cn("animate-spin")} />
                 )}
                 <span>Save</span>

@@ -5,8 +5,8 @@ import type { default as zod } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
-import { Loader2Icon, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { EditIcon, Loader2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -32,48 +32,110 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { CreateSectionSchema } from "~/validators/section";
+import { UpdateWeekSchema } from "~/validators/week";
 
-const CreateSectionFormSchema = CreateSectionSchema;
+interface Flashcard {
+  id: string;
+  question: string;
+  answer: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-export function NewSectionButton() {
+interface TestQuestion {
+  id: string;
+  question: string;
+  answers: string[];
+  correctAnswer: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface WeekUserNote {
+  id: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Week {
+  id: string;
+  weekOrder: number;
+  weekTitle: string;
+  weekDescription: string;
+  guideLabel: string;
+  guideLink: string;
+  flashcardsLabel: string;
+  sampleTestLabel: string;
+  finalTestLabel: string;
+  flashcards: Flashcard[];
+  sampleTestQuestions: TestQuestion[];
+  finalTestQuestions: TestQuestion[];
+  weekUserNotes: WeekUserNote[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const UpdateWeekFormSchema = UpdateWeekSchema;
+
+export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const createSectionform = useForm<zod.infer<typeof CreateSectionFormSchema>>({
-    resolver: zodResolver(CreateSectionFormSchema),
+  const updateWeekform = useForm<zod.infer<typeof UpdateWeekFormSchema>>({
+    resolver: zodResolver(UpdateWeekFormSchema),
     defaultValues: {
-      sectionOrder: 0,
-      sectionTitle: "",
-      sectionDescription: "",
-      guideLabel: "",
-      guideLink: "",
-      flashcardsLabel: "",
-      sampleTestLabel: "",
-      finalTestLabel: "",
-      flashcards: [],
-      sampleTestQuestions: [],
-      finalTestQuestions: [],
+      weekOrder: week.weekOrder,
+      weekTitle: week.weekTitle,
+      weekDescription: week.weekDescription,
+      guideLabel: week.guideLabel,
+      guideLink: week.guideLink,
+      flashcardsLabel: week.flashcardsLabel,
+      sampleTestLabel: week.sampleTestLabel,
+      finalTestLabel: week.finalTestLabel,
+      flashcards: week.flashcards,
+      sampleTestQuestions: week.sampleTestQuestions,
+      finalTestQuestions: week.finalTestQuestions,
     },
   });
 
-  const createSectionMutation = useMutation({
-    mutationFn: async (data: zod.infer<typeof CreateSectionFormSchema>) => {
-      const response = await axios.post(paths.api.sections.root(), data, {
-        headers: {
-          authorization: `Bearer ${token}`,
+  useEffect(() => {
+    updateWeekform.reset({
+      weekOrder: week.weekOrder,
+      weekTitle: week.weekTitle,
+      weekDescription: week.weekDescription,
+      guideLabel: week.guideLabel,
+      guideLink: week.guideLink,
+      flashcardsLabel: week.flashcardsLabel,
+      sampleTestLabel: week.sampleTestLabel,
+      finalTestLabel: week.finalTestLabel,
+      flashcards: week.flashcards,
+      sampleTestQuestions: week.sampleTestQuestions,
+      finalTestQuestions: week.finalTestQuestions,
+    });
+  }, [updateWeekform.reset, week]);
+
+  const updateWeekMutation = useMutation({
+    mutationFn: async (data: zod.infer<typeof UpdateWeekFormSchema>) => {
+      const response = await axios.put(
+        paths.api.weeks.id.root({ id: week.id }),
+        data,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       return response.data;
     },
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["sections"] });
+      queryClient.invalidateQueries({ queryKey: ["weeks"] });
 
       setIsDialogOpen(false);
     },
@@ -83,14 +145,14 @@ export function NewSectionButton() {
       }
     },
     onSettled: () => {
-      createSectionform.reset();
+      updateWeekform.reset();
     },
   });
 
-  const onCreateSectionSubmit = async (
-    data: zod.infer<typeof CreateSectionFormSchema>,
+  const onUpdateWeekSubmit = async (
+    data: zod.infer<typeof UpdateWeekFormSchema>,
   ) => {
-    createSectionMutation.mutate(data);
+    updateWeekMutation.mutate(data);
   };
 
   return (
@@ -101,27 +163,27 @@ export function NewSectionButton() {
           size="sm"
           className={cn("flex items-center gap-2")}
         >
-          <PlusIcon className={cn("w-4 h-4")} />
-          <span>New Section</span>
+          <EditIcon className={cn("w-4 h-4")} />
+          <span>Edit</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[512px] lg:max-w-[768px]">
-        <Form {...createSectionform}>
+        <Form {...updateWeekform}>
           <form
-            onSubmit={createSectionform.handleSubmit(onCreateSectionSubmit)}
+            onSubmit={updateWeekform.handleSubmit(onUpdateWeekSubmit)}
             className={cn("flex flex-col gap-6")}
           >
             <DialogHeader>
-              <DialogTitle>New Section</DialogTitle>
+              <DialogTitle>Edit Week</DialogTitle>
             </DialogHeader>
             <main className={cn("flex flex-col gap-2")}>
               <div className={cn("flex gap-4")}>
                 <FormField
-                  control={createSectionform.control}
-                  name="sectionOrder"
+                  control={updateWeekform.control}
+                  name="weekOrder"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Section Order</FormLabel>
+                      <FormLabel>Week Order</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="1" type="text" />
                       </FormControl>
@@ -130,11 +192,11 @@ export function NewSectionButton() {
                   )}
                 />
                 <FormField
-                  control={createSectionform.control}
-                  name="sectionTitle"
+                  control={updateWeekform.control}
+                  name="weekTitle"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Section Title</FormLabel>
+                      <FormLabel>Week Title</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -147,11 +209,11 @@ export function NewSectionButton() {
                   )}
                 />
                 <FormField
-                  control={createSectionform.control}
-                  name="sectionDescription"
+                  control={updateWeekform.control}
+                  name="weekDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-8/12")}>
-                      <FormLabel>Section Description</FormLabel>
+                      <FormLabel>Week Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -166,7 +228,7 @@ export function NewSectionButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="guideLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -183,7 +245,7 @@ export function NewSectionButton() {
                   )}
                 />
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="guideLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -201,7 +263,7 @@ export function NewSectionButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="flashcardsLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -218,7 +280,7 @@ export function NewSectionButton() {
                   )}
                 />
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="flashcards"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -226,16 +288,17 @@ export function NewSectionButton() {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            createSectionform.setValue(
+                            updateWeekform.setValue(
                               "flashcards",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map((_, index) => ({
-                                question: `Question ${index + 1}`,
-                                answer: `Answer ${index + 1}`,
+                              }).map(() => ({
+                                question: "",
+                                answer: "",
                               })),
                             );
                           }}
+                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -247,7 +310,7 @@ export function NewSectionButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="sampleTestLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -264,7 +327,7 @@ export function NewSectionButton() {
                   )}
                 />
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="sampleTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -272,22 +335,18 @@ export function NewSectionButton() {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            createSectionform.setValue(
+                            updateWeekform.setValue(
                               "sampleTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map((_, index) => ({
-                                question: `Question ${index + 1}`,
-                                answers: [
-                                  "Option 1",
-                                  "Option 2",
-                                  "Option 3",
-                                  "Option 4",
-                                ],
-                                correctAnswer: "Option 1",
+                              }).map(() => ({
+                                question: "",
+                                answers: ["", "", "", ""],
+                                correctAnswer: "",
                               })),
                             );
                           }}
+                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -299,7 +358,7 @@ export function NewSectionButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="finalTestLabel"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -316,7 +375,7 @@ export function NewSectionButton() {
                   )}
                 />
                 <FormField
-                  control={createSectionform.control}
+                  control={updateWeekform.control}
                   name="finalTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -324,22 +383,18 @@ export function NewSectionButton() {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            createSectionform.setValue(
+                            updateWeekform.setValue(
                               "finalTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map((_, index) => ({
-                                question: `Question ${index + 1}`,
-                                answers: [
-                                  "Option 1",
-                                  "Option 2",
-                                  "Option 3",
-                                  "Option 4",
-                                ],
-                                correctAnswer: "Option 1",
+                              }).map(() => ({
+                                question: "",
+                                answers: ["", "", "", ""],
+                                correctAnswer: "",
                               })),
                             );
                           }}
+                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -352,12 +407,12 @@ export function NewSectionButton() {
             </main>
             <DialogFooter>
               <Button
-                disabled={createSectionMutation.isPending}
+                disabled={updateWeekMutation.isPending}
                 variant="outline"
                 size="sm"
                 type="submit"
               >
-                {createSectionMutation.isPending && (
+                {updateWeekMutation.isPending && (
                   <Loader2Icon className={cn("animate-spin")} />
                 )}
                 <span>Save</span>

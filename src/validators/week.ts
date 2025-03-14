@@ -53,27 +53,27 @@ const UserNoteSchema = zod.object({
     }),
 });
 
-const CreateSectionSchema = zod.object({
-  sectionOrder: zod.coerce
+const CreateWeekSchema = zod.object({
+  weekOrder: zod.coerce
     .number({
-      message: "Section order is required!",
+      message: "Week order is required!",
     })
     .min(1, {
-      message: "Section order must be at least 1!",
+      message: "Week order must be at least 1!",
     }),
-  sectionTitle: zod
+  weekTitle: zod
     .string({
-      message: "Section title is required!",
+      message: "Week title is required!",
     })
     .min(3, {
-      message: "Section title must be at least 3 characters long!",
+      message: "Week title must be at least 3 characters long!",
     }),
-  sectionDescription: zod
+  weekDescription: zod
     .string({
-      message: "Section description is required!",
+      message: "Week description is required!",
     })
     .min(32, {
-      message: "Section description must be at least 32 characters long!",
+      message: "Week description must be at least 32 characters long!",
     }),
   guideLabel: zod
     .string({
@@ -217,11 +217,11 @@ const BulkUpdateUserNotesSchema = zod.object({
   newNotes: zod.array(UserNoteSchema),
 });
 
-const UpdateSectionSchema = CreateSectionSchema;
+const UpdateWeekSchema = CreateWeekSchema;
 
 export {
-  CreateSectionSchema,
-  UpdateSectionSchema,
+  CreateWeekSchema,
+  UpdateWeekSchema,
   BulkUpdateFlashcardsSchema,
   BulkUpdateSampleTestQuestionsSchema,
   BulkUpdateFinalTestQuestionsSchema,

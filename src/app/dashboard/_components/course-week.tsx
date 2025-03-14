@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { CourseSectionNotes } from "~/app/dashboard/_components/course-section-notes";
+import { CourseWeekNotes } from "~/app/dashboard/_components/course-week-notes";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -34,18 +34,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface SectionUserNote {
+interface WeekUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Section {
+interface Week {
   id: string;
-  sectionOrder: number;
-  sectionTitle: string;
-  sectionDescription: string;
+  weekOrder: number;
+  weekTitle: string;
+  weekDescription: string;
   guideLabel: string;
   guideLink: string;
   flashcardsLabel: string;
@@ -54,22 +54,22 @@ interface Section {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  sectionUserNotes: SectionUserNote[];
+  weekUserNotes: WeekUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export function CourseSection({
-  section,
+export function CourseWeek({
+  week,
   showNotes,
-}: Readonly<{ section: Section; showNotes: boolean }>) {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>(section.flashcards);
+}: Readonly<{ week: Week; showNotes: boolean }>) {
+  const [flashcards, setFlashcards] = useState<Flashcard[]>(week.flashcards);
   const [showFlashcard, setShowFlashcard] = useState(false);
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
     TestQuestion[]
-  >(section.sampleTestQuestions);
+  >(week.sampleTestQuestions);
   const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
-    section.finalTestQuestions,
+    week.finalTestQuestions,
   );
   const [sampleTestAnswers, setSampleTestAnswers] = useState<
     Array<string | null>
@@ -87,10 +87,10 @@ export function CourseSection({
   const [questionIndex, setQuestionIndex] = useState(0);
 
   useEffect(() => {
-    setFlashcards(section.flashcards);
-    setSampleTestQuestions(section.sampleTestQuestions);
-    setFinalTestQuestions(section.finalTestQuestions);
-  }, [section]);
+    setFlashcards(week.flashcards);
+    setSampleTestQuestions(week.sampleTestQuestions);
+    setFinalTestQuestions(week.finalTestQuestions);
+  }, [week]);
 
   useEffect(() => {
     setSampleTestAnswers(
@@ -133,20 +133,18 @@ export function CourseSection({
       >
         <article className={cn("space-y-2")}>
           <h3 className={cn("text-primary text-xl font-bold")}>
-            {section.sectionTitle}
+            {week.weekTitle}
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>
-            {section.sectionDescription}
-          </p>
+          <p className={cn("text-gray-600 text-sm")}>{week.weekDescription}</p>
         </article>
         <article className={cn("space-y-2")}>
           <h3 className={cn("text-foreground/70 text-lg font-medium")}>
             Study Guide
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>{section.guideLabel}</p>
+          <p className={cn("text-gray-600 text-sm")}>{week.guideLabel}</p>
           <Button
             onClick={() => {
-              window.open(section.guideLink, "_blank");
+              window.open(week.guideLink, "_blank");
             }}
             size="sm"
           >
@@ -157,9 +155,7 @@ export function CourseSection({
           <h3 className={cn("text-foreground/70 text-lg font-medium")}>
             Flashcards
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>
-            {section.flashcardsLabel}
-          </p>
+          <p className={cn("text-gray-600 text-sm")}>{week.flashcardsLabel}</p>
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -173,10 +169,10 @@ export function CourseSection({
             </DialogTrigger>
             <DialogContent className="max-w-[320px] lg:max-w-[512px]">
               <DialogHeader>
-                <DialogTitle>Flashcards: {section.sectionTitle}</DialogTitle>
+                <DialogTitle>Flashcards: {week.weekTitle}</DialogTitle>
                 <DialogDescription>
                   This is a set of flashcards to help you reinforce your
-                  learning on {section.sectionTitle}.
+                  learning on {week.weekTitle}.
                 </DialogDescription>
               </DialogHeader>
               {currentFlashcard ? (
@@ -239,9 +235,7 @@ export function CourseSection({
           <h3 className={cn("text-foreground/70 text-lg font-medium")}>
             Sample Questions
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>
-            {section.sampleTestLabel}
-          </p>
+          <p className={cn("text-gray-600 text-sm")}>{week.sampleTestLabel}</p>
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -255,13 +249,11 @@ export function CourseSection({
             </DialogTrigger>
             <DialogContent className="max-w-[320px] lg:max-w-[512px]">
               <DialogHeader>
-                <DialogTitle>
-                  Sample Questions: {section.sectionTitle}
-                </DialogTitle>
+                <DialogTitle>Sample Questions: {week.weekTitle}</DialogTitle>
                 <DialogDescription>
                   This is a set of sample questions to help you practice and
-                  reinforce your knowledge on {section.sectionTitle}. The
-                  questions consist of multiple choice questions.
+                  reinforce your knowledge on {week.weekTitle}. The questions
+                  consist of multiple choice questions.
                 </DialogDescription>
               </DialogHeader>
               <article className={cn("space-y-3")}>
@@ -365,9 +357,7 @@ export function CourseSection({
         </article>
         <article className={cn("space-y-2")}>
           <h3 className={cn("text-foreground/70 text-lg font-medium")}>Test</h3>
-          <p className={cn("text-gray-600 text-sm")}>
-            {section.finalTestLabel}
-          </p>
+          <p className={cn("text-gray-600 text-sm")}>{week.finalTestLabel}</p>
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -381,11 +371,11 @@ export function CourseSection({
             </DialogTrigger>
             <DialogContent className="max-w-[320px] lg:max-w-[512px]">
               <DialogHeader>
-                <DialogTitle>Test: {section.sectionTitle}</DialogTitle>
+                <DialogTitle>Test: {week.weekTitle}</DialogTitle>
                 <DialogDescription>
-                  This is a test to assess your knowledge on{" "}
-                  {section.sectionTitle}. The test consists of multiple choice
-                  questions and is timed. Good luck!
+                  This is a test to assess your knowledge on {week.weekTitle}.
+                  The test consists of multiple choice questions and is timed.
+                  Good luck!
                 </DialogDescription>
               </DialogHeader>
               <article className={cn("space-y-3")}>
@@ -488,7 +478,7 @@ export function CourseSection({
           </Dialog>
         </article>
       </div>
-      <CourseSectionNotes showNotes={showNotes} section={section} />
+      <CourseWeekNotes showNotes={showNotes} week={week} />
     </section>
   );
 }
