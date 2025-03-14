@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
+import {
+  BookOpen,
+  Check,
+  ClipboardList,
+  FileCheck,
+  FlipHorizontal,
+  RefreshCcw,
+  X,
+} from "lucide-react";
 import { CourseWeekNotes } from "~/app/(dashboard)/_components/course-week-notes";
 import { Button } from "~/components/ui/button";
 import {
@@ -15,10 +24,9 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
+import { Progress } from "~/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { cn } from "~/lib/utils";
-import { Check, X, RefreshCcw, BookOpen } from "lucide-react";
-import { Progress } from "~/components/ui/progress";
 
 interface Flashcard {
   id: string;
@@ -169,7 +177,12 @@ export function CourseWeek({
         <article
           className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
         >
-          <h3 className={cn("text-foreground/70 text-lg font-medium")}>
+          <h3
+            className={cn(
+              "text-foreground/70 text-lg font-medium flex items-center",
+            )}
+          >
+            <FlipHorizontal className="h-5 w-5 mr-2 text-primary/70" />
             Flashcards
           </h3>
           <p className={cn("text-gray-600 text-sm")}>{week.flashcardsLabel}</p>
@@ -318,7 +331,12 @@ export function CourseWeek({
         <article
           className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
         >
-          <h3 className={cn("text-foreground/70 text-lg font-medium")}>
+          <h3
+            className={cn(
+              "text-foreground/70 text-lg font-medium flex items-center",
+            )}
+          >
+            <ClipboardList className="h-5 w-5 mr-2 text-primary/70" />
             Sample Questions
           </h3>
           <p className={cn("text-gray-600 text-sm")}>{week.sampleTestLabel}</p>
@@ -513,7 +531,14 @@ export function CourseWeek({
         <article
           className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
         >
-          <h3 className={cn("text-foreground/70 text-lg font-medium")}>Test</h3>
+          <h3
+            className={cn(
+              "text-foreground/70 text-lg font-medium flex items-center",
+            )}
+          >
+            <FileCheck className="h-5 w-5 mr-2 text-primary/70" />
+            Test
+          </h3>
           <p className={cn("text-gray-600 text-sm")}>{week.finalTestLabel}</p>
           <Dialog>
             <DialogTrigger asChild>

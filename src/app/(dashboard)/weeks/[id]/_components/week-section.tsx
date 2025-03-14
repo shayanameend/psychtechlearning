@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { XIcon, AlertCircle, Calendar } from "lucide-react";
+import { AlertCircle, Calendar, XIcon } from "lucide-react";
 
 import { CourseWeek } from "~/app/(dashboard)/_components/course-week";
 import { Button } from "~/components/ui/button";
