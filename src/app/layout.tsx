@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
+import { Analytics } from "@vercel/analytics/next";
+
 import { Toaster } from "~/components/ui/sonner";
 
 import { QueryProvider } from "~/providers/query-provider";
@@ -20,6 +22,7 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
           <UserProvider>{children}</UserProvider>
           <Toaster />
         </QueryProvider>
+        <Analytics />
       </body>
     </html>
   );
