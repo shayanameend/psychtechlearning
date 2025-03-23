@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { AlertCircle, Calendar, XIcon } from "lucide-react";
+import { AlertCircle, BlocksIcon, XIcon } from "lucide-react";
 
 import { Block } from "~/app/(dashboard)/_components/block";
 import { Button } from "~/components/ui/button";
@@ -90,9 +90,9 @@ const ErrorState = ({ message }: { message: string }) => (
 const EmptyState = () => (
   <section className="flex-1 flex justify-center items-center">
     <div className="text-center p-10 rounded-lg bg-gray-50 shadow-sm">
-      <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <BlocksIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
       <p className="text-gray-600">
-        Block not found. Please go back to the calendar and try again.
+        Block not found. Please go back and try again.
       </p>
     </div>
   </section>

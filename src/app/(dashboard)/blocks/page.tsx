@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { AlertCircle, ArrowRightIcon, Calendar, Clock } from "lucide-react";
+import { AlertCircle, ArrowRightIcon, BlocksIcon, Clock } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -52,7 +52,7 @@ const ErrorState = ({ message }: { message: string }) => (
 const EmptyState = () => (
   <section className="flex-1 flex justify-center items-center">
     <div className="text-center p-10 rounded-lg bg-gray-50 shadow-sm">
-      <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <BlocksIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
       <p className="text-gray-600">
         No blocks available, Please check back later!
       </p>
@@ -122,7 +122,7 @@ export default function BlocksPage() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-primary" />
+                      <BlocksIcon className="h-4 w-4 text-primary" />
                       <span className="font-medium text-primary">
                         Block {block.blockOrder}
                       </span>
