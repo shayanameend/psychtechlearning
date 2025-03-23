@@ -38,11 +38,27 @@ export async function GET(
         blockDescription: true,
         guideLink: true,
         guideDescription: true,
-        audioLink: true,
-        audioDescription: true,
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,
+        weeks: {
+          select: {
+            id: true,
+            weekNumber: true,
+            title: true,
+            audios: {
+              select: {
+                id: true,
+                title: true,
+                audioLink: true,
+                createdAt: true,
+                updatedAt: true,
+              },            
+            }, 
+            createdAt: true,
+            updatedAt: true,
+          },        
+        },
         flashcards: {
           select: {
             id: true,
@@ -135,8 +151,6 @@ export async function PUT(
       blockDescription,
       guideLink,
       guideDescription,
-      audioLink,
-      audioDescription,
       flashcardsDescription,
       sampleTestDescription,
       finalTestDescription,
@@ -152,8 +166,6 @@ export async function PUT(
         blockDescription,
         guideLink,
         guideDescription,
-        audioLink,
-        audioDescription,
         flashcardsDescription,
         sampleTestDescription,
         finalTestDescription,
@@ -164,11 +176,27 @@ export async function PUT(
         blockDescription: true,
         guideLink: true,
         guideDescription: true,
-        audioLink: true,
-        audioDescription: true,
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,
+        weeks: {
+          select: {
+            id: true,
+            weekNumber: true,
+            title: true,
+            audios: {
+              select: {
+                id: true,
+                title: true,
+                audioLink: true,
+                createdAt: true,
+                updatedAt: true,
+              },            
+            }, 
+            createdAt: true,
+            updatedAt: true,
+          },        
+        },
         flashcards: {
           select: {
             id: true,

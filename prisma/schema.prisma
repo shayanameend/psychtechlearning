@@ -70,16 +70,43 @@ model Block {
   blockDescription      String
   guideLink             String
   guideDescription      String
-  audioLink             String
-  audioDescription      String
   flashcardsDescription String
   sampleTestDescription String
   finalTestDescription  String
 
+  weeks               Week[]
   flashcards          Flashcard[]
   sampleTestQuestions SampleTestQuestion[]
   finalTestQuestions  FinalTestQuestion[]
   blockUserNotes      UserNote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Week {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  weekNumber Int
+  title      String
+
+  blockId String @db.ObjectId
+  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+
+  audios Audio[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Audio {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  title     String
+  audioLink String
+
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
