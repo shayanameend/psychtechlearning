@@ -5,8 +5,8 @@ import type { default as zod } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
-import { EditIcon, Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Loader2Icon, PlusIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -32,116 +32,50 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { UpdateWeekSchema } from "~/validators/week";
+import { CreateCourseSchema } from "~/validators/course";
 
-interface Flashcard {
-  id: string;
-  question: string;
-  answer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+const CreateCourseFormSchema = CreateCourseSchema;
 
-interface TestQuestion {
-  id: string;
-  question: string;
-  answers: string[];
-  correctAnswer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface WeekUserNote {
-  id: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Week {
-  id: string;
-  weekOrder: number;
-  weekTitle: string;
-  weekDescription: string;
-  guideLink: string;
-  guideDescription: string;
-  audioLink: string;
-  audioDescription: string;
-  flashcardsDescription: string;
-  sampleTestDescription: string;
-  finalTestDescription: string;
-  flashcards: Flashcard[];
-  sampleTestQuestions: TestQuestion[];
-  finalTestQuestions: TestQuestion[];
-  weekUserNotes: WeekUserNote[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const UpdateWeekFormSchema = UpdateWeekSchema;
-
-export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
+export function NewCourseButton() {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const updateWeekform = useForm<zod.infer<typeof UpdateWeekFormSchema>>({
-    resolver: zodResolver(UpdateWeekFormSchema),
+  const createCourseform = useForm<zod.infer<typeof CreateCourseFormSchema>>({
+    resolver: zodResolver(CreateCourseFormSchema),
     defaultValues: {
-      weekOrder: week.weekOrder,
-      weekTitle: week.weekTitle,
-      weekDescription: week.weekDescription,
-      guideLink: week.guideLink,
-      guideDescription: week.guideDescription,
-      audioLink: week.audioLink,
-      audioDescription: week.audioDescription,
-      flashcardsDescription: week.flashcardsDescription,
-      sampleTestDescription: week.sampleTestDescription,
-      finalTestDescription: week.finalTestDescription,
-      flashcards: week.flashcards,
-      sampleTestQuestions: week.sampleTestQuestions,
-      finalTestQuestions: week.finalTestQuestions,
+      courseOrder: 0,
+      courseTitle: "",
+      courseDescription: "",
+      guideLink: "",
+      guideDescription: "",
+      audioLink: "",
+      audioDescription: "",
+      flashcardsDescription: "",
+      sampleTestDescription: "",
+      finalTestDescription: "",
+      flashcards: [],
+      sampleTestQuestions: [],
+      finalTestQuestions: [],
     },
   });
 
-  useEffect(() => {
-    updateWeekform.reset({
-      weekOrder: week.weekOrder,
-      weekTitle: week.weekTitle,
-      weekDescription: week.weekDescription,
-      guideLink: week.guideLink,
-      guideDescription: week.guideDescription,
-      audioLink: week.audioLink,
-      audioDescription: week.audioDescription,
-      flashcardsDescription: week.flashcardsDescription,
-      sampleTestDescription: week.sampleTestDescription,
-      finalTestDescription: week.finalTestDescription,
-      flashcards: week.flashcards,
-      sampleTestQuestions: week.sampleTestQuestions,
-      finalTestQuestions: week.finalTestQuestions,
-    });
-  }, [updateWeekform.reset, week]);
-
-  const updateWeekMutation = useMutation({
-    mutationFn: async (data: zod.infer<typeof UpdateWeekFormSchema>) => {
-      const response = await axios.put(
-        paths.api.weeks.id.root({ id: week.id }),
-        data,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+  const createCourseMutation = useMutation({
+    mutationFn: async (data: zod.infer<typeof CreateCourseFormSchema>) => {
+      const response = await axios.post(paths.api.courses.root(), data, {
+        headers: {
+          authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       return response.data;
     },
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["weeks"] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
 
       setIsDialogOpen(false);
     },
@@ -151,14 +85,14 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
       }
     },
     onSettled: () => {
-      updateWeekform.reset();
+      createCourseform.reset();
     },
   });
 
-  const onUpdateWeekSubmit = async (
-    data: zod.infer<typeof UpdateWeekFormSchema>,
+  const onCreateCourseSubmit = async (
+    data: zod.infer<typeof CreateCourseFormSchema>,
   ) => {
-    updateWeekMutation.mutate(data);
+    createCourseMutation.mutate(data);
   };
 
   return (
@@ -169,27 +103,27 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
           size="sm"
           className={cn("flex items-center gap-2")}
         >
-          <EditIcon className={cn("w-4 h-4")} />
-          <span>Edit</span>
+          <PlusIcon className={cn("w-4 h-4")} />
+          <span>New Course</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[512px] lg:max-w-[768px]">
-        <Form {...updateWeekform}>
+        <Form {...createCourseform}>
           <form
-            onSubmit={updateWeekform.handleSubmit(onUpdateWeekSubmit)}
+            onSubmit={createCourseform.handleSubmit(onCreateCourseSubmit)}
             className={cn("flex flex-col gap-6")}
           >
             <DialogHeader>
-              <DialogTitle>Edit Week</DialogTitle>
+              <DialogTitle>New Course</DialogTitle>
             </DialogHeader>
             <main className={cn("flex flex-col gap-2")}>
               <div className={cn("flex gap-4")}>
                 <FormField
-                  control={updateWeekform.control}
-                  name="weekOrder"
+                  control={createCourseform.control}
+                  name="courseOrder"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Week Order</FormLabel>
+                      <FormLabel>Course Order</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="1" type="text" />
                       </FormControl>
@@ -198,11 +132,11 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                   )}
                 />
                 <FormField
-                  control={updateWeekform.control}
-                  name="weekTitle"
+                  control={createCourseform.control}
+                  name="courseTitle"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Week Title</FormLabel>
+                      <FormLabel>Course Title</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -215,11 +149,11 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                   )}
                 />
                 <FormField
-                  control={updateWeekform.control}
-                  name="weekDescription"
+                  control={createCourseform.control}
+                  name="courseDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-8/12")}>
-                      <FormLabel>Week Description</FormLabel>
+                      <FormLabel>Course Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -234,7 +168,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="guideDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -251,7 +185,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                   )}
                 />
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="guideLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -269,7 +203,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="audioDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -277,7 +211,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Listen to the nursing science audio guide."
+                          placeholder="Listen to nursing science audio lectures."
                           className={cn("resize-none min-h-14")}
                         />
                       </FormControl>
@@ -286,7 +220,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                   )}
                 />
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="audioLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -304,7 +238,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="flashcardsDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -321,7 +255,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                   )}
                 />
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="flashcards"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -329,17 +263,16 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateWeekform.setValue(
+                            createCourseform.setValue(
                               "flashcards",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answer: `Answer ${index + 1}`,
                               })),
                             );
                           }}
-                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -351,7 +284,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="sampleTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -368,7 +301,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                   )}
                 />
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="sampleTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -376,18 +309,22 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateWeekform.setValue(
+                            createCourseform.setValue(
                               "sampleTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answers: [
+                                  "Option 1",
+                                  "Option 2",
+                                  "Option 3",
+                                  "Option 4",
+                                ],
+                                correctAnswer: "Option 1",
                               })),
                             );
                           }}
-                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -399,7 +336,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="finalTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -416,7 +353,7 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                   )}
                 />
                 <FormField
-                  control={updateWeekform.control}
+                  control={createCourseform.control}
                   name="finalTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -424,18 +361,22 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateWeekform.setValue(
+                            createCourseform.setValue(
                               "finalTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
+                              }).map((_, index) => ({
+                                question: `Question ${index + 1}`,
+                                answers: [
+                                  "Option 1",
+                                  "Option 2",
+                                  "Option 3",
+                                  "Option 4",
+                                ],
+                                correctAnswer: "Option 1",
                               })),
                             );
                           }}
-                          disabled={true}
                           value={field.value.length}
                           type="text"
                         />
@@ -448,12 +389,12 @@ export function EditWeekButton({ week }: Readonly<{ week: Week }>) {
             </main>
             <DialogFooter>
               <Button
-                disabled={updateWeekMutation.isPending}
+                disabled={createCourseMutation.isPending}
                 variant="outline"
                 size="sm"
                 type="submit"
               >
-                {updateWeekMutation.isPending && (
+                {createCourseMutation.isPending && (
                   <Loader2Icon className={cn("animate-spin")} />
                 )}
                 <span>Save</span>

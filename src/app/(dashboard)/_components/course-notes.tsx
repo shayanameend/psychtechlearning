@@ -32,18 +32,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface WeekUserNote {
+interface CourseUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Week {
+interface Course {
   id: string;
-  weekOrder: number;
-  weekTitle: string;
-  weekDescription: string;
+  courseOrder: number;
+  courseTitle: string;
+  courseDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -54,19 +54,19 @@ interface Week {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  weekUserNotes: WeekUserNote[];
+  courseUserNotes: CourseUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export function CourseWeekNotes({
-  week,
+export function CourseNotes({
+  course,
   showNotes,
-}: Readonly<{ week: Week; showNotes: boolean }>) {
-  const [notes, setNotes] = useState<WeekUserNote[]>(week.weekUserNotes);
+}: Readonly<{ course: Course; showNotes: boolean }>) {
+  const [notes, setNotes] = useState<CourseUserNote[]>(course.courseUserNotes);
   const [deletedNotes, setDeletedNotes] = useState<string[]>([]);
   const [newNotes, setNewNotes] = useState<
-    Omit<Omit<Omit<WeekUserNote, "updatedAt">, "createdAt">, "id">[]
+    Omit<Omit<Omit<CourseUserNote, "updatedAt">, "createdAt">, "id">[]
   >([]);
 
   const [isEditing, setIsEditing] = useState(-1);
@@ -76,8 +76,8 @@ export function CourseWeekNotes({
   const { token } = useUserContext();
 
   useEffect(() => {
-    setNotes(week.weekUserNotes);
-  }, [week.weekUserNotes]);
+    setNotes(course.courseUserNotes);
+  }, [course.courseUserNotes]);
 
   useEffect(() => {
     if (isEditing >= 0) {
@@ -91,21 +91,21 @@ export function CourseWeekNotes({
 
   const updateNotesMutation = useMutation({
     mutationFn: async ({
-      weekId,
+      courseId,
       notes,
       deletedNotes,
       newNotes,
     }: {
-      weekId: string;
-      notes: WeekUserNote[];
+      courseId: string;
+      notes: CourseUserNote[];
       deletedNotes: string[];
       newNotes: Omit<
-        Omit<Omit<WeekUserNote, "updatedAt">, "createdAt">,
+        Omit<Omit<CourseUserNote, "updatedAt">, "createdAt">,
         "id"
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.weeks.id.userNotes.bulk({ id: weekId }),
+        paths.api.courses.id.userNotes.bulk({ id: courseId }),
         {
           notes,
           deletedNotes,
@@ -122,7 +122,7 @@ export function CourseWeekNotes({
     },
     onSuccess: ({ info }) => {
       toast.success(info.message);
-      queryClient.invalidateQueries({ queryKey: ["weeks"] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
       setDeletedNotes([]);
       setNewNotes([]);
     },
@@ -171,7 +171,7 @@ export function CourseWeekNotes({
             <Button
               onClick={() => {
                 updateNotesMutation.mutate({
-                  weekId: week.id,
+                  courseId: course.id,
                   notes,
                   deletedNotes,
                   newNotes,
@@ -186,7 +186,7 @@ export function CourseWeekNotes({
           </div>
         </div>
         <p className={cn("text-gray-600 text-sm")}>
-          Here you can find the notes you've taken while studying this week.
+          Here you can find the notes you've taken while studying this course.
           (Max {MAX_NOTES} notes, each up to {MAX_NOTE_LENGTH} characters).
           These notes are personal to you and can help reinforce your learning.
           Feel free to add, edit, or delete any notes as you progress through

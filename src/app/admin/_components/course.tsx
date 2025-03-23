@@ -28,7 +28,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { EditWeekButton } from "./edit-week-button";
+import { EditCourseButton } from "./edit-course-button";
 
 interface Flashcard {
   id: string;
@@ -47,18 +47,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface WeekUserNote {
+interface CourseUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Week {
+interface Course {
   id: string;
-  weekOrder: number;
-  weekTitle: string;
-  weekDescription: string;
+  courseOrder: number;
+  courseTitle: string;
+  courseDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -69,7 +69,7 @@ interface Week {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  weekUserNotes: WeekUserNote[];
+  courseUserNotes: CourseUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -81,7 +81,7 @@ const truncateText = (text: string, maxLength: number) => {
   return `${text.substring(0, maxLength)}...`;
 };
 
-export function CourseWeek({ week }: Readonly<{ week: Week }>) {
+export function Course({ course }: Readonly<{ course: Course }>) {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
@@ -90,7 +90,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
   const [isSampleTestDialogOpen, setIsSampleTestDialogOpen] = useState(false);
   const [isFinalTestDialogOpen, setIsFinalTestDialogOpen] = useState(false);
 
-  const [flashcards, setFlashcards] = useState<Flashcard[]>(week.flashcards);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>(course.flashcards);
   const [deletedFlashcards, setDeletedFlashcards] = useState<string[]>([]);
   const [newFlashcards, setNewFlashcards] = useState<
     Omit<Omit<Omit<Flashcard, "updatedAt">, "createdAt">, "id">[]
@@ -98,7 +98,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
 
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
     TestQuestion[]
-  >(week.sampleTestQuestions);
+  >(course.sampleTestQuestions);
   const [deletedSampleTestQuestions, setDeletedSampleTestQuestions] = useState<
     string[]
   >([]);
@@ -107,7 +107,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
   >([]);
 
   const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
-    week.finalTestQuestions,
+    course.finalTestQuestions,
   );
   const [deletedFinalTestQuestions, setDeletedFinalTestQuestions] = useState<
     string[]
@@ -126,13 +126,13 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
   const [answers, setAnswers] = useState<string[]>(Array(4).fill(""));
 
   useEffect(() => {
-    setFlashcards(week.flashcards);
+    setFlashcards(course.flashcards);
     setDeletedFlashcards([]);
     setNewFlashcards([]);
-    setSampleTestQuestions(week.sampleTestQuestions);
+    setSampleTestQuestions(course.sampleTestQuestions);
     setDeletedSampleTestQuestions([]);
     setNewSampleTestQuestions([]);
-    setFinalTestQuestions(week.finalTestQuestions);
+    setFinalTestQuestions(course.finalTestQuestions);
     setDeletedFinalTestQuestions([]);
     setNewFinalTestQuestions([]);
     setQuestionIndex(0);
@@ -142,16 +142,16 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
     setIsQuestionEditing(-1);
     setIsCorrectAnswerEditing(-1);
     setIsAnswersEditing([-1, -1]);
-  }, [week]);
+  }, [course]);
 
   const updateFlashcardsMutation = useMutation({
     mutationFn: async ({
-      weekId,
+      courseId,
       flashcards,
       deletedFlashcards,
       newFlashcards,
     }: {
-      weekId: string;
+      courseId: string;
       flashcards: Flashcard[];
       deletedFlashcards: string[];
       newFlashcards: Omit<
@@ -160,7 +160,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.weeks.id.flashcards.bulk({ id: weekId }),
+        paths.api.courses.id.flashcards.bulk({ id: courseId }),
         {
           flashcards,
           deletedFlashcards,
@@ -178,7 +178,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["weeks"] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
 
       setDeletedFlashcards([]);
       setNewFlashcards([]);
@@ -202,12 +202,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
 
   const updateSampleTestQuestionsMutation = useMutation({
     mutationFn: async ({
-      weekId,
+      courseId,
       sampleTestQuestions,
       deletedSampleTestQuestions,
       newSampleTestQuestions,
     }: {
-      weekId: string;
+      courseId: string;
       sampleTestQuestions: TestQuestion[];
       deletedSampleTestQuestions: string[];
       newSampleTestQuestions: Omit<
@@ -216,7 +216,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.weeks.id.sampleTestQuestions.bulk({ id: weekId }),
+        paths.api.courses.id.sampleTestQuestions.bulk({ id: courseId }),
         {
           sampleTestQuestions,
           deletedSampleTestQuestions,
@@ -234,7 +234,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["weeks"] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
 
       setDeletedSampleTestQuestions([]);
       setNewSampleTestQuestions([]);
@@ -258,12 +258,12 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
 
   const updateFinalTestQuestionsMutation = useMutation({
     mutationFn: async ({
-      weekId,
+      courseId,
       finalTestQuestions,
       deletedFinalTestQuestions,
       newFinalTestQuestions,
     }: {
-      weekId: string;
+      courseId: string;
       finalTestQuestions: TestQuestion[];
       deletedFinalTestQuestions: string[];
       newFinalTestQuestions: Omit<
@@ -272,7 +272,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.weeks.id.finalTestQuestions.bulk({ id: weekId }),
+        paths.api.courses.id.finalTestQuestions.bulk({ id: courseId }),
         {
           finalTestQuestions,
           deletedFinalTestQuestions,
@@ -290,7 +290,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["weeks"] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
 
       setDeletedFinalTestQuestions([]);
       setNewFinalTestQuestions([]);
@@ -312,10 +312,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
     },
   });
 
-  const deleteWeekMutation = useMutation({
-    mutationFn: async (weekId: string) => {
+  const deleteCourseMutation = useMutation({
+    mutationFn: async (courseId: string) => {
       const response = await axios.delete(
-        paths.api.weeks.id.root({ id: weekId }),
+        paths.api.courses.id.root({ id: courseId }),
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -328,7 +328,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["weeks"] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -339,7 +339,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
 
   return (
     <section
-      key={week.id}
+      key={course.id}
       className={cn(
         "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm",
       )}
@@ -350,13 +350,13 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
         )}
       >
         <h3 className={cn("text-lg font-semibold text-gray-800")}>
-          {week.weekOrder}. {week.weekTitle}
+          {course.courseOrder}. {course.courseTitle}
         </h3>
         <div className={cn("flex gap-2")}>
-          <EditWeekButton week={week} />
+          <EditCourseButton course={course} />
           <Button
             onClick={() => {
-              deleteWeekMutation.mutate(week.id);
+              deleteCourseMutation.mutate(course.id);
             }}
             variant="outline"
             size="icon"
@@ -371,13 +371,15 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
       <article className={cn("flex flex-col gap-4")}>
         <div className={cn("flex flex-col gap-2")}>
           <Label className={cn("font-bold")}>Description</Label>
-          <p className={cn("text-sm text-gray-600")}>{week.weekDescription}</p>
+          <p className={cn("text-sm text-gray-600")}>
+            {course.courseDescription}
+          </p>
         </div>
         <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Flashcards</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {truncateText(week.flashcardsDescription, 150)}
+              {truncateText(course.flashcardsDescription, 150)}
             </p>
           </div>
           <div>
@@ -401,10 +403,10 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
                 <DialogHeader>
-                  <DialogTitle>Flashcards: {week.weekTitle}</DialogTitle>
+                  <DialogTitle>Flashcards: {course.courseTitle}</DialogTitle>
                   <DialogDescription>
                     This is a set of flashcards to help you reinforce your
-                    learning on {week.weekTitle}.
+                    learning on {course.courseTitle}.
                   </DialogDescription>
                 </DialogHeader>
                 <article className={cn("space-y-2")}>
@@ -555,7 +557,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                     <Button
                       onClick={() => {
                         updateFlashcardsMutation.mutate({
-                          weekId: week.id,
+                          courseId: course.id,
                           flashcards,
                           deletedFlashcards,
                           newFlashcards,
@@ -687,7 +689,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Sample Test</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {truncateText(week.sampleTestDescription, 150)}
+              {truncateText(course.sampleTestDescription, 150)}
             </p>
           </div>
           <div>
@@ -711,11 +713,13 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
                 <DialogHeader>
-                  <DialogTitle>Sample Questions: {week.weekTitle}</DialogTitle>
+                  <DialogTitle>
+                    Sample Questions: {course.courseTitle}
+                  </DialogTitle>
                   <DialogDescription>
                     This is a set of sample questions to help you practice and
-                    reinforce your knowledge on {week.weekTitle}. The questions
-                    consist of multiple choice questions.
+                    reinforce your knowledge on {course.courseTitle}. The
+                    questions consist of multiple choice questions.
                   </DialogDescription>
                 </DialogHeader>
                 <article className={cn("space-y-3")}>
@@ -936,7 +940,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                     <Button
                       onClick={() => {
                         updateSampleTestQuestionsMutation.mutate({
-                          weekId: week.id,
+                          courseId: course.id,
                           sampleTestQuestions,
                           deletedSampleTestQuestions,
                           newSampleTestQuestions,
@@ -1084,7 +1088,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Final Test</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {truncateText(week.finalTestDescription, 150)}
+              {truncateText(course.finalTestDescription, 150)}
             </p>
           </div>
           <div>
@@ -1108,11 +1112,13 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
                 <DialogHeader>
-                  <DialogTitle>Final Questions: {week.weekTitle}</DialogTitle>
+                  <DialogTitle>
+                    Final Questions: {course.courseTitle}
+                  </DialogTitle>
                   <DialogDescription>
                     This is a set of final questions to help you practice and
-                    reinforce your knowledge on {week.weekTitle}. The questions
-                    consist of multiple choice questions.
+                    reinforce your knowledge on {course.courseTitle}. The
+                    questions consist of multiple choice questions.
                   </DialogDescription>
                 </DialogHeader>
                 <article className={cn("space-y-3")}>
@@ -1333,7 +1339,7 @@ export function CourseWeek({ week }: Readonly<{ week: Week }>) {
                     <Button
                       onClick={() => {
                         updateFinalTestQuestionsMutation.mutate({
-                          weekId: week.id,
+                          courseId: course.id,
                           finalTestQuestions,
                           deletedFinalTestQuestions,
                           newFinalTestQuestions,

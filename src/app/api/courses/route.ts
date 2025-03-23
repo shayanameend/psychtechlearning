@@ -3,14 +3,11 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { verifyRequest } from "~/lib/auth";
-import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
+import { UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { UpdateWeekSchema } from "~/validators/week";
+import { CreateCourseSchema } from "~/validators/course";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(request: NextRequest) {
   try {
     const decodedUser = await verifyRequest({
       request,
@@ -21,21 +18,15 @@ export async function GET(
       throw new UnauthorizedResponse("Unauthorized!");
     }
 
-    const { id } = await params;
-
-    if (!id) {
-      throw new BadResponse("ID is required!");
-    }
-
-    const week = await prisma.week.findUnique({
-      where: {
-        id,
+    const courses = await prisma.course.findMany({
+      orderBy: {
+        courseOrder: "asc",
       },
       select: {
         id: true,
-        weekOrder: true,
-        weekTitle: true,
-        weekDescription: true,
+        courseOrder: true,
+        courseTitle: true,
+        courseDescription: true,
         guideLink: true,
         guideDescription: true,
         audioLink: true,
@@ -72,7 +63,7 @@ export async function GET(
             updatedAt: true,
           },
         },
-        weekUserNotes: {
+        courseUserNotes: {
           where: {
             userId: decodedUser.id,
           },
@@ -88,15 +79,11 @@ export async function GET(
       },
     });
 
-    if (!week) {
-      throw new BadResponse("Week Not Found!");
-    }
-
     return NextResponse.json(
       {
-        data: { week },
+        data: { courses },
         info: {
-          message: "Week Fetched Successfully!",
+          message: "Courses Fetched Successfully!",
         },
       },
       {
@@ -108,10 +95,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: NextRequest) {
   try {
     const decodedUser = await verifyRequest({
       request,
@@ -122,53 +106,62 @@ export async function PUT(
       throw new UnauthorizedResponse("Unauthorized!");
     }
 
-    const { id } = await params;
-
-    if (!id) {
-      throw new BadResponse("ID is required!");
-    }
-
     const body = await request.json();
     const {
-      weekOrder,
-      weekTitle,
-      weekDescription,
+      courseOrder,
+      courseTitle,
+      courseDescription,
       guideLink,
       guideDescription,
       audioLink,
       audioDescription,
       flashcardsDescription,
+      flashcards,
       sampleTestDescription,
+      sampleTestQuestions,
       finalTestDescription,
-    } = UpdateWeekSchema.parse(body);
+      finalTestQuestions,
+    } = CreateCourseSchema.parse(body);
 
-    const week = await prisma.week.update({
-      where: {
-        id,
-      },
+    const course = await prisma.course.create({
       data: {
-        weekOrder,
-        weekTitle,
-        weekDescription,
+        courseOrder,
+        courseTitle,
+        courseDescription,
         guideLink,
         guideDescription,
         audioLink,
         audioDescription,
         flashcardsDescription,
+        flashcards: {
+          createMany: {
+            data: flashcards,
+          },
+        },
         sampleTestDescription,
+        sampleTestQuestions: {
+          createMany: {
+            data: sampleTestQuestions,
+          },
+        },
         finalTestDescription,
+        finalTestQuestions: {
+          createMany: {
+            data: finalTestQuestions,
+          },
+        },
       },
       select: {
         id: true,
-        weekTitle: true,
-        weekDescription: true,
-        guideLink: true,
+        courseTitle: true,
+        courseDescription: true,
         guideDescription: true,
-        audioLink: true,
-        audioDescription: true,
+        guideLink: true,
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,
+        audioLink: true,
+        audioDescription: true,
         flashcards: {
           select: {
             id: true,
@@ -203,68 +196,15 @@ export async function PUT(
       },
     });
 
-    if (!week) {
-      throw new BadResponse("Week Not Found!");
-    }
-
     return NextResponse.json(
       {
-        data: { week },
+        data: { course },
         info: {
-          message: "Week Updated Successfully!",
+          message: "Course Created Successfully!",
         },
       },
       {
-        status: 200,
-      },
-    );
-  } catch (error) {
-    return handleErrors({ error });
-  }
-}
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const decodedUser = await verifyRequest({
-      request,
-      isVerified: true,
-    });
-
-    if (!decodedUser) {
-      throw new UnauthorizedResponse("Unauthorized!");
-    }
-
-    const { id } = await params;
-
-    if (!id) {
-      throw new BadResponse("ID is required!");
-    }
-
-    const week = await prisma.week.delete({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!week) {
-      throw new BadResponse("Week Not Found!");
-    }
-
-    return NextResponse.json(
-      {
-        data: {},
-        info: {
-          message: "Week Deleted Successfully!",
-        },
-      },
-      {
-        status: 200,
+        status: 201,
       },
     );
   } catch (error) {

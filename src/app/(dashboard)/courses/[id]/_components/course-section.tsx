@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { AlertCircle, Calendar, XIcon } from "lucide-react";
 
-import { CourseWeek } from "~/app/(dashboard)/_components/course-week";
+import { Course } from "~/app/(dashboard)/_components/course";
 import { Button } from "~/components/ui/button";
 import { Steps } from "~/components/ui/steps";
 import { cn } from "~/lib/utils";
@@ -30,18 +30,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface WeekUserNote {
+interface CourseUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Week {
+interface Course {
   id: string;
-  weekOrder: number;
-  weekTitle: string;
-  weekDescription: string;
+  courseOrder: number;
+  courseTitle: string;
+  courseDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -52,7 +52,7 @@ interface Week {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  weekUserNotes: WeekUserNote[];
+  courseUserNotes: CourseUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -92,13 +92,13 @@ const EmptyState = () => (
     <div className="text-center p-10 rounded-lg bg-gray-50 shadow-sm">
       <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
       <p className="text-gray-600">
-        Week not found. Please go back to the calendar and try again.
+        Course not found. Please go back to the calendar and try again.
       </p>
     </div>
   </section>
 );
 
-export function WeekSection({
+export function CourseSection({
   id,
   total,
   on,
@@ -107,32 +107,32 @@ export function WeekSection({
   total: number;
   on: number;
 }) {
-  const [content, setContent] = useState<Week | null>(null);
+  const [content, setContent] = useState<Course | null>(null);
   const [showNotes, setShowNotes] = useState(false);
 
   const { token } = useUserContext();
 
   const {
-    data: weeksQueryResult,
+    data: coursesQueryResult,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["weeks", id],
+    queryKey: ["courses", id],
     queryFn: async () => {
-      const response = await axios.get(paths.api.weeks.id.root({ id }), {
+      const response = await axios.get(paths.api.courses.id.root({ id }), {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
 
-      return response.data as { data: { week: Week } };
+      return response.data as { data: { course: Course } };
     },
   });
 
   useEffect(() => {
-    setContent(weeksQueryResult?.data.week ?? null);
-  }, [weeksQueryResult?.data.week]);
+    setContent(coursesQueryResult?.data.course ?? null);
+  }, [coursesQueryResult?.data.course]);
 
   const steps = Array.from({ length: total }, (_, index) => index + 1);
 
@@ -152,11 +152,11 @@ export function WeekSection({
           ) : isError ? (
             <ErrorState
               message={
-                (error as Error)?.message || "Failed to load week content"
+                (error as Error)?.message || "Failed to load course content"
               }
             />
           ) : content ? (
-            <CourseWeek week={content} showNotes={showNotes} />
+            <Course course={content} showNotes={showNotes} />
           ) : (
             <EmptyState />
           )}

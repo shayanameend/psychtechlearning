@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   BookOpen,
@@ -9,14 +9,14 @@ import {
   ClipboardList,
   FileCheck,
   FlipHorizontal,
-  RefreshCcw,
-  X,
-  Volume2,
   Pause,
   Play,
+  RefreshCcw,
+  Volume2,
   VolumeX,
+  X,
 } from "lucide-react";
-import { CourseWeekNotes } from "~/app/(dashboard)/_components/course-week-notes";
+import { CourseNotes } from "~/app/(dashboard)/_components/course-notes";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -49,18 +49,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface WeekUserNote {
+interface CourseUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Week {
+interface Course {
   id: string;
-  weekOrder: number;
-  weekTitle: string;
-  weekDescription: string;
+  courseOrder: number;
+  courseTitle: string;
+  courseDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -71,22 +71,22 @@ interface Week {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  weekUserNotes: WeekUserNote[];
+  courseUserNotes: CourseUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export function CourseWeek({
-  week,
+export function Course({
+  course,
   showNotes,
-}: Readonly<{ week: Week; showNotes: boolean }>) {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>(week.flashcards);
+}: Readonly<{ course: Course; showNotes: boolean }>) {
+  const [flashcards, setFlashcards] = useState<Flashcard[]>(course.flashcards);
   const [showFlashcard, setShowFlashcard] = useState(false);
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
     TestQuestion[]
-  >(week.sampleTestQuestions);
+  >(course.sampleTestQuestions);
   const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
-    week.finalTestQuestions,
+    course.finalTestQuestions,
   );
   const [sampleTestAnswers, setSampleTestAnswers] = useState<
     Array<string | null>
@@ -110,10 +110,10 @@ export function CourseWeek({
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    setFlashcards(week.flashcards);
-    setSampleTestQuestions(week.sampleTestQuestions);
-    setFinalTestQuestions(week.finalTestQuestions);
-  }, [week]);
+    setFlashcards(course.flashcards);
+    setSampleTestQuestions(course.sampleTestQuestions);
+    setFinalTestQuestions(course.finalTestQuestions);
+  }, [course]);
 
   useEffect(() => {
     setSampleTestAnswers(
@@ -219,10 +219,10 @@ export function CourseWeek({
           className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
         >
           <h3 className={cn("text-primary text-xl font-bold")}>
-            {week.weekTitle}
+            {course.courseTitle}
           </h3>
           <p className={cn("text-gray-600 text-sm leading-relaxed")}>
-            {week.weekDescription}
+            {course.courseDescription}
           </p>
         </article>
         <article
@@ -236,12 +236,14 @@ export function CourseWeek({
             <Volume2 className="h-5 w-5 mr-2 text-primary/70" />
             Summary
           </h3>
-          <p className={cn("text-gray-600 text-sm")}>{week.audioDescription}</p>
+          <p className={cn("text-gray-600 text-sm")}>
+            {course.audioDescription}
+          </p>
           <div className="bg-white/80 rounded-lg p-3 shadow-sm">
             {/* biome-ignore lint/a11y/useMediaCaption: <> */}
             <audio
               ref={audioRef}
-              src={week.audioLink}
+              src={course.audioLink}
               onTimeUpdate={handleTimeUpdate}
               onLoadedMetadata={handleLoadedMetadata}
               onEnded={handleAudioEnd}
@@ -308,11 +310,11 @@ export function CourseWeek({
               Study Guide
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {week.guideDescription}
+              {course.guideDescription}
             </p>
             <Button
               onClick={() => {
-                window.open(week.guideLink, "_blank");
+                window.open(course.guideLink, "_blank");
               }}
               size="sm"
               className="transition-all hover:scale-105 mt-auto w-full sm:w-auto"
@@ -335,7 +337,7 @@ export function CourseWeek({
               Flashcards
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {week.flashcardsDescription}
+              {course.flashcardsDescription}
             </p>
             <Dialog>
               <DialogTrigger asChild>
@@ -353,11 +355,11 @@ export function CourseWeek({
               <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle className="text-primary">
-                    Flashcards: {week.weekTitle}
+                    Flashcards: {course.courseTitle}
                   </DialogTitle>
                   <DialogDescription>
                     This is a set of flashcards to help you reinforce your
-                    learning on {week.weekTitle}.
+                    learning on {course.courseTitle}.
                   </DialogDescription>
                 </DialogHeader>
                 {currentFlashcard ? (
@@ -494,7 +496,7 @@ export function CourseWeek({
               Sample Questions
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {week.sampleTestDescription}
+              {course.sampleTestDescription}
             </p>
             <Dialog>
               <DialogTrigger asChild>
@@ -511,12 +513,12 @@ export function CourseWeek({
               <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle className="text-primary">
-                    Sample Questions: {week.weekTitle}
+                    Sample Questions: {course.courseTitle}
                   </DialogTitle>
                   <DialogDescription>
                     This is a set of sample questions to help you practice and
-                    reinforce your knowledge on {week.weekTitle}. The questions
-                    consist of multiple choice questions.
+                    reinforce your knowledge on {course.courseTitle}. The
+                    questions consist of multiple choice questions.
                   </DialogDescription>
                 </DialogHeader>
                 <article className={cn("space-y-3")}>
@@ -700,7 +702,7 @@ export function CourseWeek({
               Test
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {week.finalTestDescription}
+              {course.finalTestDescription}
             </p>
             <Dialog>
               <DialogTrigger asChild>
@@ -717,12 +719,12 @@ export function CourseWeek({
               <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle className="text-primary">
-                    Test: {week.weekTitle}
+                    Test: {course.courseTitle}
                   </DialogTitle>
                   <DialogDescription>
-                    This is a test to assess your knowledge on {week.weekTitle}.
-                    The test consists of multiple choice questions and is timed.
-                    Good luck!
+                    This is a test to assess your knowledge on{" "}
+                    {course.courseTitle}. The test consists of multiple choice
+                    questions and is timed. Good luck!
                   </DialogDescription>
                 </DialogHeader>
                 <article className={cn("space-y-3")}>
@@ -897,7 +899,7 @@ export function CourseWeek({
           </article>
         </div>
       </div>
-      <CourseWeekNotes showNotes={showNotes} week={week} />
+      <CourseNotes showNotes={showNotes} course={course} />
     </section>
   );
 }

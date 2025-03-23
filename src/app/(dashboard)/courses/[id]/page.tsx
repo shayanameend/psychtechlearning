@@ -1,6 +1,6 @@
-import { WeekSection } from "./_components/week-section";
+import { CourseSection } from "./_components/course-section";
 
-export default async function WeekPage({
+export default async function CoursePage({
   params,
   searchParams,
 }: {
@@ -12,7 +12,7 @@ export default async function WeekPage({
 
   return (
     <>
-      <WeekSection id={id} total={Number(total)} on={Number(on)} />
+      <CourseSection id={id} total={Number(total)} on={Number(on)} />
     </>
   );
 }
