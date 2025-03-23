@@ -62,12 +62,12 @@ model Profile {
   updatedAt DateTime @updatedAt
 }
 
-model Course {
+model Block {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  courseOrder           Int
-  courseTitle           String
-  courseDescription     String
+  blockOrder            Int
+  blockTitle            String
+  blockDescription      String
   guideLink             String
   guideDescription      String
   audioLink             String
@@ -79,7 +79,7 @@ model Course {
   flashcards          Flashcard[]
   sampleTestQuestions SampleTestQuestion[]
   finalTestQuestions  FinalTestQuestion[]
-  courseUserNotes     UserNote[]
+  blockUserNotes      UserNote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -91,8 +91,8 @@ model Flashcard {
   question String
   answer   String
 
-  courseId String @db.ObjectId
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  blockId String @db.ObjectId
+  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -105,8 +105,8 @@ model SampleTestQuestion {
   answers       String[]
   correctAnswer String
 
-  courseId String @db.ObjectId
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  blockId String @db.ObjectId
+  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -119,8 +119,8 @@ model FinalTestQuestion {
   answers       String[]
   correctAnswer String
 
-  courseId String @db.ObjectId
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  blockId String @db.ObjectId
+  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -131,10 +131,10 @@ model UserNote {
 
   content String
 
-  courseId String @db.ObjectId
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  userId   String @db.ObjectId
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blockId String @db.ObjectId
+  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  userId  String @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

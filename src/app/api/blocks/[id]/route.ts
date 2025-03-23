@@ -3,11 +3,14 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { verifyRequest } from "~/lib/auth";
-import { UnauthorizedResponse, handleErrors } from "~/lib/error";
+import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { CreateCourseSchema } from "~/validators/course";
+import { UpdateBlockSchema } from "~/validators/block";
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     const decodedUser = await verifyRequest({
       request,
@@ -18,15 +21,21 @@ export async function GET(request: NextRequest) {
       throw new UnauthorizedResponse("Unauthorized!");
     }
 
-    const courses = await prisma.course.findMany({
-      orderBy: {
-        courseOrder: "asc",
+    const { id } = await params;
+
+    if (!id) {
+      throw new BadResponse("ID is required!");
+    }
+
+    const block = await prisma.block.findUnique({
+      where: {
+        id,
       },
       select: {
         id: true,
-        courseOrder: true,
-        courseTitle: true,
-        courseDescription: true,
+        blockOrder: true,
+        blockTitle: true,
+        blockDescription: true,
         guideLink: true,
         guideDescription: true,
         audioLink: true,
@@ -63,7 +72,7 @@ export async function GET(request: NextRequest) {
             updatedAt: true,
           },
         },
-        courseUserNotes: {
+        blockUserNotes: {
           where: {
             userId: decodedUser.id,
           },
@@ -79,11 +88,15 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    if (!block) {
+      throw new BadResponse("Block Not Found!");
+    }
+
     return NextResponse.json(
       {
-        data: { courses },
+        data: { block },
         info: {
-          message: "Courses Fetched Successfully!",
+          message: "Block Fetched Successfully!",
         },
       },
       {
@@ -95,7 +108,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     const decodedUser = await verifyRequest({
       request,
@@ -106,62 +122,53 @@ export async function POST(request: NextRequest) {
       throw new UnauthorizedResponse("Unauthorized!");
     }
 
+    const { id } = await params;
+
+    if (!id) {
+      throw new BadResponse("ID is required!");
+    }
+
     const body = await request.json();
     const {
-      courseOrder,
-      courseTitle,
-      courseDescription,
+      blockOrder,
+      blockTitle,
+      blockDescription,
       guideLink,
       guideDescription,
       audioLink,
       audioDescription,
       flashcardsDescription,
-      flashcards,
       sampleTestDescription,
-      sampleTestQuestions,
       finalTestDescription,
-      finalTestQuestions,
-    } = CreateCourseSchema.parse(body);
+    } = UpdateBlockSchema.parse(body);
 
-    const course = await prisma.course.create({
+    const block = await prisma.block.update({
+      where: {
+        id,
+      },
       data: {
-        courseOrder,
-        courseTitle,
-        courseDescription,
+        blockOrder,
+        blockTitle,
+        blockDescription,
         guideLink,
         guideDescription,
         audioLink,
         audioDescription,
         flashcardsDescription,
-        flashcards: {
-          createMany: {
-            data: flashcards,
-          },
-        },
         sampleTestDescription,
-        sampleTestQuestions: {
-          createMany: {
-            data: sampleTestQuestions,
-          },
-        },
         finalTestDescription,
-        finalTestQuestions: {
-          createMany: {
-            data: finalTestQuestions,
-          },
-        },
       },
       select: {
         id: true,
-        courseTitle: true,
-        courseDescription: true,
-        guideDescription: true,
+        blockTitle: true,
+        blockDescription: true,
         guideLink: true,
+        guideDescription: true,
+        audioLink: true,
+        audioDescription: true,
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,
-        audioLink: true,
-        audioDescription: true,
         flashcards: {
           select: {
             id: true,
@@ -196,15 +203,68 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    if (!block) {
+      throw new BadResponse("Block Not Found!");
+    }
+
     return NextResponse.json(
       {
-        data: { course },
+        data: { block },
         info: {
-          message: "Course Created Successfully!",
+          message: "Block Updated Successfully!",
         },
       },
       {
-        status: 201,
+        status: 200,
+      },
+    );
+  } catch (error) {
+    return handleErrors({ error });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const decodedUser = await verifyRequest({
+      request,
+      isVerified: true,
+    });
+
+    if (!decodedUser) {
+      throw new UnauthorizedResponse("Unauthorized!");
+    }
+
+    const { id } = await params;
+
+    if (!id) {
+      throw new BadResponse("ID is required!");
+    }
+
+    const block = await prisma.block.delete({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!block) {
+      throw new BadResponse("Block Not Found!");
+    }
+
+    return NextResponse.json(
+      {
+        data: {},
+        info: {
+          message: "Block Deleted Successfully!",
+        },
+      },
+      {
+        status: 200,
       },
     );
   } catch (error) {

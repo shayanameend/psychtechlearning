@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { Course } from "./_components/course";
-import { NewCourseButton } from "./_components/new-course-button";
+import { Block } from "./_components/block";
+import { NewBlockButton } from "./_components/new-block-button";
 
 interface Flashcard {
   id: string;
@@ -27,18 +27,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface CourseUserNote {
+interface BlockUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Course {
+interface Block {
   id: string;
-  courseOrder: number;
-  courseTitle: string;
-  courseDescription: string;
+  blockOrder: number;
+  blockTitle: string;
+  blockDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -49,7 +49,7 @@ interface Course {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  courseUserNotes: CourseUserNote[];
+  blockUserNotes: BlockUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,29 +57,30 @@ interface Course {
 export default function AdminPage() {
   const { token } = useUserContext();
 
-  const { data: coursesQueryResult, isSuccess: coursesQueryIsSuccess } =
-    useQuery({
-      queryKey: ["courses"],
+  const { data: blocksQueryResult, isSuccess: blocksQueryIsSuccess } = useQuery(
+    {
+      queryKey: ["blocks"],
       queryFn: async () => {
-        const response = await axios.get(paths.api.courses.root(), {
+        const response = await axios.get(paths.api.blocks.root(), {
           headers: {
             authorization: `Bearer ${token}`,
           },
         });
 
-        return response.data as { data: { courses: Course[] } };
+        return response.data as { data: { blocks: Block[] } };
       },
-    });
+    },
+  );
 
-  const [content, setContent] = useState<Course[]>(
-    coursesQueryResult?.data.courses || [],
+  const [content, setContent] = useState<Block[]>(
+    blocksQueryResult?.data.blocks || [],
   );
 
   useEffect(() => {
-    setContent(coursesQueryResult?.data.courses || []);
-  }, [coursesQueryResult?.data.courses]);
+    setContent(blocksQueryResult?.data.blocks || []);
+  }, [blocksQueryResult?.data.blocks]);
 
-  if (!coursesQueryIsSuccess) {
+  if (!blocksQueryIsSuccess) {
     return null;
   }
 
@@ -99,22 +100,20 @@ export default function AdminPage() {
             )}
           >
             <h2 className={cn("text-xl font-semibold text-gray-800")}>
-              Courses
+              Blocks
             </h2>
-            <NewCourseButton />
+            <NewBlockButton />
           </header>
           <div className={cn("flex-1 grid gap-6 grid-cols-1 lg:grid-cols-2")}>
             {content.length > 0 ? (
-              content.map((course) => (
-                <Course key={course.id} course={course} />
-              ))
+              content.map((block) => <Block key={block.id} block={block} />)
             ) : (
               <section
                 className={cn(
                   "flex items-center justify-center col-span-full h-40 text-gray-500",
                 )}
               >
-                <p className={cn("text-lg")}>No courses found.</p>
+                <p className={cn("text-lg")}>No blocks found.</p>
               </section>
             )}
           </div>

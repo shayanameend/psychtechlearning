@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { verifyRequest } from "~/lib/auth";
 import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { BulkUpdateFlashcardsSchema } from "~/validators/course";
+import { BulkUpdateFlashcardsSchema } from "~/validators/block";
 
 export async function PUT(
   request: NextRequest,
@@ -46,7 +46,7 @@ export async function PUT(
         data: newFlashcards.map(({ question, answer }) => ({
           question,
           answer,
-          courseId: id,
+          blockId: id,
         })),
       });
     }

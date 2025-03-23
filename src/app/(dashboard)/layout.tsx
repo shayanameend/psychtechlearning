@@ -17,7 +17,7 @@ export default function DashboardLayout({
       >
         <div>
           <Link
-            href={paths.app.courses.root()}
+            href={paths.app.blocks.root()}
             className={cn("flex justify-center md:justify-start")}
           >
             <h1 className={cn("flex items-center gap-2 font-medium")}>

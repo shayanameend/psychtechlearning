@@ -1,6 +1,6 @@
-import { CourseSection } from "./_components/course-section";
+import { BlockSection } from "./_components/block-section";
 
-export default async function CoursePage({
+export default async function BlockPage({
   params,
   searchParams,
 }: {
@@ -12,7 +12,7 @@ export default async function CoursePage({
 
   return (
     <>
-      <CourseSection id={id} total={Number(total)} on={Number(on)} />
+      <BlockSection id={id} total={Number(total)} on={Number(on)} />
     </>
   );
 }

@@ -12,25 +12,23 @@ export const paths = {
       refresh: () => "/api/auth/refresh",
       profile: () => "/api/auth/profile",
     },
-    courses: {
-      root: () => "/api/courses",
+    blocks: {
+      root: () => "/api/blocks",
       id: {
-        root: ({ id }: { id: string }) => `/api/courses/${id}`,
+        root: ({ id }: { id: string }) => `/api/blocks/${id}`,
         flashcards: {
-          bulk: ({ id }: { id: string }) =>
-            `/api/courses/${id}/flashcards/bulk`,
+          bulk: ({ id }: { id: string }) => `/api/blocks/${id}/flashcards/bulk`,
         },
         sampleTestQuestions: {
           bulk: ({ id }: { id: string }) =>
-            `/api/courses/${id}/sample-test-questions/bulk`,
+            `/api/blocks/${id}/sample-test-questions/bulk`,
         },
         finalTestQuestions: {
           bulk: ({ id }: { id: string }) =>
-            `/api/courses/${id}/final-test-questions/bulk`,
+            `/api/blocks/${id}/final-test-questions/bulk`,
         },
         userNotes: {
-          bulk: ({ id }: { id: string }) =>
-            `/api/courses/${id}/user-notes/bulk`,
+          bulk: ({ id }: { id: string }) => `/api/blocks/${id}/user-notes/bulk`,
         },
       },
     },
@@ -47,10 +45,10 @@ export const paths = {
         update: () => "/auth/profile/update",
       },
     },
-    courses: {
-      root: () => "/courses",
+    blocks: {
+      root: () => "/blocks",
       id: {
-        root: ({ id }: { id: string }) => `/courses/${id}`,
+        root: ({ id }: { id: string }) => `/blocks/${id}`,
       },
     },
     admin: {

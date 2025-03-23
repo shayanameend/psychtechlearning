@@ -16,7 +16,7 @@ import {
   VolumeX,
   X,
 } from "lucide-react";
-import { CourseNotes } from "~/app/(dashboard)/_components/course-notes";
+import { BlockNotes } from "~/app/(dashboard)/_components/block-notes";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -49,18 +49,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface CourseUserNote {
+interface BlockUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Course {
+interface Block {
   id: string;
-  courseOrder: number;
-  courseTitle: string;
-  courseDescription: string;
+  blockOrder: number;
+  blockTitle: string;
+  blockDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -71,22 +71,22 @@ interface Course {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  courseUserNotes: CourseUserNote[];
+  blockUserNotes: BlockUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export function Course({
-  course,
+export function Block({
+  block,
   showNotes,
-}: Readonly<{ course: Course; showNotes: boolean }>) {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>(course.flashcards);
+}: Readonly<{ block: Block; showNotes: boolean }>) {
+  const [flashcards, setFlashcards] = useState<Flashcard[]>(block.flashcards);
   const [showFlashcard, setShowFlashcard] = useState(false);
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
     TestQuestion[]
-  >(course.sampleTestQuestions);
+  >(block.sampleTestQuestions);
   const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
-    course.finalTestQuestions,
+    block.finalTestQuestions,
   );
   const [sampleTestAnswers, setSampleTestAnswers] = useState<
     Array<string | null>
@@ -110,10 +110,10 @@ export function Course({
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    setFlashcards(course.flashcards);
-    setSampleTestQuestions(course.sampleTestQuestions);
-    setFinalTestQuestions(course.finalTestQuestions);
-  }, [course]);
+    setFlashcards(block.flashcards);
+    setSampleTestQuestions(block.sampleTestQuestions);
+    setFinalTestQuestions(block.finalTestQuestions);
+  }, [block]);
 
   useEffect(() => {
     setSampleTestAnswers(
@@ -219,10 +219,10 @@ export function Course({
           className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
         >
           <h3 className={cn("text-primary text-xl font-bold")}>
-            {course.courseTitle}
+            {block.blockTitle}
           </h3>
           <p className={cn("text-gray-600 text-sm leading-relaxed")}>
-            {course.courseDescription}
+            {block.blockDescription}
           </p>
         </article>
         <article
@@ -237,13 +237,13 @@ export function Course({
             Summary
           </h3>
           <p className={cn("text-gray-600 text-sm")}>
-            {course.audioDescription}
+            {block.audioDescription}
           </p>
           <div className="bg-white/80 rounded-lg p-3 shadow-sm">
             {/* biome-ignore lint/a11y/useMediaCaption: <> */}
             <audio
               ref={audioRef}
-              src={course.audioLink}
+              src={block.audioLink}
               onTimeUpdate={handleTimeUpdate}
               onLoadedMetadata={handleLoadedMetadata}
               onEnded={handleAudioEnd}
@@ -310,11 +310,11 @@ export function Course({
               Study Guide
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {course.guideDescription}
+              {block.guideDescription}
             </p>
             <Button
               onClick={() => {
-                window.open(course.guideLink, "_blank");
+                window.open(block.guideLink, "_blank");
               }}
               size="sm"
               className="transition-all hover:scale-105 mt-auto w-full sm:w-auto"
@@ -337,7 +337,7 @@ export function Course({
               Flashcards
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {course.flashcardsDescription}
+              {block.flashcardsDescription}
             </p>
             <Dialog>
               <DialogTrigger asChild>
@@ -355,11 +355,11 @@ export function Course({
               <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle className="text-primary">
-                    Flashcards: {course.courseTitle}
+                    Flashcards: {block.blockTitle}
                   </DialogTitle>
                   <DialogDescription>
                     This is a set of flashcards to help you reinforce your
-                    learning on {course.courseTitle}.
+                    learning on {block.blockTitle}.
                   </DialogDescription>
                 </DialogHeader>
                 {currentFlashcard ? (
@@ -496,7 +496,7 @@ export function Course({
               Sample Questions
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {course.sampleTestDescription}
+              {block.sampleTestDescription}
             </p>
             <Dialog>
               <DialogTrigger asChild>
@@ -513,11 +513,11 @@ export function Course({
               <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle className="text-primary">
-                    Sample Questions: {course.courseTitle}
+                    Sample Questions: {block.blockTitle}
                   </DialogTitle>
                   <DialogDescription>
                     This is a set of sample questions to help you practice and
-                    reinforce your knowledge on {course.courseTitle}. The
+                    reinforce your knowledge on {block.blockTitle}. The
                     questions consist of multiple choice questions.
                   </DialogDescription>
                 </DialogHeader>
@@ -702,7 +702,7 @@ export function Course({
               Test
             </h3>
             <p className={cn("text-gray-600 text-sm flex-grow")}>
-              {course.finalTestDescription}
+              {block.finalTestDescription}
             </p>
             <Dialog>
               <DialogTrigger asChild>
@@ -719,11 +719,11 @@ export function Course({
               <DialogContent className="max-w-[320px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle className="text-primary">
-                    Test: {course.courseTitle}
+                    Test: {block.blockTitle}
                   </DialogTitle>
                   <DialogDescription>
                     This is a test to assess your knowledge on{" "}
-                    {course.courseTitle}. The test consists of multiple choice
+                    {block.blockTitle}. The test consists of multiple choice
                     questions and is timed. Good luck!
                   </DialogDescription>
                 </DialogHeader>
@@ -899,7 +899,7 @@ export function Course({
           </article>
         </div>
       </div>
-      <CourseNotes showNotes={showNotes} course={course} />
+      <BlockNotes showNotes={showNotes} block={block} />
     </section>
   );
 }

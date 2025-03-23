@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { verifyRequest } from "~/lib/auth";
 import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { BulkUpdateUserNotesSchema } from "~/validators/course";
+import { BulkUpdateUserNotesSchema } from "~/validators/block";
 
 export async function PUT(
   request: NextRequest,
@@ -45,7 +45,7 @@ export async function PUT(
       await prisma.userNote.createMany({
         data: newNotes.map(({ content }) => ({
           content,
-          courseId: id,
+          blockId: id,
           userId: decodedUser.id,
         })),
       });

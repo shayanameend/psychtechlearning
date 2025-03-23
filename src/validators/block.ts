@@ -53,27 +53,27 @@ const UserNoteSchema = zod.object({
     }),
 });
 
-const CreateCourseSchema = zod.object({
-  courseOrder: zod.coerce
+const CreateBlockSchema = zod.object({
+  blockOrder: zod.coerce
     .number({
-      message: "Course order is required!",
+      message: "Block order is required!",
     })
     .min(1, {
-      message: "Course order must be at least 1!",
+      message: "Block order must be at least 1!",
     }),
-  courseTitle: zod
+  blockTitle: zod
     .string({
-      message: "Course title is required!",
+      message: "Block title is required!",
     })
     .min(3, {
-      message: "Course title must be at least 3 characters long!",
+      message: "Block title must be at least 3 characters long!",
     }),
-  courseDescription: zod
+  blockDescription: zod
     .string({
-      message: "Course description is required!",
+      message: "Block description is required!",
     })
     .min(32, {
-      message: "Course description must be at least 32 characters long!",
+      message: "Block description must be at least 32 characters long!",
     }),
   guideLink: zod
     .string({
@@ -231,11 +231,11 @@ const BulkUpdateUserNotesSchema = zod.object({
   newNotes: zod.array(UserNoteSchema),
 });
 
-const UpdateCourseSchema = CreateCourseSchema;
+const UpdateBlockSchema = CreateBlockSchema;
 
 export {
-  CreateCourseSchema,
-  UpdateCourseSchema,
+  CreateBlockSchema,
+  UpdateBlockSchema,
   BulkUpdateFlashcardsSchema,
   BulkUpdateSampleTestQuestionsSchema,
   BulkUpdateFinalTestQuestionsSchema,

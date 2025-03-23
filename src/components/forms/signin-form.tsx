@@ -84,7 +84,7 @@ export function SignInForm() {
 
           localStorage.setItem("token", data.token);
 
-          router.push(paths.app.courses.root());
+          router.push(paths.app.blocks.root());
           break;
       }
     },

@@ -147,7 +147,7 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
         return router.push(paths.app.admin.root());
       }
 
-      return router.push(paths.app.courses.root());
+      return router.push(paths.app.blocks.root());
     }
 
     if (
@@ -157,7 +157,7 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
       pathname.includes(paths.app.admin.root())
     ) {
       if (user.role !== "ADMIN") {
-        return router.push(paths.app.courses.root());
+        return router.push(paths.app.blocks.root());
       }
     }
   }, [isLoading, token, user, router.push, pathname]);

@@ -70,7 +70,7 @@ export function UpdateProfileForm({
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      router.push(paths.app.courses.root());
+      router.push(paths.app.blocks.root());
     },
     onError: (error) => {
       if (error instanceof AxiosError) {

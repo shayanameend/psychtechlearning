@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { verifyRequest } from "~/lib/auth";
 import { BadResponse, UnauthorizedResponse, handleErrors } from "~/lib/error";
 import { prisma } from "~/lib/prisma";
-import { BulkUpdateSampleTestQuestionsSchema } from "~/validators/course";
+import { BulkUpdateSampleTestQuestionsSchema } from "~/validators/block";
 
 export async function PUT(
   request: NextRequest,
@@ -50,7 +50,7 @@ export async function PUT(
             question,
             answers,
             correctAnswer,
-            courseId: id,
+            blockId: id,
           }),
         ),
       });

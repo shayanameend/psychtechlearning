@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { AlertCircle, Calendar, XIcon } from "lucide-react";
 
-import { Course } from "~/app/(dashboard)/_components/course";
+import { Block } from "~/app/(dashboard)/_components/block";
 import { Button } from "~/components/ui/button";
 import { Steps } from "~/components/ui/steps";
 import { cn } from "~/lib/utils";
@@ -30,18 +30,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface CourseUserNote {
+interface BlockUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Course {
+interface Block {
   id: string;
-  courseOrder: number;
-  courseTitle: string;
-  courseDescription: string;
+  blockOrder: number;
+  blockTitle: string;
+  blockDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -52,7 +52,7 @@ interface Course {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  courseUserNotes: CourseUserNote[];
+  blockUserNotes: BlockUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -92,13 +92,13 @@ const EmptyState = () => (
     <div className="text-center p-10 rounded-lg bg-gray-50 shadow-sm">
       <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
       <p className="text-gray-600">
-        Course not found. Please go back to the calendar and try again.
+        Block not found. Please go back to the calendar and try again.
       </p>
     </div>
   </section>
 );
 
-export function CourseSection({
+export function BlockSection({
   id,
   total,
   on,
@@ -107,32 +107,32 @@ export function CourseSection({
   total: number;
   on: number;
 }) {
-  const [content, setContent] = useState<Course | null>(null);
+  const [content, setContent] = useState<Block | null>(null);
   const [showNotes, setShowNotes] = useState(false);
 
   const { token } = useUserContext();
 
   const {
-    data: coursesQueryResult,
+    data: blocksQueryResult,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["courses", id],
+    queryKey: ["blocks", id],
     queryFn: async () => {
-      const response = await axios.get(paths.api.courses.id.root({ id }), {
+      const response = await axios.get(paths.api.blocks.id.root({ id }), {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
 
-      return response.data as { data: { course: Course } };
+      return response.data as { data: { block: Block } };
     },
   });
 
   useEffect(() => {
-    setContent(coursesQueryResult?.data.course ?? null);
-  }, [coursesQueryResult?.data.course]);
+    setContent(blocksQueryResult?.data.block ?? null);
+  }, [blocksQueryResult?.data.block]);
 
   const steps = Array.from({ length: total }, (_, index) => index + 1);
 
@@ -152,11 +152,11 @@ export function CourseSection({
           ) : isError ? (
             <ErrorState
               message={
-                (error as Error)?.message || "Failed to load course content"
+                (error as Error)?.message || "Failed to load block content"
               }
             />
           ) : content ? (
-            <Course course={content} showNotes={showNotes} />
+            <Block block={content} showNotes={showNotes} />
           ) : (
             <EmptyState />
           )}

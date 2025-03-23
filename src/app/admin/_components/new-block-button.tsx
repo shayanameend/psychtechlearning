@@ -32,23 +32,23 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { CreateCourseSchema } from "~/validators/course";
+import { CreateBlockSchema } from "~/validators/block";
 
-const CreateCourseFormSchema = CreateCourseSchema;
+const CreateBlockFormSchema = CreateBlockSchema;
 
-export function NewCourseButton() {
+export function NewBlockButton() {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const createCourseform = useForm<zod.infer<typeof CreateCourseFormSchema>>({
-    resolver: zodResolver(CreateCourseFormSchema),
+  const createBlockform = useForm<zod.infer<typeof CreateBlockFormSchema>>({
+    resolver: zodResolver(CreateBlockFormSchema),
     defaultValues: {
-      courseOrder: 0,
-      courseTitle: "",
-      courseDescription: "",
+      blockOrder: 0,
+      blockTitle: "",
+      blockDescription: "",
       guideLink: "",
       guideDescription: "",
       audioLink: "",
@@ -62,9 +62,9 @@ export function NewCourseButton() {
     },
   });
 
-  const createCourseMutation = useMutation({
-    mutationFn: async (data: zod.infer<typeof CreateCourseFormSchema>) => {
-      const response = await axios.post(paths.api.courses.root(), data, {
+  const createBlockMutation = useMutation({
+    mutationFn: async (data: zod.infer<typeof CreateBlockFormSchema>) => {
+      const response = await axios.post(paths.api.blocks.root(), data, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -75,7 +75,7 @@ export function NewCourseButton() {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
 
       setIsDialogOpen(false);
     },
@@ -85,14 +85,14 @@ export function NewCourseButton() {
       }
     },
     onSettled: () => {
-      createCourseform.reset();
+      createBlockform.reset();
     },
   });
 
-  const onCreateCourseSubmit = async (
-    data: zod.infer<typeof CreateCourseFormSchema>,
+  const onCreateBlockSubmit = async (
+    data: zod.infer<typeof CreateBlockFormSchema>,
   ) => {
-    createCourseMutation.mutate(data);
+    createBlockMutation.mutate(data);
   };
 
   return (
@@ -104,26 +104,26 @@ export function NewCourseButton() {
           className={cn("flex items-center gap-2")}
         >
           <PlusIcon className={cn("w-4 h-4")} />
-          <span>New Course</span>
+          <span>New Block</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[512px] lg:max-w-[768px]">
-        <Form {...createCourseform}>
+        <Form {...createBlockform}>
           <form
-            onSubmit={createCourseform.handleSubmit(onCreateCourseSubmit)}
+            onSubmit={createBlockform.handleSubmit(onCreateBlockSubmit)}
             className={cn("flex flex-col gap-6")}
           >
             <DialogHeader>
-              <DialogTitle>New Course</DialogTitle>
+              <DialogTitle>New Block</DialogTitle>
             </DialogHeader>
             <main className={cn("flex flex-col gap-2")}>
               <div className={cn("flex gap-4")}>
                 <FormField
-                  control={createCourseform.control}
-                  name="courseOrder"
+                  control={createBlockform.control}
+                  name="blockOrder"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Course Order</FormLabel>
+                      <FormLabel>Block Order</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="1" type="text" />
                       </FormControl>
@@ -132,11 +132,11 @@ export function NewCourseButton() {
                   )}
                 />
                 <FormField
-                  control={createCourseform.control}
-                  name="courseTitle"
+                  control={createBlockform.control}
+                  name="blockTitle"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Course Title</FormLabel>
+                      <FormLabel>Block Title</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -149,11 +149,11 @@ export function NewCourseButton() {
                   )}
                 />
                 <FormField
-                  control={createCourseform.control}
-                  name="courseDescription"
+                  control={createBlockform.control}
+                  name="blockDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-8/12")}>
-                      <FormLabel>Course Description</FormLabel>
+                      <FormLabel>Block Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -168,7 +168,7 @@ export function NewCourseButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="guideDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -185,7 +185,7 @@ export function NewCourseButton() {
                   )}
                 />
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="guideLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -203,7 +203,7 @@ export function NewCourseButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="audioDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -220,7 +220,7 @@ export function NewCourseButton() {
                   )}
                 />
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="audioLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -238,7 +238,7 @@ export function NewCourseButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="flashcardsDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -255,7 +255,7 @@ export function NewCourseButton() {
                   )}
                 />
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="flashcards"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -263,7 +263,7 @@ export function NewCourseButton() {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            createCourseform.setValue(
+                            createBlockform.setValue(
                               "flashcards",
                               Array.from({
                                 length: Number(event.target.value),
@@ -284,7 +284,7 @@ export function NewCourseButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="sampleTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -301,7 +301,7 @@ export function NewCourseButton() {
                   )}
                 />
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="sampleTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -309,7 +309,7 @@ export function NewCourseButton() {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            createCourseform.setValue(
+                            createBlockform.setValue(
                               "sampleTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
@@ -336,7 +336,7 @@ export function NewCourseButton() {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="finalTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -353,7 +353,7 @@ export function NewCourseButton() {
                   )}
                 />
                 <FormField
-                  control={createCourseform.control}
+                  control={createBlockform.control}
                   name="finalTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -361,7 +361,7 @@ export function NewCourseButton() {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            createCourseform.setValue(
+                            createBlockform.setValue(
                               "finalTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
@@ -389,12 +389,12 @@ export function NewCourseButton() {
             </main>
             <DialogFooter>
               <Button
-                disabled={createCourseMutation.isPending}
+                disabled={createBlockMutation.isPending}
                 variant="outline"
                 size="sm"
                 type="submit"
               >
-                {createCourseMutation.isPending && (
+                {createBlockMutation.isPending && (
                   <Loader2Icon className={cn("animate-spin")} />
                 )}
                 <span>Save</span>

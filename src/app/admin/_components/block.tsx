@@ -28,7 +28,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { EditCourseButton } from "./edit-course-button";
+import { EditBlockButton } from "./edit-block-button";
 
 interface Flashcard {
   id: string;
@@ -47,18 +47,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface CourseUserNote {
+interface BlockUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Course {
+interface Block {
   id: string;
-  courseOrder: number;
-  courseTitle: string;
-  courseDescription: string;
+  blockOrder: number;
+  blockTitle: string;
+  blockDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -69,7 +69,7 @@ interface Course {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  courseUserNotes: CourseUserNote[];
+  blockUserNotes: BlockUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -81,7 +81,7 @@ const truncateText = (text: string, maxLength: number) => {
   return `${text.substring(0, maxLength)}...`;
 };
 
-export function Course({ course }: Readonly<{ course: Course }>) {
+export function Block({ block }: Readonly<{ block: Block }>) {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
@@ -90,7 +90,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
   const [isSampleTestDialogOpen, setIsSampleTestDialogOpen] = useState(false);
   const [isFinalTestDialogOpen, setIsFinalTestDialogOpen] = useState(false);
 
-  const [flashcards, setFlashcards] = useState<Flashcard[]>(course.flashcards);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>(block.flashcards);
   const [deletedFlashcards, setDeletedFlashcards] = useState<string[]>([]);
   const [newFlashcards, setNewFlashcards] = useState<
     Omit<Omit<Omit<Flashcard, "updatedAt">, "createdAt">, "id">[]
@@ -98,7 +98,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
 
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
     TestQuestion[]
-  >(course.sampleTestQuestions);
+  >(block.sampleTestQuestions);
   const [deletedSampleTestQuestions, setDeletedSampleTestQuestions] = useState<
     string[]
   >([]);
@@ -107,7 +107,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
   >([]);
 
   const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
-    course.finalTestQuestions,
+    block.finalTestQuestions,
   );
   const [deletedFinalTestQuestions, setDeletedFinalTestQuestions] = useState<
     string[]
@@ -126,13 +126,13 @@ export function Course({ course }: Readonly<{ course: Course }>) {
   const [answers, setAnswers] = useState<string[]>(Array(4).fill(""));
 
   useEffect(() => {
-    setFlashcards(course.flashcards);
+    setFlashcards(block.flashcards);
     setDeletedFlashcards([]);
     setNewFlashcards([]);
-    setSampleTestQuestions(course.sampleTestQuestions);
+    setSampleTestQuestions(block.sampleTestQuestions);
     setDeletedSampleTestQuestions([]);
     setNewSampleTestQuestions([]);
-    setFinalTestQuestions(course.finalTestQuestions);
+    setFinalTestQuestions(block.finalTestQuestions);
     setDeletedFinalTestQuestions([]);
     setNewFinalTestQuestions([]);
     setQuestionIndex(0);
@@ -142,16 +142,16 @@ export function Course({ course }: Readonly<{ course: Course }>) {
     setIsQuestionEditing(-1);
     setIsCorrectAnswerEditing(-1);
     setIsAnswersEditing([-1, -1]);
-  }, [course]);
+  }, [block]);
 
   const updateFlashcardsMutation = useMutation({
     mutationFn: async ({
-      courseId,
+      blockId,
       flashcards,
       deletedFlashcards,
       newFlashcards,
     }: {
-      courseId: string;
+      blockId: string;
       flashcards: Flashcard[];
       deletedFlashcards: string[];
       newFlashcards: Omit<
@@ -160,7 +160,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.courses.id.flashcards.bulk({ id: courseId }),
+        paths.api.blocks.id.flashcards.bulk({ id: blockId }),
         {
           flashcards,
           deletedFlashcards,
@@ -178,7 +178,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
 
       setDeletedFlashcards([]);
       setNewFlashcards([]);
@@ -202,12 +202,12 @@ export function Course({ course }: Readonly<{ course: Course }>) {
 
   const updateSampleTestQuestionsMutation = useMutation({
     mutationFn: async ({
-      courseId,
+      blockId,
       sampleTestQuestions,
       deletedSampleTestQuestions,
       newSampleTestQuestions,
     }: {
-      courseId: string;
+      blockId: string;
       sampleTestQuestions: TestQuestion[];
       deletedSampleTestQuestions: string[];
       newSampleTestQuestions: Omit<
@@ -216,7 +216,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.courses.id.sampleTestQuestions.bulk({ id: courseId }),
+        paths.api.blocks.id.sampleTestQuestions.bulk({ id: blockId }),
         {
           sampleTestQuestions,
           deletedSampleTestQuestions,
@@ -234,7 +234,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
 
       setDeletedSampleTestQuestions([]);
       setNewSampleTestQuestions([]);
@@ -258,12 +258,12 @@ export function Course({ course }: Readonly<{ course: Course }>) {
 
   const updateFinalTestQuestionsMutation = useMutation({
     mutationFn: async ({
-      courseId,
+      blockId,
       finalTestQuestions,
       deletedFinalTestQuestions,
       newFinalTestQuestions,
     }: {
-      courseId: string;
+      blockId: string;
       finalTestQuestions: TestQuestion[];
       deletedFinalTestQuestions: string[];
       newFinalTestQuestions: Omit<
@@ -272,7 +272,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.courses.id.finalTestQuestions.bulk({ id: courseId }),
+        paths.api.blocks.id.finalTestQuestions.bulk({ id: blockId }),
         {
           finalTestQuestions,
           deletedFinalTestQuestions,
@@ -290,7 +290,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
 
       setDeletedFinalTestQuestions([]);
       setNewFinalTestQuestions([]);
@@ -312,10 +312,10 @@ export function Course({ course }: Readonly<{ course: Course }>) {
     },
   });
 
-  const deleteCourseMutation = useMutation({
-    mutationFn: async (courseId: string) => {
+  const deleteBlockMutation = useMutation({
+    mutationFn: async (blockId: string) => {
       const response = await axios.delete(
-        paths.api.courses.id.root({ id: courseId }),
+        paths.api.blocks.id.root({ id: blockId }),
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -328,7 +328,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -339,7 +339,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
 
   return (
     <section
-      key={course.id}
+      key={block.id}
       className={cn(
         "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm",
       )}
@@ -350,13 +350,13 @@ export function Course({ course }: Readonly<{ course: Course }>) {
         )}
       >
         <h3 className={cn("text-lg font-semibold text-gray-800")}>
-          {course.courseOrder}. {course.courseTitle}
+          {block.blockOrder}. {block.blockTitle}
         </h3>
         <div className={cn("flex gap-2")}>
-          <EditCourseButton course={course} />
+          <EditBlockButton block={block} />
           <Button
             onClick={() => {
-              deleteCourseMutation.mutate(course.id);
+              deleteBlockMutation.mutate(block.id);
             }}
             variant="outline"
             size="icon"
@@ -372,14 +372,14 @@ export function Course({ course }: Readonly<{ course: Course }>) {
         <div className={cn("flex flex-col gap-2")}>
           <Label className={cn("font-bold")}>Description</Label>
           <p className={cn("text-sm text-gray-600")}>
-            {course.courseDescription}
+            {block.blockDescription}
           </p>
         </div>
         <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Flashcards</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {truncateText(course.flashcardsDescription, 150)}
+              {truncateText(block.flashcardsDescription, 150)}
             </p>
           </div>
           <div>
@@ -403,10 +403,10 @@ export function Course({ course }: Readonly<{ course: Course }>) {
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
                 <DialogHeader>
-                  <DialogTitle>Flashcards: {course.courseTitle}</DialogTitle>
+                  <DialogTitle>Flashcards: {block.blockTitle}</DialogTitle>
                   <DialogDescription>
                     This is a set of flashcards to help you reinforce your
-                    learning on {course.courseTitle}.
+                    learning on {block.blockTitle}.
                   </DialogDescription>
                 </DialogHeader>
                 <article className={cn("space-y-2")}>
@@ -557,7 +557,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
                     <Button
                       onClick={() => {
                         updateFlashcardsMutation.mutate({
-                          courseId: course.id,
+                          blockId: block.id,
                           flashcards,
                           deletedFlashcards,
                           newFlashcards,
@@ -689,7 +689,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Sample Test</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {truncateText(course.sampleTestDescription, 150)}
+              {truncateText(block.sampleTestDescription, 150)}
             </p>
           </div>
           <div>
@@ -714,11 +714,11 @@ export function Course({ course }: Readonly<{ course: Course }>) {
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
                 <DialogHeader>
                   <DialogTitle>
-                    Sample Questions: {course.courseTitle}
+                    Sample Questions: {block.blockTitle}
                   </DialogTitle>
                   <DialogDescription>
                     This is a set of sample questions to help you practice and
-                    reinforce your knowledge on {course.courseTitle}. The
+                    reinforce your knowledge on {block.blockTitle}. The
                     questions consist of multiple choice questions.
                   </DialogDescription>
                 </DialogHeader>
@@ -940,7 +940,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
                     <Button
                       onClick={() => {
                         updateSampleTestQuestionsMutation.mutate({
-                          courseId: course.id,
+                          blockId: block.id,
                           sampleTestQuestions,
                           deletedSampleTestQuestions,
                           newSampleTestQuestions,
@@ -1088,7 +1088,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Final Test</Label>
             <p className={cn("text-sm text-gray-600")}>
-              {truncateText(course.finalTestDescription, 150)}
+              {truncateText(block.finalTestDescription, 150)}
             </p>
           </div>
           <div>
@@ -1112,12 +1112,10 @@ export function Course({ course }: Readonly<{ course: Course }>) {
               </DialogTrigger>
               <DialogContent className="max-w-[384px] lg:max-w-[512px]">
                 <DialogHeader>
-                  <DialogTitle>
-                    Final Questions: {course.courseTitle}
-                  </DialogTitle>
+                  <DialogTitle>Final Questions: {block.blockTitle}</DialogTitle>
                   <DialogDescription>
                     This is a set of final questions to help you practice and
-                    reinforce your knowledge on {course.courseTitle}. The
+                    reinforce your knowledge on {block.blockTitle}. The
                     questions consist of multiple choice questions.
                   </DialogDescription>
                 </DialogHeader>
@@ -1339,7 +1337,7 @@ export function Course({ course }: Readonly<{ course: Course }>) {
                     <Button
                       onClick={() => {
                         updateFinalTestQuestionsMutation.mutate({
-                          courseId: course.id,
+                          blockId: block.id,
                           finalTestQuestions,
                           deletedFinalTestQuestions,
                           newFinalTestQuestions,

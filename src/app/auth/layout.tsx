@@ -20,7 +20,7 @@ export default function AuthLayout({ children }: Readonly<PropsWithChildren>) {
           >
             <div className={cn("flex justify-center gap-2 md:justify-start")}>
               <Link
-                href={paths.app.courses.root()}
+                href={paths.app.blocks.root()}
                 className={cn("flex items-center gap-2 font-medium")}
               >
                 <span

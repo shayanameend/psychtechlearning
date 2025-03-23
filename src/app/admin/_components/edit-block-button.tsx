@@ -32,7 +32,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-import { UpdateCourseSchema } from "~/validators/course";
+import { UpdateBlockSchema } from "~/validators/block";
 
 interface Flashcard {
   id: string;
@@ -51,18 +51,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface CourseUserNote {
+interface BlockUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Course {
+interface Block {
   id: string;
-  courseOrder: number;
-  courseTitle: string;
-  courseDescription: string;
+  blockOrder: number;
+  blockTitle: string;
+  blockDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -73,61 +73,61 @@ interface Course {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  courseUserNotes: CourseUserNote[];
+  blockUserNotes: BlockUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-const UpdateCourseFormSchema = UpdateCourseSchema;
+const UpdateBlockFormSchema = UpdateBlockSchema;
 
-export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
+export function EditBlockButton({ block }: Readonly<{ block: Block }>) {
   const queryClient = useQueryClient();
 
   const { token } = useUserContext();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const updateCourseform = useForm<zod.infer<typeof UpdateCourseFormSchema>>({
-    resolver: zodResolver(UpdateCourseFormSchema),
+  const updateBlockform = useForm<zod.infer<typeof UpdateBlockFormSchema>>({
+    resolver: zodResolver(UpdateBlockFormSchema),
     defaultValues: {
-      courseOrder: course.courseOrder,
-      courseTitle: course.courseTitle,
-      courseDescription: course.courseDescription,
-      guideLink: course.guideLink,
-      guideDescription: course.guideDescription,
-      audioLink: course.audioLink,
-      audioDescription: course.audioDescription,
-      flashcardsDescription: course.flashcardsDescription,
-      sampleTestDescription: course.sampleTestDescription,
-      finalTestDescription: course.finalTestDescription,
-      flashcards: course.flashcards,
-      sampleTestQuestions: course.sampleTestQuestions,
-      finalTestQuestions: course.finalTestQuestions,
+      blockOrder: block.blockOrder,
+      blockTitle: block.blockTitle,
+      blockDescription: block.blockDescription,
+      guideLink: block.guideLink,
+      guideDescription: block.guideDescription,
+      audioLink: block.audioLink,
+      audioDescription: block.audioDescription,
+      flashcardsDescription: block.flashcardsDescription,
+      sampleTestDescription: block.sampleTestDescription,
+      finalTestDescription: block.finalTestDescription,
+      flashcards: block.flashcards,
+      sampleTestQuestions: block.sampleTestQuestions,
+      finalTestQuestions: block.finalTestQuestions,
     },
   });
 
   useEffect(() => {
-    updateCourseform.reset({
-      courseOrder: course.courseOrder,
-      courseTitle: course.courseTitle,
-      courseDescription: course.courseDescription,
-      guideLink: course.guideLink,
-      guideDescription: course.guideDescription,
-      audioLink: course.audioLink,
-      audioDescription: course.audioDescription,
-      flashcardsDescription: course.flashcardsDescription,
-      sampleTestDescription: course.sampleTestDescription,
-      finalTestDescription: course.finalTestDescription,
-      flashcards: course.flashcards,
-      sampleTestQuestions: course.sampleTestQuestions,
-      finalTestQuestions: course.finalTestQuestions,
+    updateBlockform.reset({
+      blockOrder: block.blockOrder,
+      blockTitle: block.blockTitle,
+      blockDescription: block.blockDescription,
+      guideLink: block.guideLink,
+      guideDescription: block.guideDescription,
+      audioLink: block.audioLink,
+      audioDescription: block.audioDescription,
+      flashcardsDescription: block.flashcardsDescription,
+      sampleTestDescription: block.sampleTestDescription,
+      finalTestDescription: block.finalTestDescription,
+      flashcards: block.flashcards,
+      sampleTestQuestions: block.sampleTestQuestions,
+      finalTestQuestions: block.finalTestQuestions,
     });
-  }, [updateCourseform.reset, course]);
+  }, [updateBlockform.reset, block]);
 
-  const updateCourseMutation = useMutation({
-    mutationFn: async (data: zod.infer<typeof UpdateCourseFormSchema>) => {
+  const updateBlockMutation = useMutation({
+    mutationFn: async (data: zod.infer<typeof UpdateBlockFormSchema>) => {
       const response = await axios.put(
-        paths.api.courses.id.root({ id: course.id }),
+        paths.api.blocks.id.root({ id: block.id }),
         data,
         {
           headers: {
@@ -141,7 +141,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
     onSuccess: ({ info }) => {
       toast.success(info.message);
 
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
 
       setIsDialogOpen(false);
     },
@@ -151,14 +151,14 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
       }
     },
     onSettled: () => {
-      updateCourseform.reset();
+      updateBlockform.reset();
     },
   });
 
-  const onUpdateCourseSubmit = async (
-    data: zod.infer<typeof UpdateCourseFormSchema>,
+  const onUpdateBlockSubmit = async (
+    data: zod.infer<typeof UpdateBlockFormSchema>,
   ) => {
-    updateCourseMutation.mutate(data);
+    updateBlockMutation.mutate(data);
   };
 
   return (
@@ -174,22 +174,22 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[512px] lg:max-w-[768px]">
-        <Form {...updateCourseform}>
+        <Form {...updateBlockform}>
           <form
-            onSubmit={updateCourseform.handleSubmit(onUpdateCourseSubmit)}
+            onSubmit={updateBlockform.handleSubmit(onUpdateBlockSubmit)}
             className={cn("flex flex-col gap-6")}
           >
             <DialogHeader>
-              <DialogTitle>Edit Course</DialogTitle>
+              <DialogTitle>Edit Block</DialogTitle>
             </DialogHeader>
             <main className={cn("flex flex-col gap-2")}>
               <div className={cn("flex gap-4")}>
                 <FormField
-                  control={updateCourseform.control}
-                  name="courseOrder"
+                  control={updateBlockform.control}
+                  name="blockOrder"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Course Order</FormLabel>
+                      <FormLabel>Block Order</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="1" type="text" />
                       </FormControl>
@@ -198,11 +198,11 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                   )}
                 />
                 <FormField
-                  control={updateCourseform.control}
-                  name="courseTitle"
+                  control={updateBlockform.control}
+                  name="blockTitle"
                   render={({ field }) => (
                     <FormItem className={cn("w-2/12")}>
-                      <FormLabel>Course Title</FormLabel>
+                      <FormLabel>Block Title</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -215,11 +215,11 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                   )}
                 />
                 <FormField
-                  control={updateCourseform.control}
-                  name="courseDescription"
+                  control={updateBlockform.control}
+                  name="blockDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-8/12")}>
-                      <FormLabel>Course Description</FormLabel>
+                      <FormLabel>Block Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -234,7 +234,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="guideDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -251,7 +251,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                   )}
                 />
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="guideLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -269,7 +269,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="audioDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -286,7 +286,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                   )}
                 />
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="audioLink"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -304,7 +304,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="flashcardsDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -321,7 +321,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                   )}
                 />
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="flashcards"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -329,7 +329,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateCourseform.setValue(
+                            updateBlockform.setValue(
                               "flashcards",
                               Array.from({
                                 length: Number(event.target.value),
@@ -351,7 +351,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="sampleTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -368,7 +368,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                   )}
                 />
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="sampleTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -376,7 +376,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateCourseform.setValue(
+                            updateBlockform.setValue(
                               "sampleTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
@@ -399,7 +399,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
               </div>
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="finalTestDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
@@ -416,7 +416,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                   )}
                 />
                 <FormField
-                  control={updateCourseform.control}
+                  control={updateBlockform.control}
                   name="finalTestQuestions"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
@@ -424,7 +424,7 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
                       <FormControl>
                         <Input
                           onChange={(event) => {
-                            updateCourseform.setValue(
+                            updateBlockform.setValue(
                               "finalTestQuestions",
                               Array.from({
                                 length: Number(event.target.value),
@@ -448,12 +448,12 @@ export function EditCourseButton({ course }: Readonly<{ course: Course }>) {
             </main>
             <DialogFooter>
               <Button
-                disabled={updateCourseMutation.isPending}
+                disabled={updateBlockMutation.isPending}
                 variant="outline"
                 size="sm"
                 type="submit"
               >
-                {updateCourseMutation.isPending && (
+                {updateBlockMutation.isPending && (
                   <Loader2Icon className={cn("animate-spin")} />
                 )}
                 <span>Save</span>

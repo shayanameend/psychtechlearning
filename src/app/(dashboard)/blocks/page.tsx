@@ -10,11 +10,11 @@ import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 
-interface Course {
+interface Block {
   id: string;
-  courseOrder: number;
-  courseTitle: string;
-  courseDescription: string;
+  blockOrder: number;
+  blockTitle: string;
+  blockDescription: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,7 +23,7 @@ const LoadingState = () => (
   <section className="flex-1 flex flex-col items-center justify-center">
     <div className="text-center p-10">
       <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-      <p className="mt-4 text-gray-600">Loading courses...</p>
+      <p className="mt-4 text-gray-600">Loading blocks...</p>
     </div>
   </section>
 );
@@ -54,38 +54,38 @@ const EmptyState = () => (
     <div className="text-center p-10 rounded-lg bg-gray-50 shadow-sm">
       <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
       <p className="text-gray-600">
-        No courses available, Please check back later!
+        No blocks available, Please check back later!
       </p>
     </div>
   </section>
 );
 
-export default function CoursesPage() {
+export default function BlocksPage() {
   const { token } = useUserContext();
 
   const {
-    data: coursesQueryResult,
+    data: blocksQueryResult,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["courses"],
+    queryKey: ["blocks"],
     queryFn: async () => {
-      const response = await axios.get(paths.api.courses.root(), {
+      const response = await axios.get(paths.api.blocks.root(), {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
 
-      return response.data as { data: { courses: Course[] } };
+      return response.data as { data: { blocks: Block[] } };
     },
   });
 
-  const [content, setContent] = useState<Course[]>([]);
+  const [content, setContent] = useState<Block[]>([]);
 
   useEffect(() => {
-    setContent(coursesQueryResult?.data.courses ?? []);
-  }, [coursesQueryResult?.data.courses]);
+    setContent(blocksQueryResult?.data.blocks ?? []);
+  }, [blocksQueryResult?.data.blocks]);
 
   return (
     <section
@@ -98,11 +98,11 @@ export default function CoursesPage() {
           <LoadingState />
         ) : isError ? (
           <ErrorState
-            message={(error as Error)?.message || "Failed to load courses"}
+            message={(error as Error)?.message || "Failed to load blocks"}
           />
         ) : content.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {content.map((course, index) => {
+            {content.map((block, index) => {
               const total = content.length;
               const on = index + 1;
 
@@ -112,11 +112,11 @@ export default function CoursesPage() {
 
               const queryString = urlSearchParams.toString();
 
-              const url = `${paths.app.courses.id.root({ id: course.id })}${queryString ? `?${queryString}` : ""}`;
+              const url = `${paths.app.blocks.id.root({ id: block.id })}${queryString ? `?${queryString}` : ""}`;
 
               return (
                 <Link
-                  key={course.id}
+                  key={block.id}
                   href={url}
                   className="group block rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-gray-300"
                 >
@@ -124,7 +124,7 @@ export default function CoursesPage() {
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-primary" />
                       <span className="font-medium text-primary">
-                        Course {course.courseOrder}
+                        Block {block.blockOrder}
                       </span>
                     </div>
                     <div className="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center group-hover:bg-green-100 transition-colors">
@@ -132,16 +132,16 @@ export default function CoursesPage() {
                     </div>
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                    {course.courseTitle}
+                    {block.blockTitle}
                   </h2>
                   <p className="text-gray-600 mb-4 line-clamp-2">
-                    {course.courseDescription}
+                    {block.blockDescription}
                   </p>
 
                   <div className="flex items-center gap-1 text-sm text-gray-500">
                     <Clock className="h-3.5 w-3.5" />
                     <span>
-                      Updated {new Date(course.updatedAt).toLocaleDateString()}
+                      Updated {new Date(block.updatedAt).toLocaleDateString()}
                     </span>
                   </div>
                 </Link>

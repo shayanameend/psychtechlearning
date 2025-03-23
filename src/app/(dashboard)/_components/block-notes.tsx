@@ -32,18 +32,18 @@ interface TestQuestion {
   updatedAt: Date;
 }
 
-interface CourseUserNote {
+interface BlockUserNote {
   id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Course {
+interface Block {
   id: string;
-  courseOrder: number;
-  courseTitle: string;
-  courseDescription: string;
+  blockOrder: number;
+  blockTitle: string;
+  blockDescription: string;
   guideLink: string;
   guideDescription: string;
   audioLink: string;
@@ -54,19 +54,19 @@ interface Course {
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
-  courseUserNotes: CourseUserNote[];
+  blockUserNotes: BlockUserNote[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export function CourseNotes({
-  course,
+export function BlockNotes({
+  block,
   showNotes,
-}: Readonly<{ course: Course; showNotes: boolean }>) {
-  const [notes, setNotes] = useState<CourseUserNote[]>(course.courseUserNotes);
+}: Readonly<{ block: Block; showNotes: boolean }>) {
+  const [notes, setNotes] = useState<BlockUserNote[]>(block.blockUserNotes);
   const [deletedNotes, setDeletedNotes] = useState<string[]>([]);
   const [newNotes, setNewNotes] = useState<
-    Omit<Omit<Omit<CourseUserNote, "updatedAt">, "createdAt">, "id">[]
+    Omit<Omit<Omit<BlockUserNote, "updatedAt">, "createdAt">, "id">[]
   >([]);
 
   const [isEditing, setIsEditing] = useState(-1);
@@ -76,8 +76,8 @@ export function CourseNotes({
   const { token } = useUserContext();
 
   useEffect(() => {
-    setNotes(course.courseUserNotes);
-  }, [course.courseUserNotes]);
+    setNotes(block.blockUserNotes);
+  }, [block.blockUserNotes]);
 
   useEffect(() => {
     if (isEditing >= 0) {
@@ -91,21 +91,21 @@ export function CourseNotes({
 
   const updateNotesMutation = useMutation({
     mutationFn: async ({
-      courseId,
+      blockId,
       notes,
       deletedNotes,
       newNotes,
     }: {
-      courseId: string;
-      notes: CourseUserNote[];
+      blockId: string;
+      notes: BlockUserNote[];
       deletedNotes: string[];
       newNotes: Omit<
-        Omit<Omit<CourseUserNote, "updatedAt">, "createdAt">,
+        Omit<Omit<BlockUserNote, "updatedAt">, "createdAt">,
         "id"
       >[];
     }) => {
       const response = await axios.put(
-        paths.api.courses.id.userNotes.bulk({ id: courseId }),
+        paths.api.blocks.id.userNotes.bulk({ id: blockId }),
         {
           notes,
           deletedNotes,
@@ -122,7 +122,7 @@ export function CourseNotes({
     },
     onSuccess: ({ info }) => {
       toast.success(info.message);
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
       setDeletedNotes([]);
       setNewNotes([]);
     },
@@ -171,7 +171,7 @@ export function CourseNotes({
             <Button
               onClick={() => {
                 updateNotesMutation.mutate({
-                  courseId: course.id,
+                  blockId: block.id,
                   notes,
                   deletedNotes,
                   newNotes,
@@ -186,7 +186,7 @@ export function CourseNotes({
           </div>
         </div>
         <p className={cn("text-gray-600 text-sm")}>
-          Here you can find the notes you've taken while studying this course.
+          Here you can find the notes you've taken while studying this block.
           (Max {MAX_NOTES} notes, each up to {MAX_NOTE_LENGTH} characters).
           These notes are personal to you and can help reinforce your learning.
           Feel free to add, edit, or delete any notes as you progress through
