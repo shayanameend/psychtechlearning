@@ -100,7 +100,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
     setWeekIndex(0);
 
     if (block.weeks.length > 0) {
-      setPresentations([block.weeks[0].presentation].filter(Boolean));
+      setPresentations(block.weeks[0].presentations || []);
       setAudios(block.weeks[0].audios || []);
     } else {
       setPresentations([]);
@@ -122,7 +122,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
   useEffect(() => {
     if (weekIndex < weeks.length) {
       const currentWeek = weeks[weekIndex];
-      setPresentations([currentWeek.presentation].filter(Boolean));
+      setPresentations(currentWeek.presentations || []);
       setAudios(currentWeek.audios || []);
     } else if (weekIndex - weeks.length < newWeeks.length) {
       const currentWeek = newWeeks[weekIndex - weeks.length];
@@ -449,7 +449,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                       {
                         weekNumber: weeks.length + newWeeks.length + 1,
                         title: `Week ${weeks.length + newWeeks.length + 1}`,
-                        presentation: null as any,
+                        presentations: [],
                         audios: [],
                       },
                     ]);

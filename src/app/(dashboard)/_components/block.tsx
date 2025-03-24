@@ -280,14 +280,8 @@ export function Block({
   const getWeekPresentations = (): PresentationType[] => {
     if (!currentWeek) return [];
 
-    // Handle both cases - single presentation or array of presentations
-    if (Array.isArray(currentWeek.presentation)) {
-      return currentWeek.presentation;
-    } else if (currentWeek.presentation) {
-      return [currentWeek.presentation];
-    }
-
-    return [];
+    // Return the presentations array
+    return currentWeek.presentations || [];
   };
 
   // Get current presentation

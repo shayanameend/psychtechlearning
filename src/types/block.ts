@@ -42,7 +42,7 @@ export interface WeekType {
   id: string;
   weekNumber: number;
   title: string;
-  presentation: PresentationType;
+  presentations: PresentationType[];
   audios: AudioType[];
   createdAt: Date;
   updatedAt: Date;
