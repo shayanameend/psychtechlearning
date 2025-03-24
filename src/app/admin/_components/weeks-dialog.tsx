@@ -70,7 +70,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
   // Presentations
   const [presentations, setPresentations] = useState<PresentationType[]>([]);
   const [deletedPresentations, setDeletedPresentations] = useState<string[]>(
-    [],
+    []
   );
   const [newPresentations, setNewPresentations] = useState<
     NewPresentationType[]
@@ -183,7 +183,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       return response.data;
@@ -233,7 +233,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       return response.data;
@@ -279,7 +279,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       return response.data;
@@ -307,8 +307,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                 weekNumber,
                 title: weekTitle,
               }
-            : week,
-        ),
+            : week
+        )
       );
     } else {
       setNewWeeks(
@@ -319,10 +319,47 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                 weekNumber,
                 title: weekTitle,
               }
-            : week,
-        ),
+            : week
+        )
       );
     }
+  };
+
+  const deleteWeek = () => {
+    // If it's an existing week, add to deletedWeeks
+    if (weekIndex < weeks.length) {
+      setDeletedWeeks([...deletedWeeks, weeks[weekIndex].id]);
+
+      // Update weeks list by removing the current week
+      setWeeks(weeks.filter((_, index) => index !== weekIndex));
+
+      // Reset presentations and audios for this week
+      setPresentations([]);
+      setAudios([]);
+
+      // Move to previous week or first week if this was the first week
+      if (weekIndex > 0) {
+        setWeekIndex(weekIndex - 1);
+      } else if (weeks.length > 1 || newWeeks.length > 0) {
+        // If we have other weeks, stay at index 0
+        setWeekIndex(0);
+      }
+    } else {
+      // For new weeks, just remove from newWeeks array
+      const newWeekIndex = weekIndex - weeks.length;
+      setNewWeeks(newWeeks.filter((_, index) => index !== newWeekIndex));
+
+      // Move to previous week
+      if (weekIndex > 0) {
+        setWeekIndex(weekIndex - 1);
+      }
+    }
+
+    // Reset tab to week details
+    setActiveTab("week-details");
+
+    // Reset editing states
+    resetEditingStates();
   };
 
   return (
@@ -396,9 +433,19 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
           >
             <div className="flex justify-between">
               <h4 className="text-base font-medium">Week Details</h4>
-              <Button onClick={() => saveWeek()} size="sm" variant="outline">
-                Save Week
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => deleteWeek()}
+                  size="sm"
+                  variant="outline"
+                  disabled={weeks.length === 0 && newWeeks.length === 0}
+                >
+                  <Trash2Icon className="size-4" />
+                </Button>
+                <Button onClick={() => saveWeek()} size="sm" variant="outline">
+                  Save Week
+                </Button>
+              </div>
             </div>
 
             <div className="space-y-4">
@@ -443,7 +490,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                           (weekIndex < weeks.length
                             ? weeks[weekIndex]
                             : newWeeks[weekIndex - weeks.length]
-                          )?.weekNumber || 0,
+                          )?.weekNumber || 0
                         );
                         setWeekNumberEditing(true);
                       }}
@@ -491,7 +538,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                           (weekIndex < weeks.length
                             ? weeks[weekIndex]
                             : newWeeks[weekIndex - weeks.length]
-                          )?.title || "",
+                          )?.title || ""
                         );
                         setWeekTitleEditing(true);
                       }}
@@ -518,7 +565,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                   onClick={() => {
                     if (weekIndex >= weeks.length) {
                       toast.error(
-                        "Please save the week first before adding presentations.",
+                        "Please save the week first before adding presentations."
                       );
                       return;
                     }
@@ -534,7 +581,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                     ]);
 
                     setPresentationIndex(
-                      presentations.length + newPresentations.length,
+                      presentations.length + newPresentations.length
                     );
                   }}
                   size="sm"
@@ -544,15 +591,14 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                     weekIndex >= weeks.length
                   }
                 >
-                  <PlusIcon className="h-4 w-4 mr-1" />
-                  Add
+                  New
                 </Button>
 
                 <Button
                   onClick={() => {
                     if (weekIndex >= weeks.length) {
                       toast.error(
-                        "Please save the week first before saving presentations.",
+                        "Please save the week first before saving presentations."
                       );
                       return;
                     }
@@ -602,8 +648,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...presentation,
                                       title: presentationTitle,
                                     }
-                                  : presentation,
-                              ),
+                                  : presentation
+                              )
                             );
                           } else {
                             setNewPresentations(
@@ -614,8 +660,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...presentation,
                                       title: presentationTitle,
                                     }
-                                  : presentation,
-                              ),
+                                  : presentation
+                              )
                             );
                           }
                         }
@@ -630,8 +676,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...presentation,
                                     title: presentationTitle,
                                   }
-                                : presentation,
-                            ),
+                                : presentation
+                            )
                           );
                         } else {
                           setNewPresentations(
@@ -641,8 +687,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...presentation,
                                     title: presentationTitle,
                                   }
-                                : presentation,
-                            ),
+                                : presentation
+                            )
                           );
                         }
                       }}
@@ -656,11 +702,11 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                         presentations[presentationIndex]
                           ? presentations[presentationIndex].title
                           : presentationIndex - presentations.length <
-                              newPresentations.length
-                            ? newPresentations[
-                                presentationIndex - presentations.length
-                              ].title
-                            : "No presentation available"}
+                            newPresentations.length
+                          ? newPresentations[
+                              presentationIndex - presentations.length
+                            ].title
+                          : "No presentation available"}
                       </span>
                       {(presentationIndex < presentations.length ||
                         presentationIndex - presentations.length <
@@ -671,13 +717,13 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                           onClick={() => {
                             if (presentationIndex < presentations.length) {
                               setPresentationTitle(
-                                presentations[presentationIndex].title,
+                                presentations[presentationIndex].title
                               );
                             } else {
                               setPresentationTitle(
                                 newPresentations[
                                   presentationIndex - presentations.length
-                                ].title,
+                                ].title
                               );
                             }
                             setPresentationTitleEditing(true);
@@ -709,8 +755,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...presentation,
                                       presentationLink: presentationLink,
                                     }
-                                  : presentation,
-                              ),
+                                  : presentation
+                              )
                             );
                           } else {
                             setNewPresentations(
@@ -721,8 +767,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...presentation,
                                       presentationLink: presentationLink,
                                     }
-                                  : presentation,
-                              ),
+                                  : presentation
+                              )
                             );
                           }
                         }
@@ -737,8 +783,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...presentation,
                                     presentationLink: presentationLink,
                                   }
-                                : presentation,
-                            ),
+                                : presentation
+                            )
                           );
                         } else {
                           setNewPresentations(
@@ -748,8 +794,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...presentation,
                                     presentationLink: presentationLink,
                                   }
-                                : presentation,
-                            ),
+                                : presentation
+                            )
                           );
                         }
                       }}
@@ -763,11 +809,11 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                         presentations[presentationIndex]
                           ? presentations[presentationIndex].presentationLink
                           : presentationIndex - presentations.length <
-                              newPresentations.length
-                            ? newPresentations[
-                                presentationIndex - presentations.length
-                              ].presentationLink
-                            : "No link available"}
+                            newPresentations.length
+                          ? newPresentations[
+                              presentationIndex - presentations.length
+                            ].presentationLink
+                          : "No link available"}
                       </span>
                       {(presentationIndex < presentations.length ||
                         presentationIndex - presentations.length <
@@ -779,13 +825,13 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                             if (presentationIndex < presentations.length) {
                               setPresentationLink(
                                 presentations[presentationIndex]
-                                  .presentationLink,
+                                  .presentationLink
                               );
                             } else {
                               setPresentationLink(
                                 newPresentations[
                                   presentationIndex - presentations.length
-                                ].presentationLink,
+                                ].presentationLink
                               );
                             }
                             setPresentationLinkEditing(true);
@@ -809,16 +855,16 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                           ]);
                           setPresentations(
                             presentations.filter(
-                              (_, index) => index !== presentationIndex,
-                            ),
+                              (_, index) => index !== presentationIndex
+                            )
                           );
                         } else {
                           setNewPresentations(
                             newPresentations.filter(
                               (_, index) =>
                                 index !==
-                                presentationIndex - presentations.length,
-                            ),
+                                presentationIndex - presentations.length
+                            )
                           );
                         }
 
@@ -888,7 +934,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                   onClick={() => {
                     if (weekIndex >= weeks.length) {
                       toast.error(
-                        "Please save the week first before adding audio files.",
+                        "Please save the week first before adding audio files."
                       );
                       return;
                     }
@@ -909,15 +955,14 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                     updateAudiosMutation.isPending || weekIndex >= weeks.length
                   }
                 >
-                  <PlusIcon className="h-4 w-4 mr-1" />
-                  Add
+                  New
                 </Button>
 
                 <Button
                   onClick={() => {
                     if (weekIndex >= weeks.length) {
                       toast.error(
-                        "Please save the week first before saving audio files.",
+                        "Please save the week first before saving audio files."
                       );
                       return;
                     }
@@ -966,8 +1011,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...audio,
                                       title: audioTitle,
                                     }
-                                  : audio,
-                              ),
+                                  : audio
+                              )
                             );
                           } else {
                             setNewAudios(
@@ -977,8 +1022,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...audio,
                                       title: audioTitle,
                                     }
-                                  : audio,
-                              ),
+                                  : audio
+                              )
                             );
                           }
                         }
@@ -993,8 +1038,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...audio,
                                     title: audioTitle,
                                   }
-                                : audio,
-                            ),
+                                : audio
+                            )
                           );
                         } else {
                           setNewAudios(
@@ -1004,8 +1049,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...audio,
                                     title: audioTitle,
                                   }
-                                : audio,
-                            ),
+                                : audio
+                            )
                           );
                         }
                       }}
@@ -1018,8 +1063,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                         {audioIndex < audios.length && audios[audioIndex]
                           ? audios[audioIndex].title
                           : audioIndex - audios.length < newAudios.length
-                            ? newAudios[audioIndex - audios.length].title
-                            : "No audio available"}
+                          ? newAudios[audioIndex - audios.length].title
+                          : "No audio available"}
                       </span>
                       {(audioIndex < audios.length ||
                         audioIndex - audios.length < newAudios.length) && (
@@ -1031,7 +1076,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                               setAudioTitle(audios[audioIndex].title);
                             } else {
                               setAudioTitle(
-                                newAudios[audioIndex - audios.length].title,
+                                newAudios[audioIndex - audios.length].title
                               );
                             }
                             setAudioTitleEditing(true);
@@ -1063,8 +1108,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...audio,
                                       audioLink: audioLink,
                                     }
-                                  : audio,
-                              ),
+                                  : audio
+                              )
                             );
                           } else {
                             setNewAudios(
@@ -1074,8 +1119,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                       ...audio,
                                       audioLink: audioLink,
                                     }
-                                  : audio,
-                              ),
+                                  : audio
+                              )
                             );
                           }
                         }
@@ -1090,8 +1135,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...audio,
                                     audioLink: audioLink,
                                   }
-                                : audio,
-                            ),
+                                : audio
+                            )
                           );
                         } else {
                           setNewAudios(
@@ -1101,8 +1146,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                                     ...audio,
                                     audioLink: audioLink,
                                   }
-                                : audio,
-                            ),
+                                : audio
+                            )
                           );
                         }
                       }}
@@ -1115,8 +1160,8 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                         {audioIndex < audios.length && audios[audioIndex]
                           ? audios[audioIndex].audioLink
                           : audioIndex - audios.length < newAudios.length
-                            ? newAudios[audioIndex - audios.length].audioLink
-                            : "No link available"}
+                          ? newAudios[audioIndex - audios.length].audioLink
+                          : "No link available"}
                       </span>
                       {(audioIndex < audios.length ||
                         audioIndex - audios.length < newAudios.length) && (
@@ -1128,7 +1173,7 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                               setAudioLink(audios[audioIndex].audioLink);
                             } else {
                               setAudioLink(
-                                newAudios[audioIndex - audios.length].audioLink,
+                                newAudios[audioIndex - audios.length].audioLink
                               );
                             }
                             setAudioLinkEditing(true);
@@ -1151,14 +1196,13 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                             audios[audioIndex].id,
                           ]);
                           setAudios(
-                            audios.filter((_, index) => index !== audioIndex),
+                            audios.filter((_, index) => index !== audioIndex)
                           );
                         } else {
                           setNewAudios(
                             newAudios.filter(
-                              (_, index) =>
-                                index !== audioIndex - audios.length,
-                            ),
+                              (_, index) => index !== audioIndex - audios.length
+                            )
                           );
                         }
 
@@ -1214,50 +1258,6 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
             )}
           </TabsContent>
         </Tabs>
-
-        <DialogFooter className="mt-6 pt-4 border-t">
-          <div className="flex justify-between w-full">
-            <Button
-              onClick={() => {
-                setNewWeeks([
-                  ...newWeeks,
-                  {
-                    weekNumber: weeks.length + newWeeks.length + 1,
-                    title: `Week ${weeks.length + newWeeks.length + 1}`,
-                    presentation: null as any,
-                    audios: [],
-                  },
-                ]);
-
-                setWeekIndex(weeks.length + newWeeks.length);
-                setActiveTab("week-details");
-              }}
-              size="sm"
-              variant="outline"
-            >
-              <PlusIcon className="h-4 w-4 mr-1" />
-              Add Week
-            </Button>
-
-            <Button
-              onClick={() => {
-                updateWeeksMutation.mutate({
-                  blockId: block.id,
-                  weeks,
-                  deletedWeeks,
-                  newWeeks,
-                });
-              }}
-              size="sm"
-              disabled={updateWeeksMutation.isPending}
-            >
-              {updateWeeksMutation.isPending && (
-                <Loader2Icon className="animate-spin mr-1 h-4 w-4" />
-              )}
-              Save All Changes
-            </Button>
-          </div>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
