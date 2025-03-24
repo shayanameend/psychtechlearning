@@ -63,6 +63,7 @@ interface Block {
   blockDescription: string;
   guideLink: string;
   guideDescription: string;
+  weeksDescription: string;
   flashcardsDescription: string;
   sampleTestDescription: string;
   finalTestDescription: string;

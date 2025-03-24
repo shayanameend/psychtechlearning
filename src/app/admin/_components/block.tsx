@@ -1,14 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  EditIcon,
-  ExternalLinkIcon,
-  Loader2Icon,
-  PlusIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { EditIcon, Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -54,6 +46,23 @@ interface BlockUserNote {
   updatedAt: Date;
 }
 
+interface Audio {
+  id: string;
+  title: string;
+  audioLink: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Week {
+  id: string;
+  weekNumber: number;
+  title: string;
+  audios: Audio[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface Block {
   id: string;
   blockOrder: number;
@@ -61,11 +70,11 @@ interface Block {
   blockDescription: string;
   guideLink: string;
   guideDescription: string;
-  audioLink: string;
-  audioDescription: string;
+  weeksDescription: string;
   flashcardsDescription: string;
   sampleTestDescription: string;
   finalTestDescription: string;
+  weeks: Week[];
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
@@ -579,8 +588,18 @@ export function Block({ block }: Readonly<{ block: Block }>) {
                         setNewFlashcards([
                           ...newFlashcards,
                           {
-                            question: `Question ${flashcards.length - deletedFlashcards.length + newFlashcards.length + 1}`,
-                            answer: `Answer ${flashcards.length - deletedFlashcards.length + newFlashcards.length + 1}`,
+                            question: `Question ${
+                              flashcards.length -
+                              deletedFlashcards.length +
+                              newFlashcards.length +
+                              1
+                            }`,
+                            answer: `Answer ${
+                              flashcards.length -
+                              deletedFlashcards.length +
+                              newFlashcards.length +
+                              1
+                            }`,
                           },
                         ]);
 
@@ -962,7 +981,12 @@ export function Block({ block }: Readonly<{ block: Block }>) {
                         setNewSampleTestQuestions([
                           ...newSampleTestQuestions,
                           {
-                            question: `Question ${sampleTestQuestions.length - deletedSampleTestQuestions.length + newSampleTestQuestions.length + 1}`,
+                            question: `Question ${
+                              sampleTestQuestions.length -
+                              deletedSampleTestQuestions.length +
+                              newSampleTestQuestions.length +
+                              1
+                            }`,
                             answers: [
                               "Option 1",
                               "Option 2",
@@ -1359,7 +1383,12 @@ export function Block({ block }: Readonly<{ block: Block }>) {
                         setNewFinalTestQuestions([
                           ...newFinalTestQuestions,
                           {
-                            question: `Question ${finalTestQuestions.length - deletedFinalTestQuestions.length + newFinalTestQuestions.length + 1}`,
+                            question: `Question ${
+                              finalTestQuestions.length -
+                              deletedFinalTestQuestions.length +
+                              newFinalTestQuestions.length +
+                              1
+                            }`,
                             answers: [
                               "Option 1",
                               "Option 2",

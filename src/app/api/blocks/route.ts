@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
         blockDescription: true,
         guideLink: true,
         guideDescription: true,
+        weeksDescription: true,
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,
@@ -129,6 +130,7 @@ export async function POST(request: NextRequest) {
       blockDescription,
       guideLink,
       guideDescription,
+      weeksDescription,
       weeks,
       flashcardsDescription,
       flashcards,
@@ -145,12 +147,13 @@ export async function POST(request: NextRequest) {
         blockDescription,
         guideLink,
         guideDescription,
-        flashcardsDescription,
+        weeksDescription,
         weeks: {
           createMany: {
             data: weeks,
           },
         },
+        flashcardsDescription,
         flashcards: {
           createMany: {
             data: flashcards,
@@ -175,6 +178,7 @@ export async function POST(request: NextRequest) {
         blockDescription: true,
         guideDescription: true,
         guideLink: true,
+        weeksDescription: true,
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,

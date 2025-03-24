@@ -37,6 +37,23 @@ interface BlockUserNote {
   updatedAt: Date;
 }
 
+interface Audio {
+  id: string;
+  title: string;
+  audioLink: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Week {
+  id: string;
+  weekNumber: number;
+  title: string;
+  audios: Audio[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface Block {
   id: string;
   blockOrder: number;
@@ -44,11 +61,11 @@ interface Block {
   blockDescription: string;
   guideLink: string;
   guideDescription: string;
-  audioLink: string;
-  audioDescription: string;
+  weeksDescription: string;
   flashcardsDescription: string;
   sampleTestDescription: string;
   finalTestDescription: string;
+  weeks: Week[];
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];

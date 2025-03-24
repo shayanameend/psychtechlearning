@@ -123,6 +123,13 @@ const CreateBlockSchema = zod.object({
     .min(3, {
       message: "Guide description must be at least 3 characters long!",
     }),
+  weeksDescription: zod
+    .string({
+      message: "Weeks description is required!",
+    })
+    .min(3, {
+      message: "Weeks description must be at least 3 characters long!",
+    }),
   flashcardsDescription: zod
     .string({
       message: "Flashcards description is required!",

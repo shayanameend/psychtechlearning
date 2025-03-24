@@ -58,6 +58,23 @@ interface BlockUserNote {
   updatedAt: Date;
 }
 
+interface Audio {
+  id: string;
+  title: string;
+  audioLink: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Week {
+  id: string;
+  weekNumber: number;
+  title: string;
+  audios: Audio[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface Block {
   id: string;
   blockOrder: number;
@@ -65,11 +82,11 @@ interface Block {
   blockDescription: string;
   guideLink: string;
   guideDescription: string;
-  audioLink: string;
-  audioDescription: string;
+  weeksDescription: string;
   flashcardsDescription: string;
   sampleTestDescription: string;
   finalTestDescription: string;
+  weeks: Week[];
   flashcards: Flashcard[];
   sampleTestQuestions: TestQuestion[];
   finalTestQuestions: TestQuestion[];
@@ -95,11 +112,11 @@ export function EditBlockButton({ block }: Readonly<{ block: Block }>) {
       blockDescription: block.blockDescription,
       guideLink: block.guideLink,
       guideDescription: block.guideDescription,
-      audioLink: block.audioLink,
-      audioDescription: block.audioDescription,
+      weeksDescription: block.weeksDescription,
       flashcardsDescription: block.flashcardsDescription,
       sampleTestDescription: block.sampleTestDescription,
       finalTestDescription: block.finalTestDescription,
+      weeks: block.weeks,
       flashcards: block.flashcards,
       sampleTestQuestions: block.sampleTestQuestions,
       finalTestQuestions: block.finalTestQuestions,
@@ -113,11 +130,11 @@ export function EditBlockButton({ block }: Readonly<{ block: Block }>) {
       blockDescription: block.blockDescription,
       guideLink: block.guideLink,
       guideDescription: block.guideDescription,
-      audioLink: block.audioLink,
-      audioDescription: block.audioDescription,
+      weeksDescription: block.weeksDescription,
       flashcardsDescription: block.flashcardsDescription,
       sampleTestDescription: block.sampleTestDescription,
       finalTestDescription: block.finalTestDescription,
+      weeks: block.weeks,
       flashcards: block.flashcards,
       sampleTestQuestions: block.sampleTestQuestions,
       finalTestQuestions: block.finalTestQuestions,
@@ -270,14 +287,14 @@ export function EditBlockButton({ block }: Readonly<{ block: Block }>) {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={updateBlockform.control}
-                  name="audioDescription"
+                  name="weeksDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Audio Description</FormLabel>
+                      <FormLabel>Weeks Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Listen to the nursing science audio guide."
+                          placeholder="Complete weekly lessons covering nursing fundamentals and practices."
                           className={cn("resize-none min-h-14")}
                         />
                       </FormControl>
@@ -287,14 +304,26 @@ export function EditBlockButton({ block }: Readonly<{ block: Block }>) {
                 />
                 <FormField
                   control={updateBlockform.control}
-                  name="audioLink"
+                  name="weeks"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Audio Link</FormLabel>
+                      <FormLabel>Weeks</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
-                          placeholder="https://drive.google.com/nursing.mp3"
+                          onChange={(event) => {
+                            updateBlockform.setValue(
+                              "weeks",
+                              Array.from({
+                                length: Number(event.target.value),
+                              }).map(() => ({
+                                weekNumber: 0,
+                                title: "",
+                              })),
+                            );
+                          }}
+                          disabled={true}
+                          value={field.value.length}
+                          type="text"
                         />
                       </FormControl>
                       <FormMessage />

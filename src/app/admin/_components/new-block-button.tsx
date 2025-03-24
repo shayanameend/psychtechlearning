@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, default as axios } from "axios";
 import { Loader2Icon, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -51,11 +51,11 @@ export function NewBlockButton() {
       blockDescription: "",
       guideLink: "",
       guideDescription: "",
-      audioLink: "",
-      audioDescription: "",
+      weeksDescription: "",
       flashcardsDescription: "",
       sampleTestDescription: "",
       finalTestDescription: "",
+      weeks: [],
       flashcards: [],
       sampleTestQuestions: [],
       finalTestQuestions: [],
@@ -204,14 +204,14 @@ export function NewBlockButton() {
               <div className={cn("flex gap-4 flex-row-reverse")}>
                 <FormField
                   control={createBlockform.control}
-                  name="audioDescription"
+                  name="weeksDescription"
                   render={({ field }) => (
                     <FormItem className={cn("w-9/12")}>
-                      <FormLabel>Audio Description</FormLabel>
+                      <FormLabel>Weeks Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Listen to nursing science audio lectures."
+                          placeholder="Complete weekly lessons covering nursing fundamentals and practices."
                           className={cn("resize-none min-h-14")}
                         />
                       </FormControl>
@@ -221,14 +221,25 @@ export function NewBlockButton() {
                 />
                 <FormField
                   control={createBlockform.control}
-                  name="audioLink"
+                  name="weeks"
                   render={({ field }) => (
                     <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Audio Link</FormLabel>
+                      <FormLabel>Weeks</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
-                          placeholder="https://drive.google.com/nursing.mp3"
+                          onChange={(event) => {
+                            createBlockform.setValue(
+                              "weeks",
+                              Array.from({
+                                length: Number(event.target.value),
+                              }).map((_, index) => ({
+                                weekNumber: index + 1,
+                                title: `Week ${index + 1}`,
+                              })),
+                            );
+                          }}
+                          value={field.value.length}
+                          type="text"
                         />
                       </FormControl>
                       <FormMessage />

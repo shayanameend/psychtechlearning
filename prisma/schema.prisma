@@ -70,6 +70,7 @@ model Block {
   blockDescription      String
   guideLink             String
   guideDescription      String
+  weeksDescription      String
   flashcardsDescription String
   sampleTestDescription String
   finalTestDescription  String
