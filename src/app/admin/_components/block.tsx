@@ -83,7 +83,6 @@ interface Block {
   updatedAt: Date;
 }
 
-// Utility function to truncate text
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return "";
   if (text.length <= maxLength) return text;
