@@ -53,6 +53,23 @@ const UserNoteSchema = zod.object({
     }),
 });
 
+const PresentationSchema = zod.object({
+  title: zod
+    .string({
+      message: "Presentation title is required!",
+    })
+    .min(3, {
+      message: "Presentation title must be at least 3 characters long!",
+    }),
+  presentationLink: zod
+    .string({
+      message: "Presentation link is required!",
+    })
+    .url({
+      message: "Presentation link must be a valid URL!",
+    }),
+});
+
 const AudioSchema = zod.object({
   title: zod
     .string({
@@ -163,6 +180,30 @@ const CreateBlockSchema = zod.object({
   finalTestQuestions: zod.array(QuestionSchema).min(1, {
     message: "Final test questions must have at least 1 item!",
   }),
+});
+
+const BulkUpdatePresentationsSchema = zod.object({
+  presentations: zod.array(
+    PresentationSchema.extend({
+      id: zod
+        .string({
+          message: "Presentation id is required!",
+        })
+        .min(3, {
+          message: "Presentation id must be at least 3 characters long!",
+        }),
+    }),
+  ),
+  deletedPresentations: zod.array(
+    zod
+      .string({
+        message: "Presentation id is required!",
+      })
+      .min(3, {
+        message: "Presentation id must be at least 3 characters long!",
+      }),
+  ),
+  newPresentations: zod.array(PresentationSchema),
 });
 
 const BulkUpdateAudiosSchema = zod.object({
@@ -314,6 +355,7 @@ const UpdateBlockSchema = CreateBlockSchema;
 export {
   CreateBlockSchema,
   UpdateBlockSchema,
+  BulkUpdatePresentationsSchema,
   BulkUpdateAudiosSchema,
   BulkUpdateWeeksSchema,
   BulkUpdateFlashcardsSchema,
