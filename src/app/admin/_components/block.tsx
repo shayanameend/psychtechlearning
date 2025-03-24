@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { AxiosError, default as axios } from "axios";
-import { EditIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
-import { DialogTrigger } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
@@ -19,10 +18,6 @@ import { truncateText } from "./utils";
 export function Block({ block }: Readonly<{ block: BlockType }>) {
   const queryClient = useQueryClient();
   const { token } = useUserContext();
-
-  const [isFlashcardsDialogOpen, setIsFlashcardsDialogOpen] = useState(false);
-  const [isSampleTestDialogOpen, setIsSampleTestDialogOpen] = useState(false);
-  const [isFinalTestDialogOpen, setIsFinalTestDialogOpen] = useState(false);
 
   const deleteBlockMutation = useMutation({
     mutationFn: async (blockId: string) => {
@@ -86,8 +81,6 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
             {block.blockDescription}
           </p>
         </div>
-
-        {/* Flashcards Section */}
         <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Flashcards</Label>
@@ -96,22 +89,9 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
             </p>
           </div>
           <div>
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setIsFlashcardsDialogOpen(true)}
-                variant="outline"
-                size="sm"
-              >
-                <span>
-                  <EditIcon />
-                </span>
-                <span>Edit</span>
-              </Button>
-            </DialogTrigger>
+            <FlashcardsDialog block={block} />
           </div>
         </div>
-
-        {/* Sample Test Section */}
         <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Sample Test</Label>
@@ -120,22 +100,14 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
             </p>
           </div>
           <div>
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setIsSampleTestDialogOpen(true)}
-                variant="outline"
-                size="sm"
-              >
-                <span>
-                  <EditIcon />
-                </span>
-                <span>Edit</span>
-              </Button>
-            </DialogTrigger>
+            <TestQuestionsDialog
+              block={block}
+              type="sample"
+              title="Sample Questions"
+              description="This is a set of sample questions to help you practice and reinforce your knowledge on this topic. The questions consist of multiple choice questions."
+            />
           </div>
         </div>
-
-        {/* Final Test Section */}
         <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>
             <Label className={cn("font-bold")}>Final Test</Label>
@@ -144,46 +116,15 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
             </p>
           </div>
           <div>
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setIsFinalTestDialogOpen(true)}
-                variant="outline"
-                size="sm"
-              >
-                <span>
-                  <EditIcon />
-                </span>
-                <span>Edit</span>
-              </Button>
-            </DialogTrigger>
+            <TestQuestionsDialog
+              block={block}
+              type="final"
+              title="Final Questions"
+              description="This is a set of final questions to help you assess your knowledge on this topic. The questions consist of multiple choice questions."
+            />
           </div>
         </div>
       </article>
-
-      {/* Dialogs */}
-      <FlashcardsDialog
-        block={block}
-        isOpen={isFlashcardsDialogOpen}
-        onOpenChange={setIsFlashcardsDialogOpen}
-      />
-
-      <TestQuestionsDialog
-        block={block}
-        isOpen={isSampleTestDialogOpen}
-        onOpenChange={setIsSampleTestDialogOpen}
-        type="sample"
-        title="Sample Questions"
-        description="This is a set of sample questions to help you practice and reinforce your knowledge on this topic. The questions consist of multiple choice questions."
-      />
-
-      <TestQuestionsDialog
-        block={block}
-        isOpen={isFinalTestDialogOpen}
-        onOpenChange={setIsFinalTestDialogOpen}
-        type="final"
-        title="Final Questions"
-        description="This is a set of final questions to help you assess your knowledge on this topic. The questions consist of multiple choice questions."
-      />
     </section>
   );
 }

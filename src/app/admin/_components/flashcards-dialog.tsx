@@ -22,17 +22,13 @@ import type { BlockType, FlashcardType, NewFlashcardType } from "~/types/block";
 
 interface FlashcardsDialogProps {
   block: BlockType;
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
 }
 
-export function FlashcardsDialog({
-  block,
-  isOpen,
-  onOpenChange,
-}: FlashcardsDialogProps) {
+export function FlashcardsDialog({ block }: FlashcardsDialogProps) {
   const queryClient = useQueryClient();
   const { token } = useUserContext();
+
+  const [isFlashcardsDialogOpen, setIsFlashcardsDialogOpen] = useState(false);
 
   const [questionIndex, setQuestionIndex] = useState(0);
   const [flashcards, setFlashcards] = useState<FlashcardType[]>(
@@ -90,7 +86,7 @@ export function FlashcardsDialog({
       queryClient.invalidateQueries({ queryKey: ["blocks"] });
       setDeletedFlashcards([]);
       setNewFlashcards([]);
-      onOpenChange(false);
+      setIsFlashcardsDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -107,7 +103,22 @@ export function FlashcardsDialog({
   });
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog
+      open={isFlashcardsDialogOpen}
+      onOpenChange={setIsFlashcardsDialogOpen}
+    >
+      <DialogTrigger asChild>
+        <Button
+          onClick={() => setIsFlashcardsDialogOpen(true)}
+          variant="outline"
+          size="sm"
+        >
+          <span>
+            <EditIcon />
+          </span>
+          <span>Edit</span>
+        </Button>
+      </DialogTrigger>
       <DialogContent className="max-w-[384px] lg:max-w-[512px]">
         <DialogHeader>
           <DialogTitle>Flashcards: {block.blockTitle}</DialogTitle>

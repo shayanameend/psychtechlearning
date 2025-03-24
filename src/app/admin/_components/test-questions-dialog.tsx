@@ -12,6 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
@@ -27,8 +28,6 @@ import type {
 
 interface TestQuestionsDialogProps {
   block: BlockType;
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
   type: "sample" | "final";
   title: string;
   description: string;
@@ -36,14 +35,14 @@ interface TestQuestionsDialogProps {
 
 export function TestQuestionsDialog({
   block,
-  isOpen,
-  onOpenChange,
   type,
   title,
   description,
 }: TestQuestionsDialogProps) {
   const queryClient = useQueryClient();
   const { token } = useUserContext();
+
+  const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
 
   const [questionIndex, setQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<TestQuestionType[]>(
@@ -113,7 +112,7 @@ export function TestQuestionsDialog({
       queryClient.invalidateQueries({ queryKey: ["blocks"] });
       setDeletedQuestions([]);
       setNewQuestions([]);
-      onOpenChange(false);
+      setIsTestDialogOpen(false);
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -130,7 +129,19 @@ export function TestQuestionsDialog({
   });
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isTestDialogOpen} onOpenChange={setIsTestDialogOpen}>
+      <DialogTrigger asChild>
+        <Button
+          onClick={() => setIsTestDialogOpen(true)}
+          variant="outline"
+          size="sm"
+        >
+          <span>
+            <EditIcon />
+          </span>
+          <span>Edit</span>
+        </Button>
+      </DialogTrigger>
       <DialogContent className="max-w-[384px] lg:max-w-[512px]">
         <DialogHeader>
           <DialogTitle>
