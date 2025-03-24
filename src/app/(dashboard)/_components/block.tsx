@@ -6,11 +6,15 @@ import { useEffect, useRef, useState } from "react";
 import {
   BookOpen,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ClipboardList,
+  ExternalLink,
   FileCheck,
   FlipHorizontal,
   Pause,
   Play,
+  Presentation,
   RefreshCcw,
   Volume2,
   VolumeX,
@@ -37,12 +41,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { cn } from "~/lib/utils";
 import type {
   AudioType,
   BlockType,
   FlashcardType,
+  PresentationType,
   TestQuestionType,
+  WeekType,
 } from "~/types/block";
 
 export function Block({
@@ -74,27 +81,32 @@ export function Block({
 
   const [questionIndex, setQuestionIndex] = useState(0);
 
-  // New state for weeks and audio selection
+  // Week, presentation, and audio state
   const [selectedWeekId, setSelectedWeekId] = useState<string>("");
+  const [currentWeek, setCurrentWeek] = useState<WeekType | null>(null);
+  const [selectedPresentationIndex, setSelectedPresentationIndex] = useState(0);
   const [selectedAudioId, setSelectedAudioId] = useState<string>("");
   const [currentAudio, setCurrentAudio] = useState<AudioType | null>(null);
 
+  // Audio player state
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Initialize selected week and audio when block data is loaded
+  // Initialize with first week when block data is loaded
   useEffect(() => {
     setFlashcards(block.flashcards);
     setSampleTestQuestions(block.sampleTestQuestions);
     setFinalTestQuestions(block.finalTestQuestions);
 
-    // Initialize week and audio selection if weeks exist
+    // Initialize week selection if weeks exist
     if (block.weeks && block.weeks.length > 0) {
       const firstWeek = block.weeks[0];
       setSelectedWeekId(firstWeek.id);
+      setCurrentWeek(firstWeek);
+      setSelectedPresentationIndex(0);
 
       if (firstWeek.audios && firstWeek.audios.length > 0) {
         const firstAudio = firstWeek.audios[0];
@@ -103,27 +115,55 @@ export function Block({
       } else {
         setCurrentAudio(null);
       }
+    } else {
+      setCurrentWeek(null);
+      setCurrentAudio(null);
     }
   }, [block]);
 
-  // Update current audio when selected week or audio changes
+  // Update current week when selected week changes
   useEffect(() => {
-    if (selectedWeekId && selectedAudioId) {
+    if (selectedWeekId) {
       const week = block.weeks.find((w) => w.id === selectedWeekId);
       if (week) {
-        const audio = week.audios.find((a) => a.id === selectedAudioId);
-        if (audio) {
-          setCurrentAudio(audio);
+        setCurrentWeek(week);
+        setSelectedPresentationIndex(0);
+
+        // Reset audio selection
+        if (week.audios.length > 0) {
+          const firstAudio = week.audios[0];
+          setSelectedAudioId(firstAudio.id);
+          setCurrentAudio(firstAudio);
+
           // Reset audio player state
           setIsPlaying(false);
           setCurrentTime(0);
           if (audioRef.current) {
             audioRef.current.currentTime = 0;
           }
+        } else {
+          setCurrentAudio(null);
+          setSelectedAudioId("");
         }
       }
     }
-  }, [selectedWeekId, selectedAudioId, block.weeks]);
+  }, [selectedWeekId, block.weeks]);
+
+  // Update current audio when selected audio changes
+  useEffect(() => {
+    if (selectedAudioId && currentWeek) {
+      const audio = currentWeek.audios.find((a) => a.id === selectedAudioId);
+      if (audio) {
+        setCurrentAudio(audio);
+        // Reset audio player state
+        setIsPlaying(false);
+        setCurrentTime(0);
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+        }
+      }
+    }
+  }, [selectedAudioId, currentWeek]);
 
   useEffect(() => {
     setSampleTestAnswers(
@@ -219,6 +259,46 @@ export function Block({
     }
   };
 
+  // Handle presentation navigation
+  const navigatePresentation = (direction: "next" | "prev") => {
+    if (!currentWeek) return;
+
+    const presentations = getWeekPresentations();
+    if (!presentations.length) return;
+
+    if (
+      direction === "next" &&
+      selectedPresentationIndex < presentations.length - 1
+    ) {
+      setSelectedPresentationIndex(selectedPresentationIndex + 1);
+    } else if (direction === "prev" && selectedPresentationIndex > 0) {
+      setSelectedPresentationIndex(selectedPresentationIndex - 1);
+    }
+  };
+
+  // Helper to get current week's presentations (handle both single and array)
+  const getWeekPresentations = (): PresentationType[] => {
+    if (!currentWeek) return [];
+
+    // Handle both cases - single presentation or array of presentations
+    if (Array.isArray(currentWeek.presentation)) {
+      return currentWeek.presentation;
+    } else if (currentWeek.presentation) {
+      return [currentWeek.presentation];
+    }
+
+    return [];
+  };
+
+  // Get current presentation
+  const getCurrentPresentation = (): PresentationType | null => {
+    const presentations = getWeekPresentations();
+    if (presentations.length > selectedPresentationIndex) {
+      return presentations[selectedPresentationIndex];
+    }
+    return null;
+  };
+
   return (
     <section className={cn("flex-1 flex")}>
       <div
@@ -237,21 +317,26 @@ export function Block({
             {block.blockDescription}
           </p>
         </article>
+
+        {/* Week selection UI */}
         <article
-          className={cn("space-y-2 bg-white/50 p-4 rounded-lg shadow-sm")}
+          className={cn("space-y-3 bg-white/50 p-4 rounded-lg shadow-sm")}
         >
           <h3
             className={cn(
               "text-foreground/70 text-lg font-medium flex items-center",
             )}
           >
-            <Volume2 className="h-5 w-5 mr-2 text-primary/70" />
-            Audio Content
+            <Presentation className="h-5 w-5 mr-2 text-primary/70" />
+            Weekly Content
           </h3>
 
-          {/* Week and Audio Selection UI */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-2">
-            <div>
+          <div className="bg-white/70 rounded-lg p-4 shadow-sm">
+            <p className={cn("text-gray-600 text-sm mb-3")}>
+              {block.weeksDescription}
+            </p>
+
+            <div className="mb-4">
               <Label
                 htmlFor="week-select"
                 className="text-xs text-gray-500 mb-1 block"
@@ -262,16 +347,9 @@ export function Block({
                 value={selectedWeekId}
                 onValueChange={(value) => {
                   setSelectedWeekId(value);
-                  // Reset audio selection when week changes
-                  const week = block.weeks.find((w) => w.id === value);
-                  if (week && week.audios.length > 0) {
-                    setSelectedAudioId(week.audios[0].id);
-                  } else {
-                    setSelectedAudioId("");
-                  }
                 }}
               >
-                <SelectTrigger id="week-select" className="bg-white/80">
+                <SelectTrigger id="week-select" className="bg-white">
                   <SelectValue placeholder="Select a week" />
                 </SelectTrigger>
                 <SelectContent>
@@ -284,100 +362,251 @@ export function Block({
               </Select>
             </div>
 
-            <div>
-              <Label
-                htmlFor="audio-select"
-                className="text-xs text-gray-500 mb-1 block"
-              >
-                Select Audio
-              </Label>
-              <Select
-                value={selectedAudioId}
-                onValueChange={setSelectedAudioId}
-                disabled={!selectedWeekId}
-              >
-                <SelectTrigger id="audio-select" className="bg-white/80">
-                  <SelectValue placeholder="Select an audio" />
-                </SelectTrigger>
-                <SelectContent>
-                  {block.weeks
-                    .find((w) => w.id === selectedWeekId)
-                    ?.audios.map((audio) => (
-                      <SelectItem key={audio.id} value={audio.id}>
-                        {audio.title}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {currentWeek && (
+              <Tabs defaultValue="presentations" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-3">
+                  <TabsTrigger value="presentations" className="text-sm">
+                    Presentations
+                  </TabsTrigger>
+                  <TabsTrigger value="audios" className="text-sm">
+                    Audio Content
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Presentations Tab */}
+                <TabsContent value="presentations" className="space-y-3">
+                  {getWeekPresentations().length > 0 ? (
+                    <div className="relative">
+                      {getWeekPresentations().length > 1 && (
+                        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-2 z-10 pointer-events-none">
+                          <Button
+                            onClick={() => navigatePresentation("prev")}
+                            size="icon"
+                            variant="ghost"
+                            className="bg-white/60 backdrop-blur-sm h-8 w-8 rounded-full pointer-events-auto shadow-sm hover:bg-white/90"
+                            disabled={selectedPresentationIndex === 0}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            onClick={() => navigatePresentation("next")}
+                            size="icon"
+                            variant="ghost"
+                            className="bg-white/60 backdrop-blur-sm h-8 w-8 rounded-full pointer-events-auto shadow-sm hover:bg-white/90"
+                            disabled={
+                              selectedPresentationIndex ===
+                              getWeekPresentations().length - 1
+                            }
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Presentation Carousel */}
+                      <div className="rounded-xl p-4 bg-gradient-to-br from-blue-50 to-white border border-blue-100 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-medium text-primary/90">
+                            {getCurrentPresentation()?.title}
+                          </h4>
+                          <div className="flex items-center text-xs text-gray-500">
+                            {getWeekPresentations().length > 1 && (
+                              <span>
+                                {selectedPresentationIndex + 1} of{" "}
+                                {getWeekPresentations().length}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="aspect-video bg-white/80 rounded-lg border border-blue-100 flex items-center justify-center mb-3">
+                          <div className="text-center p-6">
+                            <Presentation className="h-12 w-12 text-primary/40 mx-auto mb-4" />
+                            <p className="text-sm text-gray-500 mb-3">
+                              Preview not available. Click the button below to
+                              open the presentation.
+                            </p>
+                          </div>
+                        </div>
+
+                        <Button
+                          onClick={() => {
+                            const presentation = getCurrentPresentation();
+                            if (presentation) {
+                              window.open(
+                                presentation.presentationLink,
+                                "_blank",
+                              );
+                            }
+                          }}
+                          className="w-full"
+                          size="sm"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Open Presentation
+                        </Button>
+                      </div>
+
+                      {/* Presentation Dots Indicator */}
+                      {getWeekPresentations().length > 1 && (
+                        <div className="flex justify-center mt-3 space-x-1">
+                          {getWeekPresentations().map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() =>
+                                setSelectedPresentationIndex(index)
+                              }
+                              className={cn(
+                                "w-2 h-2 rounded-full transition-colors",
+                                index === selectedPresentationIndex
+                                  ? "bg-primary"
+                                  : "bg-gray-300 hover:bg-gray-400",
+                              )}
+                              aria-label={`Go to presentation ${index + 1}`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="bg-white/80 rounded-lg p-6 text-center text-gray-500">
+                      <Presentation className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                      <p>No presentations available for this week</p>
+                    </div>
+                  )}
+                </TabsContent>
+
+                {/* Audios Tab */}
+                <TabsContent value="audios" className="space-y-3">
+                  {currentWeek?.audios && currentWeek.audios.length > 0 ? (
+                    <>
+                      <div className="grid grid-cols-1 gap-2 mb-2">
+                        {currentWeek.audios.map((audio) => (
+                          <button
+                            key={audio.id}
+                            onClick={() => setSelectedAudioId(audio.id)}
+                            className={cn(
+                              "text-left px-3 py-2 rounded-lg transition-all flex items-center",
+                              audio.id === selectedAudioId
+                                ? "bg-primary/10 border border-primary/20"
+                                : "bg-white hover:bg-gray-50 border border-gray-100",
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                "w-8 h-8 mr-3 rounded-full flex items-center justify-center",
+                                audio.id === selectedAudioId
+                                  ? "bg-primary/20"
+                                  : "bg-gray-100",
+                              )}
+                            >
+                              {audio.id === selectedAudioId && isPlaying ? (
+                                <Pause
+                                  className={cn(
+                                    "h-4 w-4",
+                                    audio.id === selectedAudioId
+                                      ? "text-primary"
+                                      : "text-gray-500",
+                                  )}
+                                />
+                              ) : (
+                                <Play
+                                  className={cn(
+                                    "h-4 w-4",
+                                    audio.id === selectedAudioId
+                                      ? "text-primary"
+                                      : "text-gray-500",
+                                  )}
+                                />
+                              )}
+                            </div>
+                            <div>
+                              <p
+                                className={cn(
+                                  "font-medium",
+                                  audio.id === selectedAudioId
+                                    ? "text-primary"
+                                    : "text-gray-700",
+                                )}
+                              >
+                                {audio.title}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Audio Player */}
+                      {currentAudio && (
+                        <div className="rounded-xl p-3 bg-gradient-to-br from-gray-50 to-white border border-gray-100 shadow-sm">
+                          {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
+                          <audio
+                            ref={audioRef}
+                            src={currentAudio.audioLink}
+                            onTimeUpdate={handleTimeUpdate}
+                            onLoadedMetadata={handleLoadedMetadata}
+                            onEnded={handleAudioEnd}
+                            className="hidden"
+                          />
+
+                          <div className="flex justify-between mb-2 items-center">
+                            <div className="text-xs font-medium text-gray-500">
+                              {formatTime(currentTime)}
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button
+                                onClick={toggleMute}
+                                size="sm"
+                                variant="ghost"
+                                className="w-7 h-7 p-0 rounded-full"
+                              >
+                                {isMuted ? (
+                                  <VolumeX className="h-4 w-4 text-gray-400" />
+                                ) : (
+                                  <Volume2 className="h-4 w-4 text-primary/70" />
+                                )}
+                              </Button>
+                              <Button
+                                onClick={togglePlayPause}
+                                size="sm"
+                                variant="outline"
+                                className="w-8 h-8 p-0 rounded-full"
+                              >
+                                {isPlaying ? (
+                                  <Pause className="h-4 w-4" />
+                                ) : (
+                                  <Play className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                            <div className="text-xs font-medium text-gray-500">
+                              {formatTime(duration)}
+                            </div>
+                          </div>
+
+                          <div className="w-full px-1">
+                            <input
+                              type="range"
+                              min="0"
+                              max={duration || 0}
+                              value={currentTime}
+                              onChange={handleSeek}
+                              className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="bg-white/80 rounded-lg p-6 text-center text-gray-500">
+                      <Volume2 className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                      <p>No audio content available for this week</p>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            )}
           </div>
-
-          {currentAudio ? (
-            <div className="bg-white/80 rounded-lg p-3 shadow-sm">
-              <div className="mb-2 text-sm font-medium text-gray-700">
-                {currentAudio.title}
-              </div>
-              {/* biome-ignore lint/a11y/useMediaCaption: <> */}
-              <audio
-                ref={audioRef}
-                src={currentAudio.audioLink}
-                onTimeUpdate={handleTimeUpdate}
-                onLoadedMetadata={handleLoadedMetadata}
-                onEnded={handleAudioEnd}
-                className="hidden"
-              />
-              <div className="flex items-center space-x-2 mb-2">
-                <Button
-                  onClick={togglePlayPause}
-                  size="sm"
-                  variant="outline"
-                  className="w-8 h-8 p-0 rounded-full"
-                >
-                  {isPlaying ? (
-                    <Pause className="h-4 w-4" />
-                  ) : (
-                    <Play className="h-4 w-4" />
-                  )}
-                </Button>
-
-                <Button
-                  onClick={toggleMute}
-                  size="sm"
-                  variant="ghost"
-                  className="w-8 h-8 p-0"
-                >
-                  {isMuted ? (
-                    <VolumeX className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Volume2 className="h-4 w-4 text-primary/70" />
-                  )}
-                </Button>
-
-                <div className="flex-1 flex items-center space-x-2">
-                  <span className="text-xs text-gray-500 w-10">
-                    {formatTime(currentTime)}
-                  </span>
-                  <input
-                    type="range"
-                    min="0"
-                    max={duration || 0}
-                    value={currentTime}
-                    onChange={handleSeek}
-                    className="flex-1 h-1 bg-gray-200 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
-                  />
-                  <span className="text-xs text-gray-500 w-10">
-                    {formatTime(duration)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white/80 rounded-lg p-4 text-center text-gray-500">
-              {block.weeks.length > 0
-                ? "Select a week and audio to listen"
-                : "No audio content available for this block"}
-            </div>
-          )}
         </article>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 lg:gap-4">
