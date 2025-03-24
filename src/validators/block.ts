@@ -165,6 +165,30 @@ const CreateBlockSchema = zod.object({
   }),
 });
 
+const BulkUpdateAudiosSchema = zod.object({
+  audios: zod.array(
+    AudioSchema.extend({
+      id: zod
+        .string({
+          message: "Audio id is required!",
+        })
+        .min(3, {
+          message: "Audio id must be at least 3 characters long!",
+        }),
+    }),
+  ),
+  deletedAudios: zod.array(
+    zod
+      .string({
+        message: "Audio id is required!",
+      })
+      .min(3, {
+        message: "Audio id must be at least 3 characters long!",
+      }),
+  ),
+  newAudios: zod.array(AudioSchema),
+});
+
 const BulkUpdateWeeksSchema = zod.object({
   weeks: zod.array(
     WeekSchema.extend({
@@ -290,6 +314,7 @@ const UpdateBlockSchema = CreateBlockSchema;
 export {
   CreateBlockSchema,
   UpdateBlockSchema,
+  BulkUpdateAudiosSchema,
   BulkUpdateWeeksSchema,
   BulkUpdateFlashcardsSchema,
   BulkUpdateSampleTestQuestionsSchema,
