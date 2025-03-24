@@ -442,8 +442,43 @@ export function WeeksDialog({ block }: WeeksDialogProps) {
                 >
                   <Trash2Icon className="size-4" />
                 </Button>
-                <Button onClick={() => saveWeek()} size="sm" variant="outline">
-                  Save Week
+                <Button
+                  onClick={() => {
+                    setNewWeeks([
+                      ...newWeeks,
+                      {
+                        weekNumber: weeks.length + newWeeks.length + 1,
+                        title: `Week ${weeks.length + newWeeks.length + 1}`,
+                        presentation: null as any,
+                        audios: [],
+                      },
+                    ]);
+
+                    setWeekIndex(weeks.length + newWeeks.length);
+                    setActiveTab("week-details");
+                  }}
+                  size="sm"
+                  variant="outline"
+                >
+                  New
+                </Button>
+                <Button
+                  onClick={() => {
+                    updateWeeksMutation.mutate({
+                      blockId: block.id,
+                      weeks,
+                      deletedWeeks,
+                      newWeeks,
+                    });
+                  }}
+                  size="sm"
+                  variant="outline"
+                  disabled={updateWeeksMutation.isPending}
+                >
+                  {updateWeeksMutation.isPending && (
+                    <Loader2Icon className="animate-spin h-4 w-4 mr-1" />
+                  )}
+                  Save
                 </Button>
               </div>
             </div>
