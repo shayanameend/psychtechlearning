@@ -44,11 +44,11 @@ export async function GET(request: NextRequest) {
                 audioLink: true,
                 createdAt: true,
                 updatedAt: true,
-              },            
-            }, 
+              },
+            },
             createdAt: true,
             updatedAt: true,
-          },        
+          },
         },
         flashcards: {
           select: {
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
       },
       {
         status: 200,
-      },
+      }
     );
   } catch (error) {
     return handleErrors({ error });
@@ -148,9 +148,9 @@ export async function POST(request: NextRequest) {
         flashcardsDescription,
         weeks: {
           createMany: {
-            data: weeks
+            data: weeks,
           },
-          },
+        },
         flashcards: {
           createMany: {
             data: flashcards,
@@ -190,11 +190,11 @@ export async function POST(request: NextRequest) {
                 audioLink: true,
                 createdAt: true,
                 updatedAt: true,
-              },            
-            }, 
+              },
+            },
             createdAt: true,
             updatedAt: true,
-          },        
+          },
         },
         flashcards: {
           select: {
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 201,
-      },
+      }
     );
   } catch (error) {
     return handleErrors({ error });

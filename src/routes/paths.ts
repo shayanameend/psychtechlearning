@@ -19,6 +19,9 @@ export const paths = {
         flashcards: {
           bulk: ({ id }: { id: string }) => `/api/blocks/${id}/flashcards/bulk`,
         },
+        weeks: {
+          bulk: ({ id }: { id: string }) => `/api/blocks/${id}/weeks/bulk`,
+        },
         sampleTestQuestions: {
           bulk: ({ id }: { id: string }) =>
             `/api/blocks/${id}/sample-test-questions/bulk`,
