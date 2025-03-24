@@ -34,6 +34,9 @@ export async function GET(request: NextRequest) {
         sampleTestDescription: true,
         finalTestDescription: true,
         weeks: {
+          orderBy: {
+            weekNumber: "asc",
+          },
           select: {
             id: true,
             weekNumber: true,
@@ -192,6 +195,9 @@ export async function POST(request: NextRequest) {
         sampleTestDescription: true,
         finalTestDescription: true,
         weeks: {
+          orderBy: {
+            weekNumber: "asc",
+          },
           select: {
             id: true,
             weekNumber: true,

@@ -43,6 +43,9 @@ export async function GET(
         sampleTestDescription: true,
         finalTestDescription: true,
         weeks: {
+          orderBy: {
+            weekNumber: "asc",
+          },
           select: {
             id: true,
             weekNumber: true,
@@ -193,6 +196,9 @@ export async function PUT(
         sampleTestDescription: true,
         finalTestDescription: true,
         weeks: {
+          orderBy: {
+            weekNumber: "asc",
+          },
           select: {
             id: true,
             weekNumber: true,
