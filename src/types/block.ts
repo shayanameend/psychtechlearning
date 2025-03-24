@@ -76,3 +76,15 @@ export type NewTestQuestionType = Omit<
   Omit<Omit<TestQuestionType, "updatedAt">, "createdAt">,
   "id"
 >;
+export type NewPresentationType = Omit<
+  Omit<Omit<PresentationType, "updatedAt">, "createdAt">,
+  "id"
+>;
+export type NewAudioType = Omit<
+  Omit<Omit<AudioType, "updatedAt">, "createdAt">,
+  "id"
+>;
+export type NewWeekType = Omit<
+  Omit<Omit<WeekType, "updatedAt">, "createdAt">,
+  "id"
+>;

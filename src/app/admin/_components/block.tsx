@@ -14,6 +14,7 @@ import { EditBlockButton } from "./edit-block-button";
 import { FlashcardsDialog } from "./flashcards-dialog";
 import { TestQuestionsDialog } from "./test-questions-dialog";
 import { truncateText } from "./utils";
+import { WeeksDialog } from "./weeks-dialog";
 
 export function Block({ block }: Readonly<{ block: BlockType }>) {
   const queryClient = useQueryClient();
@@ -80,6 +81,17 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
           <p className={cn("text-sm text-gray-600")}>
             {block.blockDescription}
           </p>
+        </div>
+        <div className={cn("flex gap-4 justify-between items-end")}>
+          <div className={cn("flex flex-col gap-2 flex-1")}>
+            <Label className={cn("font-bold")}>Weeks</Label>
+            <p className={cn("text-sm text-gray-600")}>
+              {truncateText(block.weeksDescription, 150)}
+            </p>
+          </div>
+          <div>
+            <WeeksDialog block={block} />
+          </div>
         </div>
         <div className={cn("flex gap-4 justify-between items-end")}>
           <div className={cn("flex flex-col gap-2 flex-1")}>

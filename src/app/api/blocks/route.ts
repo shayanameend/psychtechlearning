@@ -38,6 +38,15 @@ export async function GET(request: NextRequest) {
             id: true,
             weekNumber: true,
             title: true,
+            presentations: {
+              select: {
+                id: true,
+                title: true,
+                presentationLink: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             audios: {
               select: {
                 id: true,
@@ -187,6 +196,15 @@ export async function POST(request: NextRequest) {
             id: true,
             weekNumber: true,
             title: true,
+            presentations: {
+              select: {
+                id: true,
+                title: true,
+                presentationLink: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             audios: {
               select: {
                 id: true,

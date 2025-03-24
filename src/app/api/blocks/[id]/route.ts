@@ -47,6 +47,15 @@ export async function GET(
             id: true,
             weekNumber: true,
             title: true,
+            presentations: {
+              select: {
+                id: true,
+                title: true,
+                presentationLink: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             audios: {
               select: {
                 id: true,
@@ -188,6 +197,15 @@ export async function PUT(
             id: true,
             weekNumber: true,
             title: true,
+            presentations: {
+              select: {
+                id: true,
+                title: true,
+                presentationLink: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             audios: {
               select: {
                 id: true,
