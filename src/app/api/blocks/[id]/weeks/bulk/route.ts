@@ -9,7 +9,7 @@ import { BulkUpdateWeeksSchema } from "~/validators/block";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const decodedUser = await verifyRequest({
@@ -61,8 +61,8 @@ export async function PUT(
               weekNumber,
               title,
             },
-          })
-        )
+          }),
+        ),
       );
     }
 
@@ -75,7 +75,7 @@ export async function PUT(
       },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     return handleErrors({ error });

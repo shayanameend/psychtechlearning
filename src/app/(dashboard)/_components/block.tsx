@@ -30,7 +30,13 @@ import {
 import { Label } from "~/components/ui/label";
 import { Progress } from "~/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { cn } from "~/lib/utils";
 
 interface Flashcard {
@@ -124,7 +130,7 @@ export function Block({
   const [selectedWeekId, setSelectedWeekId] = useState<string>("");
   const [selectedAudioId, setSelectedAudioId] = useState<string>("");
   const [currentAudio, setCurrentAudio] = useState<Audio | null>(null);
-  
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -136,12 +142,12 @@ export function Block({
     setFlashcards(block.flashcards);
     setSampleTestQuestions(block.sampleTestQuestions);
     setFinalTestQuestions(block.finalTestQuestions);
-    
+
     // Initialize week and audio selection if weeks exist
     if (block.weeks && block.weeks.length > 0) {
       const firstWeek = block.weeks[0];
       setSelectedWeekId(firstWeek.id);
-      
+
       if (firstWeek.audios && firstWeek.audios.length > 0) {
         const firstAudio = firstWeek.audios[0];
         setSelectedAudioId(firstAudio.id);
@@ -155,9 +161,9 @@ export function Block({
   // Update current audio when selected week or audio changes
   useEffect(() => {
     if (selectedWeekId && selectedAudioId) {
-      const week = block.weeks.find(w => w.id === selectedWeekId);
+      const week = block.weeks.find((w) => w.id === selectedWeekId);
       if (week) {
-        const audio = week.audios.find(a => a.id === selectedAudioId);
+        const audio = week.audios.find((a) => a.id === selectedAudioId);
         if (audio) {
           setCurrentAudio(audio);
           // Reset audio player state
@@ -286,17 +292,20 @@ export function Block({
         >
           <h3
             className={cn(
-              "text-foreground/70 text-lg font-medium flex items-center"
+              "text-foreground/70 text-lg font-medium flex items-center",
             )}
           >
             <Volume2 className="h-5 w-5 mr-2 text-primary/70" />
             Audio Content
           </h3>
-          
+
           {/* Week and Audio Selection UI */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-2">
             <div>
-              <Label htmlFor="week-select" className="text-xs text-gray-500 mb-1 block">
+              <Label
+                htmlFor="week-select"
+                className="text-xs text-gray-500 mb-1 block"
+              >
                 Select Week
               </Label>
               <Select
@@ -304,7 +313,7 @@ export function Block({
                 onValueChange={(value) => {
                   setSelectedWeekId(value);
                   // Reset audio selection when week changes
-                  const week = block.weeks.find(w => w.id === value);
+                  const week = block.weeks.find((w) => w.id === value);
                   if (week && week.audios.length > 0) {
                     setSelectedAudioId(week.audios[0].id);
                   } else {
@@ -324,9 +333,12 @@ export function Block({
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
-              <Label htmlFor="audio-select" className="text-xs text-gray-500 mb-1 block">
+              <Label
+                htmlFor="audio-select"
+                className="text-xs text-gray-500 mb-1 block"
+              >
                 Select Audio
               </Label>
               <Select
@@ -339,7 +351,7 @@ export function Block({
                 </SelectTrigger>
                 <SelectContent>
                   {block.weeks
-                    .find(w => w.id === selectedWeekId)
+                    .find((w) => w.id === selectedWeekId)
                     ?.audios.map((audio) => (
                       <SelectItem key={audio.id} value={audio.id}>
                         {audio.title}
@@ -349,7 +361,7 @@ export function Block({
               </Select>
             </div>
           </div>
-          
+
           {currentAudio ? (
             <div className="bg-white/80 rounded-lg p-3 shadow-sm">
               <div className="mb-2 text-sm font-medium text-gray-700">
@@ -411,13 +423,13 @@ export function Block({
             </div>
           ) : (
             <div className="bg-white/80 rounded-lg p-4 text-center text-gray-500">
-              {block.weeks.length > 0 ? 
-                "Select a week and audio to listen" : 
-                "No audio content available for this block"}
+              {block.weeks.length > 0
+                ? "Select a week and audio to listen"
+                : "No audio content available for this block"}
             </div>
           )}
         </article>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 lg:gap-4">
           <article
             className={cn(

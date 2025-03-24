@@ -53,11 +53,11 @@ export async function GET(
                 audioLink: true,
                 createdAt: true,
                 updatedAt: true,
-              },            
-            }, 
+              },
+            },
             createdAt: true,
             updatedAt: true,
-          },        
+          },
         },
         flashcards: {
           select: {
@@ -191,11 +191,11 @@ export async function PUT(
                 audioLink: true,
                 createdAt: true,
                 updatedAt: true,
-              },            
-            }, 
+              },
+            },
             createdAt: true,
             updatedAt: true,
-          },        
+          },
         },
         flashcards: {
           select: {

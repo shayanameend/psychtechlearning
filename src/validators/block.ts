@@ -32,7 +32,7 @@ const QuestionSchema = zod.object({
       })
       .min(3, {
         message: "Answer must be at least 3 characters long!",
-      })
+      }),
   ),
   correctAnswer: zod
     .string({
@@ -168,7 +168,7 @@ const BulkUpdateWeeksSchema = zod.object({
         .min(3, {
           message: "Week id must be at least 3 characters long!",
         }),
-    })
+    }),
   ),
   deletedWeeks: zod.array(
     zod
@@ -177,7 +177,7 @@ const BulkUpdateWeeksSchema = zod.object({
       })
       .min(3, {
         message: "Week id must be at least 3 characters long!",
-      })
+      }),
   ),
   newWeeks: zod.array(WeekSchema),
 });
@@ -192,7 +192,7 @@ const BulkUpdateFlashcardsSchema = zod.object({
         .min(3, {
           message: "Flashcard id must be at least 3 characters long!",
         }),
-    })
+    }),
   ),
   deletedFlashcards: zod.array(
     zod
@@ -201,7 +201,7 @@ const BulkUpdateFlashcardsSchema = zod.object({
       })
       .min(3, {
         message: "Flashcard id must be at least 3 characters long!",
-      })
+      }),
   ),
   newFlashcards: zod.array(FlashcardSchema),
 });
@@ -216,7 +216,7 @@ const BulkUpdateSampleTestQuestionsSchema = zod.object({
         .min(3, {
           message: "Question id must be at least 3 characters long!",
         }),
-    })
+    }),
   ),
   deletedSampleTestQuestions: zod.array(
     zod
@@ -225,7 +225,7 @@ const BulkUpdateSampleTestQuestionsSchema = zod.object({
       })
       .min(3, {
         message: "Question id must be at least 3 characters long!",
-      })
+      }),
   ),
   newSampleTestQuestions: zod.array(QuestionSchema),
 });
@@ -240,7 +240,7 @@ const BulkUpdateFinalTestQuestionsSchema = zod.object({
         .min(3, {
           message: "Question id must be at least 3 characters long!",
         }),
-    })
+    }),
   ),
   deletedFinalTestQuestions: zod.array(
     zod
@@ -249,7 +249,7 @@ const BulkUpdateFinalTestQuestionsSchema = zod.object({
       })
       .min(3, {
         message: "Question id must be at least 3 characters long!",
-      })
+      }),
   ),
   newFinalTestQuestions: zod.array(QuestionSchema),
 });
@@ -264,7 +264,7 @@ const BulkUpdateUserNotesSchema = zod.object({
         .min(3, {
           message: "User note id must be at least 3 characters long!",
         }),
-    })
+    }),
   ),
   deletedNotes: zod.array(
     zod
@@ -273,7 +273,7 @@ const BulkUpdateUserNotesSchema = zod.object({
       })
       .min(3, {
         message: "User note id must be at least 3 characters long!",
-      })
+      }),
   ),
   newNotes: zod.array(UserNoteSchema),
 });
