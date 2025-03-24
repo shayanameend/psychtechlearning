@@ -370,98 +370,37 @@ export function Block({
                 {/* Presentations Tab */}
                 <TabsContent value="presentations" className="space-y-3">
                   {getWeekPresentations().length > 0 ? (
-                    <div className="relative">
-                      {getWeekPresentations().length > 1 && (
-                        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-2 z-10 pointer-events-none">
-                          <Button
-                            onClick={() => navigatePresentation("prev")}
-                            size="icon"
-                            variant="ghost"
-                            className="bg-white/60 backdrop-blur-sm h-8 w-8 rounded-full pointer-events-auto shadow-sm hover:bg-white/90"
-                            disabled={selectedPresentationIndex === 0}
-                          >
-                            <ChevronLeft className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            onClick={() => navigatePresentation("next")}
-                            size="icon"
-                            variant="ghost"
-                            className="bg-white/60 backdrop-blur-sm h-8 w-8 rounded-full pointer-events-auto shadow-sm hover:bg-white/90"
-                            disabled={
-                              selectedPresentationIndex ===
-                              getWeekPresentations().length - 1
-                            }
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-
-                      {/* Presentation Carousel */}
-                      <div className="rounded-xl p-4 bg-gradient-to-br from-blue-50 to-white border border-blue-100 shadow-sm">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium text-primary/90">
-                            {getCurrentPresentation()?.title}
-                          </h4>
-                          <div className="flex items-center text-xs text-gray-500">
-                            {getWeekPresentations().length > 1 && (
-                              <span>
-                                {selectedPresentationIndex + 1} of{" "}
-                                {getWeekPresentations().length}
-                              </span>
-                            )}
+                    getWeekPresentations().map((presentation, index) => (
+                      <div
+                        key={index}
+                        className="p-3 rounded-lg border transition-all bg-white border-gray-100 hover:bg-gray-50 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <Presentation className="mr-3 h-5 w-5 text-gray-400" />
+                            <div>
+                              <h4 className="font-medium text-gray-700">
+                                {presentation.title}
+                              </h4>
+                            </div>
                           </div>
-                        </div>
-
-                        <div className="aspect-video bg-white/80 rounded-lg border border-blue-100 flex items-center justify-center mb-3">
-                          <div className="text-center p-6">
-                            <Presentation className="h-12 w-12 text-primary/40 mx-auto mb-4" />
-                            <p className="text-sm text-gray-500 mb-3">
-                              Preview not available. Click the button below to
-                              open the presentation.
-                            </p>
-                          </div>
-                        </div>
-
-                        <Button
-                          onClick={() => {
-                            const presentation = getCurrentPresentation();
-                            if (presentation) {
+                          <Button
+                            onClick={() => {
                               window.open(
                                 presentation.presentationLink,
                                 "_blank",
                               );
-                            }
-                          }}
-                          className="w-full"
-                          size="sm"
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Open Presentation
-                        </Button>
-                      </div>
-
-                      {/* Presentation Dots Indicator */}
-                      {getWeekPresentations().length > 1 && (
-                        <div className="flex justify-center mt-3 space-x-1">
-                          {getWeekPresentations().map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() =>
-                                setSelectedPresentationIndex(index)
-                              }
-                              className={cn(
-                                "w-2 h-2 rounded-full transition-colors",
-                                index === selectedPresentationIndex
-                                  ? "bg-primary"
-                                  : "bg-gray-300 hover:bg-gray-400",
-                              )}
-                              aria-label={`Go to presentation ${index + 1}`}
-                            />
-                          ))}
+                            }}
+                            size="sm"
+                            variant="outline"
+                            className="ml-2"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                            Open
+                          </Button>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ))
                   ) : (
                     <div className="bg-white/80 rounded-lg p-6 text-center text-gray-500">
                       <Presentation className="h-10 w-10 text-gray-300 mx-auto mb-2" />
