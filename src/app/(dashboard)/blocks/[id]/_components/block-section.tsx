@@ -12,67 +12,7 @@ import { Steps } from "~/components/ui/steps";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-
-interface Flashcard {
-  id: string;
-  question: string;
-  answer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface TestQuestion {
-  id: string;
-  question: string;
-  answers: string[];
-  correctAnswer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface BlockUserNote {
-  id: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Audio {
-  id: string;
-  title: string;
-  audioLink: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Week {
-  id: string;
-  weekNumber: number;
-  title: string;
-  audios: Audio[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Block {
-  id: string;
-  blockOrder: number;
-  blockTitle: string;
-  blockDescription: string;
-  guideLink: string;
-  guideDescription: string;
-  weeksDescription: string;
-  flashcardsDescription: string;
-  sampleTestDescription: string;
-  finalTestDescription: string;
-  weeks: Week[];
-  flashcards: Flashcard[];
-  sampleTestQuestions: TestQuestion[];
-  finalTestQuestions: TestQuestion[];
-  blockUserNotes: BlockUserNote[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { BlockType } from "~/types/block";
 
 const LoadingState = () => (
   <section className="flex-1 flex flex-col items-center justify-center">
@@ -124,7 +64,7 @@ export function BlockSection({
   total: number;
   on: number;
 }) {
-  const [content, setContent] = useState<Block | null>(null);
+  const [content, setContent] = useState<BlockType | null>(null);
   const [showNotes, setShowNotes] = useState(false);
 
   const { token } = useUserContext();
@@ -143,7 +83,7 @@ export function BlockSection({
         },
       });
 
-      return response.data as { data: { block: Block } };
+      return response.data as { data: { block: BlockType } };
     },
   });
 

@@ -11,79 +11,19 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
+import type { BlockType, BlockUserNoteType } from "~/types/block";
 
 const MAX_NOTES = 5;
 const MAX_NOTE_LENGTH = 210;
 
-interface Flashcard {
-  id: string;
-  question: string;
-  answer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface TestQuestion {
-  id: string;
-  question: string;
-  answers: string[];
-  correctAnswer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface BlockUserNote {
-  id: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Audio {
-  id: string;
-  title: string;
-  audioLink: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Week {
-  id: string;
-  weekNumber: number;
-  title: string;
-  audios: Audio[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Block {
-  id: string;
-  blockOrder: number;
-  blockTitle: string;
-  blockDescription: string;
-  guideLink: string;
-  guideDescription: string;
-  weeksDescription: string;
-  flashcardsDescription: string;
-  sampleTestDescription: string;
-  finalTestDescription: string;
-  weeks: Week[];
-  flashcards: Flashcard[];
-  sampleTestQuestions: TestQuestion[];
-  finalTestQuestions: TestQuestion[];
-  blockUserNotes: BlockUserNote[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export function BlockNotes({
   block,
   showNotes,
-}: Readonly<{ block: Block; showNotes: boolean }>) {
-  const [notes, setNotes] = useState<BlockUserNote[]>(block.blockUserNotes);
+}: Readonly<{ block: BlockType; showNotes: boolean }>) {
+  const [notes, setNotes] = useState<BlockUserNoteType[]>(block.blockUserNotes);
   const [deletedNotes, setDeletedNotes] = useState<string[]>([]);
   const [newNotes, setNewNotes] = useState<
-    Omit<Omit<Omit<BlockUserNote, "updatedAt">, "createdAt">, "id">[]
+    Omit<Omit<Omit<BlockUserNoteType, "updatedAt">, "createdAt">, "id">[]
   >([]);
 
   const [isEditing, setIsEditing] = useState(-1);
@@ -114,10 +54,10 @@ export function BlockNotes({
       newNotes,
     }: {
       blockId: string;
-      notes: BlockUserNote[];
+      notes: BlockUserNoteType[];
       deletedNotes: string[];
       newNotes: Omit<
-        Omit<Omit<BlockUserNote, "updatedAt">, "createdAt">,
+        Omit<Omit<BlockUserNoteType, "updatedAt">, "createdAt">,
         "id"
       >[];
     }) => {

@@ -38,80 +38,27 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { cn } from "~/lib/utils";
-
-interface Flashcard {
-  id: string;
-  question: string;
-  answer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface TestQuestion {
-  id: string;
-  question: string;
-  answers: string[];
-  correctAnswer: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface BlockUserNote {
-  id: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Audio {
-  id: string;
-  title: string;
-  audioLink: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Week {
-  id: string;
-  weekNumber: number;
-  title: string;
-  audios: Audio[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Block {
-  id: string;
-  blockOrder: number;
-  blockTitle: string;
-  blockDescription: string;
-  guideLink: string;
-  guideDescription: string;
-  weeksDescription: string;
-  flashcardsDescription: string;
-  sampleTestDescription: string;
-  finalTestDescription: string;
-  weeks: Week[];
-  flashcards: Flashcard[];
-  sampleTestQuestions: TestQuestion[];
-  finalTestQuestions: TestQuestion[];
-  blockUserNotes: BlockUserNote[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type {
+  AudioType,
+  BlockType,
+  FlashcardType,
+  TestQuestionType,
+} from "~/types/block";
 
 export function Block({
   block,
   showNotes,
-}: Readonly<{ block: Block; showNotes: boolean }>) {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>(block.flashcards);
+}: Readonly<{ block: BlockType; showNotes: boolean }>) {
+  const [flashcards, setFlashcards] = useState<FlashcardType[]>(
+    block.flashcards,
+  );
   const [showFlashcard, setShowFlashcard] = useState(false);
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
-    TestQuestion[]
+    TestQuestionType[]
   >(block.sampleTestQuestions);
-  const [finalTestQuestions, setFinalTestQuestions] = useState<TestQuestion[]>(
-    block.finalTestQuestions,
-  );
+  const [finalTestQuestions, setFinalTestQuestions] = useState<
+    TestQuestionType[]
+  >(block.finalTestQuestions);
   const [sampleTestAnswers, setSampleTestAnswers] = useState<
     Array<string | null>
   >([]);
@@ -130,7 +77,7 @@ export function Block({
   // New state for weeks and audio selection
   const [selectedWeekId, setSelectedWeekId] = useState<string>("");
   const [selectedAudioId, setSelectedAudioId] = useState<string>("");
-  const [currentAudio, setCurrentAudio] = useState<Audio | null>(null);
+  const [currentAudio, setCurrentAudio] = useState<AudioType | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -192,7 +139,7 @@ export function Block({
 
   const calculateTestScore = (
     answers: (string | null)[],
-    questions: TestQuestion[],
+    questions: TestQuestionType[],
   ) => {
     const correct = answers.reduce((acc, answer, index) => {
       return answer === questions[index]?.correctAnswer ? acc + 1 : acc;

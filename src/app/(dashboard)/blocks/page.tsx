@@ -9,15 +9,7 @@ import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
-
-interface Block {
-  id: string;
-  blockOrder: number;
-  blockTitle: string;
-  blockDescription: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { BlockType } from "~/types/block";
 
 const LoadingState = () => (
   <section className="flex-1 flex flex-col items-center justify-center">
@@ -77,11 +69,11 @@ export default function BlocksPage() {
         },
       });
 
-      return response.data as { data: { blocks: Block[] } };
+      return response.data as { data: { blocks: BlockType[] } };
     },
   });
 
-  const [content, setContent] = useState<Block[]>([]);
+  const [content, setContent] = useState<BlockType[]>([]);
 
   useEffect(() => {
     setContent(blocksQueryResult?.data.blocks ?? []);
@@ -112,7 +104,9 @@ export default function BlocksPage() {
 
               const queryString = urlSearchParams.toString();
 
-              const url = `${paths.app.blocks.id.root({ id: block.id })}${queryString ? `?${queryString}` : ""}`;
+              const url = `${paths.app.blocks.id.root({ id: block.id })}${
+                queryString ? `?${queryString}` : ""
+              }`;
 
               return (
                 <Link
