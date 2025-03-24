@@ -32,7 +32,7 @@ const QuestionSchema = zod.object({
       })
       .min(3, {
         message: "Answer must be at least 3 characters long!",
-      }),
+      })
   ),
   correctAnswer: zod
     .string({
@@ -85,9 +85,6 @@ const WeekSchema = zod.object({
     .min(3, {
       message: "Week title must be at least 3 characters long!",
     }),
-  audios: zod.array(AudioSchema).min(1, {
-    message: "Week must have at least 1 audio file!",
-  }),
 });
 
 const CreateBlockSchema = zod.object({
@@ -147,6 +144,9 @@ const CreateBlockSchema = zod.object({
     .min(3, {
       message: "Final test description must be at least 3 characters long!",
     }),
+  weeks: zod.array(WeekSchema).min(1, {
+    message: "Block must have at least 1 week!",
+  }),
   flashcards: zod.array(FlashcardSchema).min(1, {
     message: "Flashcards must have at least 1 item!",
   }),
@@ -156,9 +156,30 @@ const CreateBlockSchema = zod.object({
   finalTestQuestions: zod.array(QuestionSchema).min(1, {
     message: "Final test questions must have at least 1 item!",
   }),
-  weeks: zod.array(WeekSchema).min(1, {
-    message: "Block must have at least 1 week!",
-  }),
+});
+
+const BulkUpdateWeeksSchema = zod.object({
+  weeks: zod.array(
+    WeekSchema.extend({
+      id: zod
+        .string({
+          message: "Week id is required!",
+        })
+        .min(3, {
+          message: "Week id must be at least 3 characters long!",
+        }),
+    })
+  ),
+  deletedWeeks: zod.array(
+    zod
+      .string({
+        message: "Week id is required!",
+      })
+      .min(3, {
+        message: "Week id must be at least 3 characters long!",
+      })
+  ),
+  newWeeks: zod.array(WeekSchema),
 });
 
 const BulkUpdateFlashcardsSchema = zod.object({
@@ -171,7 +192,7 @@ const BulkUpdateFlashcardsSchema = zod.object({
         .min(3, {
           message: "Flashcard id must be at least 3 characters long!",
         }),
-    }),
+    })
   ),
   deletedFlashcards: zod.array(
     zod
@@ -180,7 +201,7 @@ const BulkUpdateFlashcardsSchema = zod.object({
       })
       .min(3, {
         message: "Flashcard id must be at least 3 characters long!",
-      }),
+      })
   ),
   newFlashcards: zod.array(FlashcardSchema),
 });
@@ -195,7 +216,7 @@ const BulkUpdateSampleTestQuestionsSchema = zod.object({
         .min(3, {
           message: "Question id must be at least 3 characters long!",
         }),
-    }),
+    })
   ),
   deletedSampleTestQuestions: zod.array(
     zod
@@ -204,7 +225,7 @@ const BulkUpdateSampleTestQuestionsSchema = zod.object({
       })
       .min(3, {
         message: "Question id must be at least 3 characters long!",
-      }),
+      })
   ),
   newSampleTestQuestions: zod.array(QuestionSchema),
 });
@@ -219,7 +240,7 @@ const BulkUpdateFinalTestQuestionsSchema = zod.object({
         .min(3, {
           message: "Question id must be at least 3 characters long!",
         }),
-    }),
+    })
   ),
   deletedFinalTestQuestions: zod.array(
     zod
@@ -228,7 +249,7 @@ const BulkUpdateFinalTestQuestionsSchema = zod.object({
       })
       .min(3, {
         message: "Question id must be at least 3 characters long!",
-      }),
+      })
   ),
   newFinalTestQuestions: zod.array(QuestionSchema),
 });
@@ -243,7 +264,7 @@ const BulkUpdateUserNotesSchema = zod.object({
         .min(3, {
           message: "User note id must be at least 3 characters long!",
         }),
-    }),
+    })
   ),
   deletedNotes: zod.array(
     zod
@@ -252,64 +273,9 @@ const BulkUpdateUserNotesSchema = zod.object({
       })
       .min(3, {
         message: "User note id must be at least 3 characters long!",
-      }),
+      })
   ),
   newNotes: zod.array(UserNoteSchema),
-});
-
-const BulkUpdateWeeksSchema = zod.object({
-  weeks: zod.array(
-    WeekSchema.extend({
-      id: zod
-        .string({
-          message: "Week id is required!",
-        })
-        .min(3, {
-          message: "Week id must be at least 3 characters long!",
-        }),
-    }),
-  ),
-  deletedWeeks: zod.array(
-    zod
-      .string({
-        message: "Week id is required!",
-      })
-      .min(3, {
-        message: "Week id must be at least 3 characters long!",
-      }),
-  ),
-  newWeeks: zod.array(WeekSchema),
-});
-
-const BulkUpdateAudiosSchema = zod.object({
-  weekId: zod
-    .string({
-      message: "Week id is required!",
-    })
-    .min(3, {
-      message: "Week id must be at least 3 characters long!",
-    }),
-  audios: zod.array(
-    AudioSchema.extend({
-      id: zod
-        .string({
-          message: "Audio id is required!",
-        })
-        .min(3, {
-          message: "Audio id must be at least 3 characters long!",
-        }),
-    }),
-  ),
-  deletedAudios: zod.array(
-    zod
-      .string({
-        message: "Audio id is required!",
-      })
-      .min(3, {
-        message: "Audio id must be at least 3 characters long!",
-      }),
-  ),
-  newAudios: zod.array(AudioSchema),
 });
 
 const UpdateBlockSchema = CreateBlockSchema;
@@ -317,12 +283,9 @@ const UpdateBlockSchema = CreateBlockSchema;
 export {
   CreateBlockSchema,
   UpdateBlockSchema,
+  BulkUpdateWeeksSchema,
   BulkUpdateFlashcardsSchema,
   BulkUpdateSampleTestQuestionsSchema,
   BulkUpdateFinalTestQuestionsSchema,
   BulkUpdateUserNotesSchema,
-  BulkUpdateWeeksSchema,
-  BulkUpdateAudiosSchema,
-  WeekSchema,
-  AudioSchema,
 };
