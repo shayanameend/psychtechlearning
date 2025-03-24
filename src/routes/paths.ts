@@ -21,6 +21,17 @@ export const paths = {
         },
         weeks: {
           bulk: ({ id }: { id: string }) => `/api/blocks/${id}/weeks/bulk`,
+          id: {
+            audios: {
+              bulk: ({
+                blockId,
+                weekId,
+              }: {
+                blockId: string;
+                weekId: string;
+              }) => `/api/blocks/${blockId}/weeks/${weekId}/audios/bulk`,
+            },
+          },
         },
         sampleTestQuestions: {
           bulk: ({ id }: { id: string }) =>
