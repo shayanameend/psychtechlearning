@@ -372,6 +372,7 @@ export function Block({
                   {getWeekPresentations().length > 0 ? (
                     getWeekPresentations().map((presentation, index) => (
                       <div
+                        // biome-ignore lint/suspicious/noArrayIndexKey: <>
                         key={index}
                         className="p-3 rounded-lg border transition-all bg-white border-gray-100 hover:bg-gray-50 shadow-sm"
                       >
@@ -416,6 +417,7 @@ export function Block({
                       <div className="grid grid-cols-1 gap-2 mb-2">
                         {currentWeek.audios.map((audio) => (
                           <button
+                            type="button"
                             key={audio.id}
                             onClick={() => setSelectedAudioId(audio.id)}
                             className={cn(

@@ -90,6 +90,7 @@ const SidebarProvider = React.forwardRef<
     );
 
     // Helper to toggle the sidebar.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     const toggleSidebar = React.useCallback(() => {
       return isMobile
         ? setOpenMobile((open) => !open)
@@ -116,6 +117,7 @@ const SidebarProvider = React.forwardRef<
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed";
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     const contextValue = React.useMemo<SidebarContext>(
       () => ({
         state,
