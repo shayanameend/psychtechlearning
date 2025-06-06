@@ -30,6 +30,7 @@ export async function GET(
     const block = await prisma.block.findUnique({
       where: {
         id,
+        isPublished: decodedUser.role === "USER" ? true : undefined,
       },
       select: {
         id: true,
@@ -144,6 +145,7 @@ export async function PUT(
   try {
     const decodedUser = await verifyRequest({
       request,
+      role: "ADMIN",
       isVerified: true,
     });
 
@@ -286,6 +288,7 @@ export async function DELETE(
   try {
     const decodedUser = await verifyRequest({
       request,
+      role: "ADMIN",
       isVerified: true,
     });
 

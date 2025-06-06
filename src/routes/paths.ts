@@ -16,6 +16,7 @@ export const paths = {
       root: () => "/api/blocks",
       id: {
         root: ({ id }: { id: string }) => `/api/blocks/${id}`,
+        publish: ({ id }: { id: string }) => `/api/blocks/${id}/publish`,
         flashcards: {
           bulk: ({ id }: { id: string }) => `/api/blocks/${id}/flashcards/bulk`,
         },

@@ -19,6 +19,9 @@ export async function GET(request: NextRequest) {
     }
 
     const blocks = await prisma.block.findMany({
+      where: {
+        isPublished: decodedUser.role === "USER" ? true : undefined,
+      },
       orderBy: {
         blockOrder: "asc",
       },
@@ -33,6 +36,7 @@ export async function GET(request: NextRequest) {
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,
+        isPublished: true,
         weeks: {
           orderBy: {
             weekNumber: "asc",
@@ -128,6 +132,7 @@ export async function POST(request: NextRequest) {
   try {
     const decodedUser = await verifyRequest({
       request,
+      role: "ADMIN",
       isVerified: true,
     });
 

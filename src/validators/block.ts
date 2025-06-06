@@ -168,6 +168,7 @@ const CreateBlockSchema = zod.object({
     .min(3, {
       message: "Final test description must be at least 3 characters long!",
     }),
+  isPublished: zod.boolean().optional().default(false),
   weeks: zod.array(WeekSchema).min(1, {
     message: "Block must have at least 1 week!",
   }),
@@ -352,9 +353,16 @@ const BulkUpdateUserNotesSchema = zod.object({
 
 const UpdateBlockSchema = CreateBlockSchema;
 
+const UpdateBlockPublishStatusSchema = zod.object({
+  isPublished: zod.boolean({
+    message: "Publish status is required!",
+  }),
+});
+
 export {
   CreateBlockSchema,
   UpdateBlockSchema,
+  UpdateBlockPublishStatusSchema,
   BulkUpdatePresentationsSchema,
   BulkUpdateAudiosSchema,
   BulkUpdateWeeksSchema,

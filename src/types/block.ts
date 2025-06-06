@@ -59,6 +59,7 @@ export interface BlockType {
   flashcardsDescription: string;
   sampleTestDescription: string;
   finalTestDescription: string;
+  isPublished: boolean;
   weeks: WeekType[];
   flashcards: FlashcardType[];
   sampleTestQuestions: TestQuestionType[];

@@ -13,6 +13,7 @@ export async function PUT(
   try {
     const decodedUser = await verifyRequest({
       request,
+      role: "ADMIN",
       isVerified: true,
     });
 

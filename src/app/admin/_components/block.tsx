@@ -12,6 +12,8 @@ import { paths } from "~/routes/paths";
 import type { BlockType } from "~/types/block";
 import { EditBlockButton } from "./edit-block-button";
 import { FlashcardsDialog } from "./flashcards-dialog";
+import { PublishButton } from "./publish-button";
+import { PublishStatusIndicator } from "./publish-status-indicator";
 import { TestQuestionsDialog } from "./test-questions-dialog";
 import { truncateText } from "./utils";
 import { WeeksDialog } from "./weeks-dialog";
@@ -56,11 +58,15 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
           "flex items-center justify-between border-b border-gray-200 pb-2",
         )}
       >
-        <h3 className={cn("text-lg font-semibold text-gray-800")}>
-          {block.blockOrder}. {block.blockTitle}
-        </h3>
+        <div className="flex items-center gap-3">
+          <h3 className={cn("text-lg font-semibold text-gray-800")}>
+            {block.blockOrder}. {block.blockTitle}
+          </h3>
+          <PublishStatusIndicator block={block} />
+        </div>
         <div className={cn("flex gap-2")}>
           <EditBlockButton block={block} />
+          <PublishButton block={block} />
           <Button
             onClick={() => {
               deleteBlockMutation.mutate(block.id);
