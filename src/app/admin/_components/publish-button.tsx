@@ -27,7 +27,7 @@ export function PublishButton({ block }: Readonly<{ block: BlockType }>) {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       return response.data;
@@ -57,10 +57,8 @@ export function PublishButton({ block }: Readonly<{ block: BlockType }>) {
       variant={block.isPublished ? "outline" : "default"}
       size="sm"
       className={cn(
-        "flex items-center gap-2 transition-all",
-        block.isPublished
-          ? "border-orange-500 text-orange-600 hover:bg-orange-50"
-          : "bg-green-600 hover:bg-green-700 text-white",
+        block.isPublished &&
+          "border-destructive hover:bg-destructive text-destructive"
       )}
     >
       {block.isPublished ? <>Unpublish</> : <>Publish</>}

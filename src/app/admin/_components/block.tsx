@@ -30,7 +30,7 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       return response.data;
@@ -50,12 +50,12 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
     <section
       key={block.id}
       className={cn(
-        "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm",
+        "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm"
       )}
     >
       <header
         className={cn(
-          "flex items-center justify-between border-b border-gray-200 pb-2",
+          "flex items-center justify-between border-b border-gray-200 pb-2"
         )}
       >
         <div className="flex items-center gap-3">
@@ -74,7 +74,7 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
             variant="outline"
             size="icon"
             className={cn(
-              "size-9 flex items-center gap-2 border-destructive hover:bg-destructive text-destructive",
+              "size-9 border-destructive hover:bg-destructive text-destructive"
             )}
           >
             <Trash2Icon />
