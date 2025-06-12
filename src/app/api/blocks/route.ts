@@ -194,6 +194,7 @@ export async function POST(request: NextRequest) {
       },
       select: {
         id: true,
+        blockOrder: true,
         blockTitle: true,
         blockDescription: true,
         guideDescription: true,
@@ -202,6 +203,10 @@ export async function POST(request: NextRequest) {
         flashcardsDescription: true,
         sampleTestDescription: true,
         finalTestDescription: true,
+        isPublished: true,
+        isFlashcardsEnabled: true,
+        isSampleTestEnabled: true,
+        isFinalTestEnabled: true,
         weeks: {
           orderBy: {
             weekNumber: "asc",
