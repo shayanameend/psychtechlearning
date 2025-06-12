@@ -8,21 +8,23 @@ import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 import type { BlockType } from "~/types/block";
 
-export function PublishButton({ block }: Readonly<{ block: BlockType }>) {
+export function FlashcardsToggleButton({
+  block,
+}: Readonly<{ block: BlockType }>) {
   const queryClient = useQueryClient();
   const { token } = useUserContext();
 
-  const updatePublishStatusMutation = useMutation({
+  const updateFlashcardsStatusMutation = useMutation({
     mutationFn: async ({
       blockId,
-      isPublished,
+      isFlashcardsEnabled,
     }: {
       blockId: string;
-      isPublished: boolean;
+      isFlashcardsEnabled: boolean;
     }) => {
       const response = await axios.patch(
-        paths.api.blocks.id.publish({ id: blockId }),
-        { isPublished },
+        paths.api.blocks.id.flashcardsEnable({ id: blockId }),
+        { isFlashcardsEnabled },
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -43,25 +45,25 @@ export function PublishButton({ block }: Readonly<{ block: BlockType }>) {
     },
   });
 
-  const handleTogglePublish = () => {
-    updatePublishStatusMutation.mutate({
+  const handleToggleFlashcards = () => {
+    updateFlashcardsStatusMutation.mutate({
       blockId: block.id,
-      isPublished: !block.isPublished,
+      isFlashcardsEnabled: !block.isFlashcardsEnabled,
     });
   };
 
   return (
     <Button
-      onClick={handleTogglePublish}
-      disabled={updatePublishStatusMutation.isPending}
-      variant={block.isPublished ? "outline" : "default"}
+      onClick={handleToggleFlashcards}
+      disabled={updateFlashcardsStatusMutation.isPending}
+      variant={block.isFlashcardsEnabled ? "outline" : "default"}
       size="sm"
       className={cn(
-        block.isPublished &&
+        block.isFlashcardsEnabled &&
           "border-destructive hover:bg-destructive text-destructive",
       )}
     >
-      {block.isPublished ? <>Unpublish</> : <>Publish</>}
+      {block.isFlashcardsEnabled ? <>Disable</> : <>Enable</>}
     </Button>
   );
 }

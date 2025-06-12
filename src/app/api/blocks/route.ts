@@ -37,6 +37,9 @@ export async function GET(request: NextRequest) {
         sampleTestDescription: true,
         finalTestDescription: true,
         isPublished: true,
+        isFlashcardsEnabled: true,
+        isSampleTestEnabled: true,
+        isFinalTestEnabled: true,
         weeks: {
           orderBy: {
             weekNumber: "asc",

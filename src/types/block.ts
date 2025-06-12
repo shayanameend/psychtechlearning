@@ -60,6 +60,9 @@ export interface BlockType {
   sampleTestDescription: string;
   finalTestDescription: string;
   isPublished: boolean;
+  isFlashcardsEnabled: boolean;
+  isSampleTestEnabled: boolean;
+  isFinalTestEnabled: boolean;
   weeks: WeekType[];
   flashcards: FlashcardType[];
   sampleTestQuestions: TestQuestionType[];

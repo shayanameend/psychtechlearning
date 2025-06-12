@@ -11,9 +11,12 @@ import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 import type { BlockType } from "~/types/block";
 import { EditBlockButton } from "./edit-block-button";
+import { FinalTestToggleButton } from "./final-test-toggle-button";
 import { FlashcardsDialog } from "./flashcards-dialog";
+import { FlashcardsToggleButton } from "./flashcards-toggle-button";
 import { PublishButton } from "./publish-button";
 import { PublishStatusIndicator } from "./publish-status-indicator";
+import { SampleTestToggleButton } from "./sample-test-toggle-button";
 import { TestQuestionsDialog } from "./test-questions-dialog";
 import { truncateText } from "./utils";
 import { WeeksDialog } from "./weeks-dialog";
@@ -30,7 +33,7 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       return response.data;
@@ -50,12 +53,12 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
     <section
       key={block.id}
       className={cn(
-        "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm"
+        "flex flex-col gap-4 border border-gray-200 p-4 rounded-lg shadow-sm",
       )}
     >
       <header
         className={cn(
-          "flex items-center justify-between border-b border-gray-200 pb-2"
+          "flex items-center justify-between border-b border-gray-200 pb-2",
         )}
       >
         <div className="flex items-center gap-3">
@@ -74,7 +77,7 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
             variant="outline"
             size="icon"
             className={cn(
-              "size-9 border-destructive hover:bg-destructive text-destructive"
+              "size-9 border-destructive hover:bg-destructive text-destructive",
             )}
           >
             <Trash2Icon />
@@ -106,7 +109,8 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
               {truncateText(block.flashcardsDescription, 150)}
             </p>
           </div>
-          <div>
+          <div className={cn("flex items-end gap-2")}>
+            <FlashcardsToggleButton block={block} />
             <FlashcardsDialog block={block} />
           </div>
         </div>
@@ -117,7 +121,8 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
               {truncateText(block.sampleTestDescription, 150)}
             </p>
           </div>
-          <div>
+          <div className={cn("flex items-end gap-2")}>
+            <SampleTestToggleButton block={block} />
             <TestQuestionsDialog
               block={block}
               type="sample"
@@ -133,7 +138,8 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
               {truncateText(block.finalTestDescription, 150)}
             </p>
           </div>
-          <div>
+          <div className={cn("flex items-end gap-2")}>
+            <FinalTestToggleButton block={block} />
             <TestQuestionsDialog
               block={block}
               type="final"

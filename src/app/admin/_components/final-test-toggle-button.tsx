@@ -8,21 +8,23 @@ import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 import type { BlockType } from "~/types/block";
 
-export function PublishButton({ block }: Readonly<{ block: BlockType }>) {
+export function FinalTestToggleButton({
+  block,
+}: Readonly<{ block: BlockType }>) {
   const queryClient = useQueryClient();
   const { token } = useUserContext();
 
-  const updatePublishStatusMutation = useMutation({
+  const updateFinalTestStatusMutation = useMutation({
     mutationFn: async ({
       blockId,
-      isPublished,
+      isFinalTestEnabled,
     }: {
       blockId: string;
-      isPublished: boolean;
+      isFinalTestEnabled: boolean;
     }) => {
       const response = await axios.patch(
-        paths.api.blocks.id.publish({ id: blockId }),
-        { isPublished },
+        paths.api.blocks.id.finalTestEnable({ id: blockId }),
+        { isFinalTestEnabled },
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -43,25 +45,25 @@ export function PublishButton({ block }: Readonly<{ block: BlockType }>) {
     },
   });
 
-  const handleTogglePublish = () => {
-    updatePublishStatusMutation.mutate({
+  const handleToggleFinalTest = () => {
+    updateFinalTestStatusMutation.mutate({
       blockId: block.id,
-      isPublished: !block.isPublished,
+      isFinalTestEnabled: !block.isFinalTestEnabled,
     });
   };
 
   return (
     <Button
-      onClick={handleTogglePublish}
-      disabled={updatePublishStatusMutation.isPending}
-      variant={block.isPublished ? "outline" : "default"}
+      onClick={handleToggleFinalTest}
+      disabled={updateFinalTestStatusMutation.isPending}
+      variant={block.isFinalTestEnabled ? "outline" : "default"}
       size="sm"
       className={cn(
-        block.isPublished &&
+        block.isFinalTestEnabled &&
           "border-destructive hover:bg-destructive text-destructive",
       )}
     >
-      {block.isPublished ? <>Unpublish</> : <>Publish</>}
+      {block.isFinalTestEnabled ? <>Disable</> : <>Enable</>}
     </Button>
   );
 }

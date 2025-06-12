@@ -17,6 +17,12 @@ export const paths = {
       id: {
         root: ({ id }: { id: string }) => `/api/blocks/${id}`,
         publish: ({ id }: { id: string }) => `/api/blocks/${id}/publish`,
+        flashcardsEnable: ({ id }: { id: string }) =>
+          `/api/blocks/${id}/flashcards-enable`,
+        sampleTestEnable: ({ id }: { id: string }) =>
+          `/api/blocks/${id}/sample-test-enable`,
+        finalTestEnable: ({ id }: { id: string }) =>
+          `/api/blocks/${id}/final-test-enable`,
         flashcards: {
           bulk: ({ id }: { id: string }) => `/api/blocks/${id}/flashcards/bulk`,
         },

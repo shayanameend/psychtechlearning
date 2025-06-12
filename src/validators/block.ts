@@ -169,6 +169,9 @@ const CreateBlockSchema = zod.object({
       message: "Final test description must be at least 3 characters long!",
     }),
   isPublished: zod.boolean().optional().default(false),
+  isFlashcardsEnabled: zod.boolean().optional().default(false),
+  isSampleTestEnabled: zod.boolean().optional().default(false),
+  isFinalTestEnabled: zod.boolean().optional().default(false),
   weeks: zod.array(WeekSchema).min(1, {
     message: "Block must have at least 1 week!",
   }),
@@ -359,10 +362,31 @@ const UpdateBlockPublishStatusSchema = zod.object({
   }),
 });
 
+const UpdateBlockFlashcardsStatusSchema = zod.object({
+  isFlashcardsEnabled: zod.boolean({
+    message: "Flashcards status is required!",
+  }),
+});
+
+const UpdateBlockSampleTestStatusSchema = zod.object({
+  isSampleTestEnabled: zod.boolean({
+    message: "Sample test status is required!",
+  }),
+});
+
+const UpdateBlockFinalTestStatusSchema = zod.object({
+  isFinalTestEnabled: zod.boolean({
+    message: "Final test status is required!",
+  }),
+});
+
 export {
   CreateBlockSchema,
   UpdateBlockSchema,
   UpdateBlockPublishStatusSchema,
+  UpdateBlockFlashcardsStatusSchema,
+  UpdateBlockSampleTestStatusSchema,
+  UpdateBlockFinalTestStatusSchema,
   BulkUpdatePresentationsSchema,
   BulkUpdateAudiosSchema,
   BulkUpdateWeeksSchema,

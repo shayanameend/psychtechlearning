@@ -75,6 +75,9 @@ model Block {
   sampleTestDescription String
   finalTestDescription  String
   isPublished           Boolean @default(false)
+  isFlashcardsEnabled   Boolean @default(false)
+  isSampleTestEnabled   Boolean @default(false)
+  isFinalTestEnabled    Boolean @default(false)
 
   weeks               Week[]
   flashcards          Flashcard[]
