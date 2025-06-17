@@ -3,6 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { cn } from "~/lib/utils";
 import { BlocksManagement } from "./_components/blocks-management";
+import { SecurityViolationsManagement } from "./_components/security-violations-management";
 import { UsersManagement } from "./_components/users-management";
 
 export default function AdminPage() {
@@ -15,9 +16,10 @@ export default function AdminPage() {
       >
         <div className={cn("py-4 lg:py-0 lg:px-8 flex flex-col gap-6 h-full")}>
           <Tabs defaultValue="blocks" className={cn("flex-1 flex flex-col")}>
-            <TabsList className={cn("grid w-full max-w-md grid-cols-2")}>
+            <TabsList className={cn("grid w-full max-w-lg grid-cols-3")}>
               <TabsTrigger value="blocks">Blocks</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
+              <TabsTrigger value="security">Security</TabsTrigger>
             </TabsList>
 
             <TabsContent value="blocks" className={cn("flex-1")}>
@@ -26,6 +28,10 @@ export default function AdminPage() {
 
             <TabsContent value="users" className={cn("flex-1")}>
               <UsersManagement />
+            </TabsContent>
+
+            <TabsContent value="security" className={cn("flex-1")}>
+              <SecurityViolationsManagement />
             </TabsContent>
           </Tabs>
         </div>

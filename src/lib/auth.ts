@@ -78,6 +78,13 @@ async function verifyRequest({
       throw new NotFoundResponse("User Not Found!");
     }
 
+    // Check if user is blocked
+    if (user.isBlocked) {
+      throw new ForbiddenResponse(
+        "Your account has been blocked due to security violations. Please contact support for assistance.",
+      );
+    }
+
     return user;
   } catch (error) {
     if (error instanceof TokenExpiredError) {

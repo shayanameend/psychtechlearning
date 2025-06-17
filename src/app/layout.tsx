@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 
 import { Toaster } from "~/components/ui/sonner";
 
+import { ContentProtectionProvider } from "~/providers/content-protection-provider";
 import { QueryProvider } from "~/providers/query-provider";
 import { UserProvider } from "~/providers/user-provider";
 
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
     <html lang="en">
       <body>
         <QueryProvider>
-          <UserProvider>{children}</UserProvider>
+          <UserProvider>
+            <ContentProtectionProvider>{children}</ContentProtectionProvider>
+          </UserProvider>
           <Toaster />
         </QueryProvider>
         <Analytics />

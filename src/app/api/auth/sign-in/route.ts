@@ -52,6 +52,13 @@ export async function POST(request: NextRequest) {
       throw new BadResponse("Invalid Password!");
     }
 
+    // Check if user is blocked
+    if (user.isBlocked) {
+      throw new BadResponse(
+        "Your account has been blocked due to security violations. Please contact support for assistance.",
+      );
+    }
+
     const token = await signToken({
       id: user.id,
       email: user.email,

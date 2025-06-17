@@ -58,6 +58,15 @@ export const paths = {
         block: ({ id }: { id: string }) => `/api/users/${id}/block`,
       },
     },
+    securityViolations: {
+      root: () => "/api/security-violations",
+    },
+    admin: {
+      securityViolations: () => "/api/admin/security-violations",
+      users: {
+        unblock: () => "/api/admin/users/unblock",
+      },
+    },
   },
   app: {
     auth: {
