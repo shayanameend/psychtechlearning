@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         password: true,
         role: true,
         isVerified: true,
-        isDeleted: true,
+        isBlocked: true,
         createdAt: true,
         updatedAt: true,
         profile: {
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 200,
-      },
+      }
     );
   } catch (error) {
     return handleErrors({ error });

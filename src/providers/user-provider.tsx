@@ -18,7 +18,7 @@ export interface User {
   email: string;
   role: Role;
   isVerified: boolean;
-  isDeleted: boolean;
+  isBlocked: boolean;
   createdAt: Date;
   updatedAt: Date;
   profile: {
@@ -62,7 +62,7 @@ async function refresh() {
       headers: {
         authorization: `Bearer ${token}`,
       },
-    },
+    }
   );
 
   return response.data;

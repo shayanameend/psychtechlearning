@@ -57,7 +57,7 @@ async function verifyRequest({
         password: true,
         role: true,
         isVerified: true,
-        isDeleted: true,
+        isBlocked: true,
         createdAt: true,
         updatedAt: true,
         profile: {
