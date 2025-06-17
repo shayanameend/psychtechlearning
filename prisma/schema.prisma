@@ -21,9 +21,10 @@ model User {
   isVerified Boolean @default(false)
   isBlocked  Boolean @default(false)
 
-  otp     Otp?
-  profile Profile?
-  notes   UserNote[]
+  otp                Otp?
+  profile            Profile?
+  notes              UserNote[]
+  securityViolations SecurityViolation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -32,6 +33,28 @@ model User {
 enum OtpType {
   VERIFY_EMAIL
   RESET_PASSWORD
+}
+
+enum ViolationType {
+  COPY_PASTE
+  SCREENSHOT
+  CONTEXT_MENU
+  DEVELOPER_TOOLS
+}
+
+model SecurityViolation {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  type        ViolationType
+  description String
+  userAgent   String?
+  ipAddress   String?
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Otp {
