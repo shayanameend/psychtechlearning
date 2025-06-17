@@ -62,23 +62,6 @@ export function UserCard({ user }: UserCardProps) {
               : "No Profile"}
           </CardTitle>
           <div className={cn("flex gap-2")}>
-            {user.isVerified ? (
-              <span
-                className={cn(
-                  "px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full",
-                )}
-              >
-                Verified
-              </span>
-            ) : (
-              <span
-                className={cn(
-                  "px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full",
-                )}
-              >
-                Unverified
-              </span>
-            )}
             {user.isBlocked ? (
               <span
                 className={cn(
@@ -94,6 +77,23 @@ export function UserCard({ user }: UserCardProps) {
                 )}
               >
                 Active
+              </span>
+            )}
+            {user.isVerified ? (
+              <span
+                className={cn(
+                  "px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full",
+                )}
+              >
+                Verified
+              </span>
+            ) : (
+              <span
+                className={cn(
+                  "px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full",
+                )}
+              >
+                Unverified
               </span>
             )}
           </div>
