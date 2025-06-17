@@ -94,10 +94,17 @@ const updatePasswordSchema = zod.object({
     }),
 });
 
+const updateUserBlockStatusSchema = zod.object({
+  isBlocked: zod.boolean({
+    message: "isBlocked must be a boolean value",
+  }),
+});
+
 export {
   signUpSchema,
   signInSchema,
   resetPasswordSchema,
   verifyOtpSchema,
   updatePasswordSchema,
+  updateUserBlockStatusSchema,
 };

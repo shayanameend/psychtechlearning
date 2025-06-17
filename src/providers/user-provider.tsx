@@ -29,7 +29,7 @@ export interface User {
     notify: boolean;
     createdAt: Date;
     updatedAt: Date;
-  };
+  } | null;
 }
 
 export const UserContext = createContext<{
@@ -62,7 +62,7 @@ async function refresh() {
       headers: {
         authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   return response.data;

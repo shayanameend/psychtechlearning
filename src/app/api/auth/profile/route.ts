@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     return handleErrors({ error });
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 201,
-      }
+      },
     );
   } catch (error) {
     return handleErrors({ error });
@@ -222,7 +222,7 @@ export async function PUT(request: NextRequest) {
       },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     return handleErrors({ error });

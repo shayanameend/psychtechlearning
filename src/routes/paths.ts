@@ -52,6 +52,12 @@ export const paths = {
         },
       },
     },
+    users: {
+      root: () => "/api/users",
+      id: {
+        block: ({ id }: { id: string }) => `/api/users/${id}/block`,
+      },
+    },
   },
   app: {
     auth: {
