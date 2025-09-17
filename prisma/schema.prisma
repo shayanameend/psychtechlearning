@@ -88,13 +88,19 @@ model Profile {
 model Block {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  blockOrder       Int
-  blockTitle       String
-  blockDescription String
-  guideLink        String
-  guideDescription String
-  weeksDescription String
-  isPublished      Boolean @default(false)
+  blockOrder            Int
+  blockTitle            String
+  blockDescription      String
+  guideLink             String
+  guideDescription      String
+  weeksDescription      String
+  flashcardsDescription String
+  sampleTestDescription String
+  finalTestDescription  String
+  isPublished           Boolean @default(false)
+  isFlashcardsEnabled   Boolean @default(false)
+  isSampleTestEnabled   Boolean @default(false)
+  isFinalTestEnabled    Boolean @default(false)
 
   weeks          Week[]
   blockUserNotes UserNote[]
@@ -106,14 +112,8 @@ model Block {
 model Week {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  weekNumber            Int
-  title                 String
-  flashcardsDescription String
-  sampleTestDescription String
-  finalTestDescription  String
-  isFlashcardsEnabled   Boolean @default(false)
-  isSampleTestEnabled   Boolean @default(false)
-  isFinalTestEnabled    Boolean @default(false)
+  weekNumber Int
+  title      String
 
   blockId String @db.ObjectId
   block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
