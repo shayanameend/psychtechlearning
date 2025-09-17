@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AxiosError, default as axios } from "axios";
-import { Trash2Icon } from "lucide-react";
+import { EditIcon, Trash2Icon } from "lucide-react";
+import { default as Link } from "next/link";
 import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
@@ -19,7 +20,6 @@ import { PublishStatusIndicator } from "./publish-status-indicator";
 import { SampleTestToggleButton } from "./sample-test-toggle-button";
 import { TestQuestionsDialog } from "./test-questions-dialog";
 import { truncateText } from "./utils";
-import { WeeksDialog } from "./weeks-dialog";
 
 export function Block({ block }: Readonly<{ block: BlockType }>) {
   const queryClient = useQueryClient();
@@ -99,7 +99,12 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
             </p>
           </div>
           <div>
-            <WeeksDialog block={block} />
+            <Link href={paths.app.admin.blocks.id.weeks({ id: block.id })}>
+              <Button variant="outline" size="sm">
+                <EditIcon className="h-4 w-4 mr-1.5" />
+                <span>Edit</span>
+              </Button>
+            </Link>
           </div>
         </div>
         <div className={cn("flex gap-4 justify-between items-end")}>

@@ -10,11 +10,12 @@ import { paths } from "~/routes/paths";
 import type { BlockType } from "~/types/block";
 import { Block } from "./block";
 import { NewBlockButton } from "./new-block-button";
+import { Loader2Icon } from "lucide-react";
 
 export function BlocksManagement() {
   const { token } = useUserContext();
 
-  const { data: blocksQueryResult, isSuccess: blocksQueryIsSuccess } = useQuery(
+  const { data: blocksQueryResult, isPending: blocksQueryIsPending } = useQuery(
     {
       queryKey: ["blocks"],
       queryFn: async () => {
@@ -37,8 +38,12 @@ export function BlocksManagement() {
     setContent(blocksQueryResult?.data.blocks || []);
   }, [blocksQueryResult?.data.blocks]);
 
-  if (!blocksQueryIsSuccess) {
-    return null;
+  if (blocksQueryIsPending) {
+    return (
+      <div className={cn("flex items-center justify-center")}>
+        <Loader2Icon className={cn("size-8 text-primary animate-spin")} />
+      </div>
+    );
   }
 
   return (

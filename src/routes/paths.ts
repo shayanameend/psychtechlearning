@@ -88,6 +88,11 @@ export const paths = {
     },
     admin: {
       root: () => "/admin",
+      blocks: {
+        id: {
+          weeks: ({ id }: { id: string }) => `/admin/blocks/${id}/weeks`,
+        },
+      },
     },
   },
 };
