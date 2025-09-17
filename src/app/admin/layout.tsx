@@ -1,10 +1,9 @@
 import type { PropsWithChildren } from "react";
 
-import { EyeIcon, GalleryVerticalEndIcon, LogOutIcon } from "lucide-react";
+import { GalleryVerticalEndIcon } from "lucide-react";
 import { default as Link } from "next/link";
 
 import { HeaderButtons } from "~/app/admin/_components/header-buttons";
-import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { paths } from "~/routes/paths";
 
