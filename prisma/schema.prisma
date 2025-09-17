@@ -88,25 +88,16 @@ model Profile {
 model Block {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  blockOrder            Int
-  blockTitle            String
-  blockDescription      String
-  guideLink             String
-  guideDescription      String
-  weeksDescription      String
-  flashcardsDescription String
-  sampleTestDescription String
-  finalTestDescription  String
-  isPublished           Boolean @default(false)
-  isFlashcardsEnabled   Boolean @default(false)
-  isSampleTestEnabled   Boolean @default(false)
-  isFinalTestEnabled    Boolean @default(false)
+  blockOrder       Int
+  blockTitle       String
+  blockDescription String
+  guideLink        String
+  guideDescription String
+  weeksDescription String
+  isPublished      Boolean @default(false)
 
-  weeks               Week[]
-  flashcards          Flashcard[]
-  sampleTestQuestions SampleTestQuestion[]
-  finalTestQuestions  FinalTestQuestion[]
-  blockUserNotes      UserNote[]
+  weeks          Week[]
+  blockUserNotes UserNote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,14 +106,23 @@ model Block {
 model Week {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  weekNumber Int
-  title      String
+  weekNumber            Int
+  title                 String
+  flashcardsDescription String
+  sampleTestDescription String
+  finalTestDescription  String
+  isFlashcardsEnabled   Boolean @default(false)
+  isSampleTestEnabled   Boolean @default(false)
+  isFinalTestEnabled    Boolean @default(false)
 
   blockId String @db.ObjectId
   block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
-  presentations Presentation[]
-  audios        Audio[]
+  presentations       Presentation[]
+  audios              Audio[]
+  flashcards          Flashcard[]
+  sampleTestQuestions SampleTestQuestion[]
+  finalTestQuestions  FinalTestQuestion[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -160,8 +160,8 @@ model Flashcard {
   question String
   answer   String
 
-  blockId String @db.ObjectId
-  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -174,8 +174,8 @@ model SampleTestQuestion {
   answers       String[]
   correctAnswer String
 
-  blockId String @db.ObjectId
-  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -188,8 +188,8 @@ model FinalTestQuestion {
   answers       String[]
   correctAnswer String
 
-  blockId String @db.ObjectId
-  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  weekId String @db.ObjectId
+  week   Week   @relation(fields: [weekId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
