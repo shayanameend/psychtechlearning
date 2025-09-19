@@ -73,35 +73,35 @@ export async function GET(
                 updatedAt: true,
               },
             },
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        flashcards: {
-          select: {
-            id: true,
-            question: true,
-            answer: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        sampleTestQuestions: {
-          select: {
-            id: true,
-            question: true,
-            answers: true,
-            correctAnswer: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        finalTestQuestions: {
-          select: {
-            id: true,
-            question: true,
-            answers: true,
-            correctAnswer: true,
+            flashcards: {
+              select: {
+                id: true,
+                question: true,
+                answer: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            sampleTestQuestions: {
+              select: {
+                id: true,
+                question: true,
+                answers: true,
+                correctAnswer: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            finalTestQuestions: {
+              select: {
+                id: true,
+                question: true,
+                answers: true,
+                correctAnswer: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             createdAt: true,
             updatedAt: true,
           },
@@ -126,17 +126,17 @@ export async function GET(
       throw new BadResponse("Block Not Found!");
     }
 
-    if (!block.isFlashcardsEnabled) {
-      block.flashcards = [];
-    }
+    // if (!block.isFlashcardsEnabled) {
+    //   block.flashcards = [];
+    // }
 
-    if (!block.isSampleTestEnabled) {
-      block.sampleTestQuestions = [];
-    }
+    // if (!block.isSampleTestEnabled) {
+    //   block.sampleTestQuestions = [];
+    // }
 
-    if (!block.isFinalTestEnabled) {
-      block.finalTestQuestions = [];
-    }
+    // if (!block.isFinalTestEnabled) {
+    //   block.finalTestQuestions = [];
+    // }
 
     return NextResponse.json(
       {
@@ -244,35 +244,35 @@ export async function PUT(
                 updatedAt: true,
               },
             },
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        flashcards: {
-          select: {
-            id: true,
-            question: true,
-            answer: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        sampleTestQuestions: {
-          select: {
-            id: true,
-            question: true,
-            answers: true,
-            correctAnswer: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        finalTestQuestions: {
-          select: {
-            id: true,
-            question: true,
-            answers: true,
-            correctAnswer: true,
+            flashcards: {
+              select: {
+                id: true,
+                question: true,
+                answer: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            sampleTestQuestions: {
+              select: {
+                id: true,
+                question: true,
+                answers: true,
+                correctAnswer: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            finalTestQuestions: {
+              select: {
+                id: true,
+                question: true,
+                answers: true,
+                correctAnswer: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             createdAt: true,
             updatedAt: true,
           },
@@ -286,17 +286,17 @@ export async function PUT(
       throw new BadResponse("Block Not Found!");
     }
 
-    if (!block.isFlashcardsEnabled) {
-      block.flashcards = [];
-    }
+    // if (!block.isFlashcardsEnabled) {
+    //   block.flashcards = [];
+    // }
 
-    if (!block.isSampleTestEnabled) {
-      block.sampleTestQuestions = [];
-    }
+    // if (!block.isSampleTestEnabled) {
+    //   block.sampleTestQuestions = [];
+    // }
 
-    if (!block.isFinalTestEnabled) {
-      block.finalTestQuestions = [];
-    }
+    // if (!block.isFinalTestEnabled) {
+    //   block.finalTestQuestions = [];
+    // }
 
     return NextResponse.json(
       {

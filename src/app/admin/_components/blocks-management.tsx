@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { default as axios } from "axios";
 import { useEffect, useState } from "react";
 
+import { Loader2Icon } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { useUserContext } from "~/providers/user-provider";
 import { paths } from "~/routes/paths";
 import type { BlockType } from "~/types/block";
 import { Block } from "./block";
 import { NewBlockButton } from "./new-block-button";
-import { Loader2Icon } from "lucide-react";
 
 export function BlocksManagement() {
   const { token } = useUserContext();

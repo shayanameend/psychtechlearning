@@ -9,7 +9,7 @@ import { BulkUpdateFlashcardsSchema } from "~/validators/block";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; weekId: string }> },
 ) {
   try {
     const decodedUser = await verifyRequest({
@@ -22,10 +22,10 @@ export async function PUT(
       throw new UnauthorizedResponse("Unauthorized!");
     }
 
-    const { id } = await params;
+    const { id, weekId } = await params;
 
-    if (!id) {
-      throw new BadResponse("ID is required!");
+    if (!id || !weekId) {
+      throw new BadResponse("Block ID and Week ID are required!");
     }
 
     const body = await request.json();
@@ -47,7 +47,7 @@ export async function PUT(
         data: newFlashcards.map(({ question, answer }) => ({
           question,
           answer,
-          blockId: id,
+          weekId,
         })),
       });
     }

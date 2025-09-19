@@ -37,6 +37,18 @@ export const paths = {
               bulk: ({ id, weekId }: { id: string; weekId: string }) =>
                 `/api/blocks/${id}/weeks/${weekId}/audios/bulk`,
             },
+            flashcards: {
+              bulk: ({ id, weekId }: { id: string; weekId: string }) =>
+                `/api/blocks/${id}/weeks/${weekId}/flashcards/bulk`,
+            },
+            sampleTestQuestions: {
+              bulk: ({ id, weekId }: { id: string; weekId: string }) =>
+                `/api/blocks/${id}/weeks/${weekId}/sample-test-questions/bulk`,
+            },
+            finalTestQuestions: {
+              bulk: ({ id, weekId }: { id: string; weekId: string }) =>
+                `/api/blocks/${id}/weeks/${weekId}/final-test-questions/bulk`,
+            },
           },
         },
         sampleTestQuestions: {

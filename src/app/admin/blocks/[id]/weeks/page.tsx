@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { EditIcon, Loader2Icon, Trash2Icon } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -17,7 +17,9 @@ import { paths } from "~/routes/paths";
 import type {
   AudioType,
   BlockType,
+  FlashcardType,
   PresentationType,
+  TestQuestionType,
   WeekType,
 } from "~/types/block";
 
@@ -27,10 +29,17 @@ type NewPresentationType = Omit<
   "id"
 >;
 type NewAudioType = Omit<Omit<Omit<AudioType, "updatedAt">, "createdAt">, "id">;
+type NewFlashcardType = Omit<
+  Omit<Omit<FlashcardType, "updatedAt">, "createdAt">,
+  "id"
+>;
+type NewTestQuestionType = Omit<
+  Omit<Omit<TestQuestionType, "updatedAt">, "createdAt">,
+  "id"
+>;
 
 export default function WeeksManagementPage() {
   const params = useParams();
-  const router = useRouter();
   const blockId = params.id as string;
   const queryClient = useQueryClient();
   const { token } = useUserContext();
@@ -73,6 +82,58 @@ export default function WeeksManagementPage() {
   const [audioLinkEditing, setAudioLinkEditing] = useState(false);
   const [audioLink, setAudioLink] = useState("");
 
+  // Flashcards
+  const [flashcards, setFlashcards] = useState<FlashcardType[]>([]);
+  const [deletedFlashcards, setDeletedFlashcards] = useState<string[]>([]);
+  const [newFlashcards, setNewFlashcards] = useState<NewFlashcardType[]>([]);
+  const [flashcardIndex, setFlashcardIndex] = useState(0);
+  const [flashcardQuestionEditing, setFlashcardQuestionEditing] =
+    useState(false);
+  const [flashcardQuestion, setFlashcardQuestion] = useState("");
+  const [flashcardAnswerEditing, setFlashcardAnswerEditing] = useState(false);
+  const [flashcardAnswer, setFlashcardAnswer] = useState("");
+
+  // Sample Test Questions
+  const [sampleTestQuestions, setSampleTestQuestions] = useState<
+    TestQuestionType[]
+  >([]);
+  const [deletedSampleTestQuestions, setDeletedSampleTestQuestions] = useState<
+    string[]
+  >([]);
+  const [newSampleTestQuestions, setNewSampleTestQuestions] = useState<
+    NewTestQuestionType[]
+  >([]);
+  const [sampleTestQuestionIndex, setSampleTestQuestionIndex] = useState(0);
+  const [sampleTestQuestionEditing, setSampleTestQuestionEditing] =
+    useState(false);
+  const [sampleTestQuestion, setSampleTestQuestion] = useState("");
+  const [sampleTestAnswersEditing, setSampleTestAnswersEditing] =
+    useState(false);
+  const [sampleTestAnswers, setSampleTestAnswers] = useState<string[]>([]);
+  const [sampleTestCorrectAnswerEditing, setSampleTestCorrectAnswerEditing] =
+    useState(false);
+  const [sampleTestCorrectAnswer, setSampleTestCorrectAnswer] = useState("");
+
+  // Final Test Questions
+  const [finalTestQuestions, setFinalTestQuestions] = useState<
+    TestQuestionType[]
+  >([]);
+  const [deletedFinalTestQuestions, setDeletedFinalTestQuestions] = useState<
+    string[]
+  >([]);
+  const [newFinalTestQuestions, setNewFinalTestQuestions] = useState<
+    NewTestQuestionType[]
+  >([]);
+  const [finalTestQuestionIndex, setFinalTestQuestionIndex] = useState(0);
+  const [finalTestQuestionEditing, setFinalTestQuestionEditing] =
+    useState(false);
+  const [finalTestQuestion, setFinalTestQuestion] = useState("");
+  const [finalTestAnswersEditing, setFinalTestAnswersEditing] = useState(false);
+  const [finalTestAnswers, setFinalTestAnswers] = useState<string[]>([]);
+  const [finalTestCorrectAnswerEditing, setFinalTestCorrectAnswerEditing] =
+    useState(false);
+  const [finalTestCorrectAnswer, setFinalTestCorrectAnswer] = useState("");
+
   // Fetch block data
   const { data: blockQueryResult, isPending: blockQueryIsPending } = useQuery({
     queryKey: ["block", blockId],
@@ -103,9 +164,19 @@ export default function WeeksManagementPage() {
           blockQueryResult?.data.block.weeks[0].presentations || [],
         );
         setAudios(blockQueryResult?.data.block.weeks[0].audios || []);
+        setFlashcards(blockQueryResult?.data.block.weeks[0].flashcards || []);
+        setSampleTestQuestions(
+          blockQueryResult?.data.block.weeks[0].sampleTestQuestions || [],
+        );
+        setFinalTestQuestions(
+          blockQueryResult?.data.block.weeks[0].finalTestQuestions || [],
+        );
       } else {
         setPresentations([]);
         setAudios([]);
+        setFlashcards([]);
+        setSampleTestQuestions([]);
+        setFinalTestQuestions([]);
       }
 
       setDeletedPresentations([]);
@@ -115,6 +186,18 @@ export default function WeeksManagementPage() {
       setDeletedAudios([]);
       setNewAudios([]);
       setAudioIndex(0);
+
+      setDeletedFlashcards([]);
+      setNewFlashcards([]);
+      setFlashcardIndex(0);
+
+      setDeletedSampleTestQuestions([]);
+      setNewSampleTestQuestions([]);
+      setSampleTestQuestionIndex(0);
+
+      setDeletedFinalTestQuestions([]);
+      setNewFinalTestQuestions([]);
+      setFinalTestQuestionIndex(0);
 
       resetEditingStates();
     }
@@ -126,10 +209,16 @@ export default function WeeksManagementPage() {
       const currentWeek = weeks[weekIndex];
       setPresentations(currentWeek.presentations || []);
       setAudios(currentWeek.audios || []);
+      setFlashcards(currentWeek.flashcards || []);
+      setSampleTestQuestions(currentWeek.sampleTestQuestions || []);
+      setFinalTestQuestions(currentWeek.finalTestQuestions || []);
     } else if (weekIndex - weeks.length < newWeeks.length) {
       const currentWeek = newWeeks[weekIndex - weeks.length];
       setPresentations([]);
       setAudios([]);
+      setFlashcards([]);
+      setSampleTestQuestions([]);
+      setFinalTestQuestions([]);
     }
 
     setDeletedPresentations([]);
@@ -139,6 +228,18 @@ export default function WeeksManagementPage() {
     setDeletedAudios([]);
     setNewAudios([]);
     setAudioIndex(0);
+
+    setDeletedFlashcards([]);
+    setNewFlashcards([]);
+    setFlashcardIndex(0);
+
+    setDeletedSampleTestQuestions([]);
+    setNewSampleTestQuestions([]);
+    setSampleTestQuestionIndex(0);
+
+    setDeletedFinalTestQuestions([]);
+    setNewFinalTestQuestions([]);
+    setFinalTestQuestionIndex(0);
 
     resetEditingStates();
   }, [weekIndex, weeks, newWeeks]);
@@ -150,6 +251,14 @@ export default function WeeksManagementPage() {
     setPresentationLinkEditing(false);
     setAudioTitleEditing(false);
     setAudioLinkEditing(false);
+    setFlashcardQuestionEditing(false);
+    setFlashcardAnswerEditing(false);
+    setSampleTestQuestionEditing(false);
+    setSampleTestAnswersEditing(false);
+    setSampleTestCorrectAnswerEditing(false);
+    setFinalTestQuestionEditing(false);
+    setFinalTestAnswersEditing(false);
+    setFinalTestCorrectAnswerEditing(false);
 
     if (weekIndex < weeks.length) {
       const currentWeek = weeks[weekIndex];
@@ -301,6 +410,147 @@ export default function WeeksManagementPage() {
     },
   });
 
+  const updateFlashcardsMutation = useMutation({
+    mutationFn: async ({
+      blockId,
+      weekId,
+      flashcards,
+      deletedFlashcards,
+      newFlashcards,
+    }: {
+      blockId: string;
+      weekId: string;
+      flashcards: FlashcardType[];
+      deletedFlashcards: string[];
+      newFlashcards: NewFlashcardType[];
+    }) => {
+      const response = await axios.put(
+        paths.api.blocks.id.weeks.id.flashcards.bulk({
+          id: blockId,
+          weekId,
+        }),
+        {
+          flashcards,
+          deletedFlashcards,
+          newFlashcards,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data;
+    },
+    onSuccess: ({ info }) => {
+      toast.success(info.message);
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
+      queryClient.invalidateQueries({ queryKey: ["block", blockId] });
+      setDeletedFlashcards([]);
+      setNewFlashcards([]);
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+  });
+
+  const updateSampleTestQuestionsMutation = useMutation({
+    mutationFn: async ({
+      blockId,
+      weekId,
+      sampleTestQuestions,
+      deletedSampleTestQuestions,
+      newSampleTestQuestions,
+    }: {
+      blockId: string;
+      weekId: string;
+      sampleTestQuestions: TestQuestionType[];
+      deletedSampleTestQuestions: string[];
+      newSampleTestQuestions: NewTestQuestionType[];
+    }) => {
+      const response = await axios.put(
+        paths.api.blocks.id.weeks.id.sampleTestQuestions.bulk({
+          id: blockId,
+          weekId,
+        }),
+        {
+          sampleTestQuestions,
+          deletedSampleTestQuestions,
+          newSampleTestQuestions,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data;
+    },
+    onSuccess: ({ info }) => {
+      toast.success(info.message);
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
+      queryClient.invalidateQueries({ queryKey: ["block", blockId] });
+      setDeletedSampleTestQuestions([]);
+      setNewSampleTestQuestions([]);
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+  });
+
+  const updateFinalTestQuestionsMutation = useMutation({
+    mutationFn: async ({
+      blockId,
+      weekId,
+      finalTestQuestions,
+      deletedFinalTestQuestions,
+      newFinalTestQuestions,
+    }: {
+      blockId: string;
+      weekId: string;
+      finalTestQuestions: TestQuestionType[];
+      deletedFinalTestQuestions: string[];
+      newFinalTestQuestions: NewTestQuestionType[];
+    }) => {
+      const response = await axios.put(
+        paths.api.blocks.id.weeks.id.finalTestQuestions.bulk({
+          id: blockId,
+          weekId,
+        }),
+        {
+          finalTestQuestions,
+          deletedFinalTestQuestions,
+          newFinalTestQuestions,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data;
+    },
+    onSuccess: ({ info }) => {
+      toast.success(info.message);
+      queryClient.invalidateQueries({ queryKey: ["blocks"] });
+      queryClient.invalidateQueries({ queryKey: ["block", blockId] });
+      setDeletedFinalTestQuestions([]);
+      setNewFinalTestQuestions([]);
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.info.message);
+      }
+    },
+  });
+
   const saveWeek = () => {
     if (weekIndex < weeks.length) {
       setWeeks(
@@ -432,10 +682,13 @@ export default function WeeksManagementPage() {
         value={activeTab}
         onValueChange={setActiveTab}
       >
-        <TabsList className="grid grid-cols-3 mb-2">
+        <TabsList className="grid grid-cols-6 mb-2">
           <TabsTrigger value="week-details">Week Details</TabsTrigger>
           <TabsTrigger value="presentations">Presentations</TabsTrigger>
           <TabsTrigger value="audios">Audios</TabsTrigger>
+          <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
+          <TabsTrigger value="sample-test-questions">Sample Test</TabsTrigger>
+          <TabsTrigger value="final-test-questions">Final Test</TabsTrigger>
         </TabsList>
 
         <TabsContent
@@ -462,6 +715,9 @@ export default function WeeksManagementPage() {
                       title: `Week ${weeks.length + newWeeks.length + 1}`,
                       presentations: [],
                       audios: [],
+                      flashcards: [],
+                      sampleTestQuestions: [],
+                      finalTestQuestions: [],
                     },
                   ]);
 
@@ -1294,6 +1550,1410 @@ export default function WeeksManagementPage() {
           ) : (
             <div className="p-4 border border-dashed rounded-md text-center">
               Please save the week first before adding audio files.
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent
+          value="flashcards"
+          className="space-y-4 mt-2 border rounded-md p-4"
+        >
+          <div className="flex justify-between">
+            <h4 className="text-base font-medium">
+              Flashcard {flashcardIndex + 1} of{" "}
+              {flashcards.length + newFlashcards.length}
+            </h4>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  if (weekIndex >= weeks.length) {
+                    toast.error(
+                      "Please save the week first before adding flashcards.",
+                    );
+                    return;
+                  }
+
+                  setNewFlashcards([
+                    ...newFlashcards,
+                    {
+                      question: `Question ${flashcards.length + newFlashcards.length + 1}`,
+                      answer: "",
+                    },
+                  ]);
+
+                  setFlashcardIndex(flashcards.length + newFlashcards.length);
+                }}
+                size="sm"
+                variant="outline"
+                disabled={
+                  updateFlashcardsMutation.isPending ||
+                  weekIndex >= weeks.length
+                }
+              >
+                New
+              </Button>
+
+              <Button
+                onClick={() => {
+                  if (weekIndex >= weeks.length) {
+                    toast.error(
+                      "Please save the week first before saving flashcards.",
+                    );
+                    return;
+                  }
+
+                  updateFlashcardsMutation.mutate({
+                    blockId: blockQueryResult.data.block.id,
+                    weekId: weeks[weekIndex].id,
+                    flashcards,
+                    deletedFlashcards,
+                    newFlashcards,
+                  });
+                }}
+                size="sm"
+                variant="outline"
+                disabled={
+                  updateFlashcardsMutation.isPending ||
+                  weekIndex >= weeks.length
+                }
+              >
+                {updateFlashcardsMutation.isPending && (
+                  <Loader2Icon className="animate-spin h-4 w-4 mr-1" />
+                )}
+                Save
+              </Button>
+            </div>
+          </div>
+
+          {weekIndex < weeks.length ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="flashcard-question" className="text-right">
+                  Question
+                </Label>
+                {flashcardQuestionEditing ? (
+                  <Input
+                    id="flashcard-question"
+                    value={flashcardQuestion}
+                    onChange={(e) => setFlashcardQuestion(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setFlashcardQuestionEditing(false);
+                        if (flashcardIndex < flashcards.length) {
+                          setFlashcards(
+                            flashcards.map((flashcard, index) =>
+                              index === flashcardIndex
+                                ? {
+                                    ...flashcard,
+                                    question: flashcardQuestion,
+                                  }
+                                : flashcard,
+                            ),
+                          );
+                        } else {
+                          setNewFlashcards(
+                            newFlashcards.map((flashcard, index) =>
+                              index === flashcardIndex - flashcards.length
+                                ? {
+                                    ...flashcard,
+                                    question: flashcardQuestion,
+                                  }
+                                : flashcard,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setFlashcardQuestionEditing(false);
+                      if (flashcardIndex < flashcards.length) {
+                        setFlashcards(
+                          flashcards.map((flashcard, index) =>
+                            index === flashcardIndex
+                              ? {
+                                  ...flashcard,
+                                  question: flashcardQuestion,
+                                }
+                              : flashcard,
+                          ),
+                        );
+                      } else {
+                        setNewFlashcards(
+                          newFlashcards.map((flashcard, index) =>
+                            index === flashcardIndex - flashcards.length
+                              ? {
+                                  ...flashcard,
+                                  question: flashcardQuestion,
+                                }
+                              : flashcard,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2">
+                      {flashcardIndex < flashcards.length &&
+                      flashcards[flashcardIndex]
+                        ? flashcards[flashcardIndex].question
+                        : flashcardIndex - flashcards.length <
+                            newFlashcards.length
+                          ? newFlashcards[flashcardIndex - flashcards.length]
+                              .question
+                          : "No flashcard available"}
+                    </span>
+                    {(flashcardIndex < flashcards.length ||
+                      flashcardIndex - flashcards.length <
+                        newFlashcards.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (flashcardIndex < flashcards.length) {
+                            setFlashcardQuestion(
+                              flashcards[flashcardIndex].question,
+                            );
+                          } else {
+                            setFlashcardQuestion(
+                              newFlashcards[flashcardIndex - flashcards.length]
+                                .question,
+                            );
+                          }
+                          setFlashcardQuestionEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="flashcard-answer" className="text-right">
+                  Answer
+                </Label>
+                {flashcardAnswerEditing ? (
+                  <Input
+                    id="flashcard-answer"
+                    value={flashcardAnswer}
+                    onChange={(e) => setFlashcardAnswer(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setFlashcardAnswerEditing(false);
+                        if (flashcardIndex < flashcards.length) {
+                          setFlashcards(
+                            flashcards.map((flashcard, index) =>
+                              index === flashcardIndex
+                                ? {
+                                    ...flashcard,
+                                    answer: flashcardAnswer,
+                                  }
+                                : flashcard,
+                            ),
+                          );
+                        } else {
+                          setNewFlashcards(
+                            newFlashcards.map((flashcard, index) =>
+                              index === flashcardIndex - flashcards.length
+                                ? {
+                                    ...flashcard,
+                                    answer: flashcardAnswer,
+                                  }
+                                : flashcard,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setFlashcardAnswerEditing(false);
+                      if (flashcardIndex < flashcards.length) {
+                        setFlashcards(
+                          flashcards.map((flashcard, index) =>
+                            index === flashcardIndex
+                              ? {
+                                  ...flashcard,
+                                  answer: flashcardAnswer,
+                                }
+                              : flashcard,
+                          ),
+                        );
+                      } else {
+                        setNewFlashcards(
+                          newFlashcards.map((flashcard, index) =>
+                            index === flashcardIndex - flashcards.length
+                              ? {
+                                  ...flashcard,
+                                  answer: flashcardAnswer,
+                                }
+                              : flashcard,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2 max-w-[300px] truncate text-sm">
+                      {flashcardIndex < flashcards.length &&
+                      flashcards[flashcardIndex]
+                        ? flashcards[flashcardIndex].answer
+                        : flashcardIndex - flashcards.length <
+                            newFlashcards.length
+                          ? newFlashcards[flashcardIndex - flashcards.length]
+                              .answer
+                          : "No answer available"}
+                    </span>
+                    {(flashcardIndex < flashcards.length ||
+                      flashcardIndex - flashcards.length <
+                        newFlashcards.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (flashcardIndex < flashcards.length) {
+                            setFlashcardAnswer(
+                              flashcards[flashcardIndex].answer,
+                            );
+                          } else {
+                            setFlashcardAnswer(
+                              newFlashcards[flashcardIndex - flashcards.length]
+                                .answer,
+                            );
+                          }
+                          setFlashcardAnswerEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {(flashcards.length > 0 || newFlashcards.length > 0) && (
+                <div className="flex justify-between pt-4">
+                  <Button
+                    onClick={() => {
+                      if (flashcardIndex < flashcards.length) {
+                        setDeletedFlashcards([
+                          ...deletedFlashcards,
+                          flashcards[flashcardIndex].id,
+                        ]);
+                        setFlashcards(
+                          flashcards.filter(
+                            (_, index) => index !== flashcardIndex,
+                          ),
+                        );
+                      } else {
+                        setNewFlashcards(
+                          newFlashcards.filter(
+                            (_, index) =>
+                              index !== flashcardIndex - flashcards.length,
+                          ),
+                        );
+                      }
+
+                      if (flashcardIndex > 0) {
+                        setFlashcardIndex(flashcardIndex - 1);
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Trash2Icon className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        if (flashcardIndex > 0) {
+                          setFlashcardIndex(flashcardIndex - 1);
+                        }
+                      }}
+                      disabled={flashcardIndex === 0}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (
+                          flashcardIndex <
+                          flashcards.length + newFlashcards.length - 1
+                        ) {
+                          setFlashcardIndex(flashcardIndex + 1);
+                        }
+                      }}
+                      disabled={
+                        flashcardIndex ===
+                        flashcards.length + newFlashcards.length - 1
+                      }
+                      size="sm"
+                      variant="outline"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="p-4 border border-dashed rounded-md text-center">
+              Please save the week first before adding flashcards.
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent
+          value="sample-test-questions"
+          className="space-y-4 mt-2 border rounded-md p-4"
+        >
+          <div className="flex justify-between">
+            <h4 className="text-base font-medium">
+              Sample Test Question {sampleTestQuestionIndex + 1} of{" "}
+              {sampleTestQuestions.length + newSampleTestQuestions.length}
+            </h4>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  if (weekIndex >= weeks.length) {
+                    toast.error(
+                      "Please save the week first before adding sample test questions.",
+                    );
+                    return;
+                  }
+
+                  setNewSampleTestQuestions([
+                    ...newSampleTestQuestions,
+                    {
+                      question: `Question ${sampleTestQuestions.length + newSampleTestQuestions.length + 1}`,
+                      answers: ["", "", "", ""],
+                      correctAnswer: "",
+                    },
+                  ]);
+
+                  setSampleTestQuestionIndex(
+                    sampleTestQuestions.length + newSampleTestQuestions.length,
+                  );
+                }}
+                size="sm"
+                variant="outline"
+                disabled={
+                  updateSampleTestQuestionsMutation.isPending ||
+                  weekIndex >= weeks.length
+                }
+              >
+                New
+              </Button>
+
+              <Button
+                onClick={() => {
+                  if (weekIndex >= weeks.length) {
+                    toast.error(
+                      "Please save the week first before saving sample test questions.",
+                    );
+                    return;
+                  }
+
+                  updateSampleTestQuestionsMutation.mutate({
+                    blockId: blockQueryResult.data.block.id,
+                    weekId: weeks[weekIndex].id,
+                    sampleTestQuestions,
+                    deletedSampleTestQuestions,
+                    newSampleTestQuestions,
+                  });
+                }}
+                size="sm"
+                variant="outline"
+                disabled={
+                  updateSampleTestQuestionsMutation.isPending ||
+                  weekIndex >= weeks.length
+                }
+              >
+                {updateSampleTestQuestionsMutation.isPending && (
+                  <Loader2Icon className="animate-spin h-4 w-4 mr-1" />
+                )}
+                Save
+              </Button>
+            </div>
+          </div>
+
+          {weekIndex < weeks.length ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="sample-test-question" className="text-right">
+                  Question
+                </Label>
+                {sampleTestQuestionEditing ? (
+                  <Input
+                    id="sample-test-question"
+                    value={sampleTestQuestion}
+                    onChange={(e) => setSampleTestQuestion(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setSampleTestQuestionEditing(false);
+                        if (
+                          sampleTestQuestionIndex < sampleTestQuestions.length
+                        ) {
+                          setSampleTestQuestions(
+                            sampleTestQuestions.map((question, index) =>
+                              index === sampleTestQuestionIndex
+                                ? {
+                                    ...question,
+                                    question: sampleTestQuestion,
+                                  }
+                                : question,
+                            ),
+                          );
+                        } else {
+                          setNewSampleTestQuestions(
+                            newSampleTestQuestions.map((question, index) =>
+                              index ===
+                              sampleTestQuestionIndex -
+                                sampleTestQuestions.length
+                                ? {
+                                    ...question,
+                                    question: sampleTestQuestion,
+                                  }
+                                : question,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setSampleTestQuestionEditing(false);
+                      if (
+                        sampleTestQuestionIndex < sampleTestQuestions.length
+                      ) {
+                        setSampleTestQuestions(
+                          sampleTestQuestions.map((question, index) =>
+                            index === sampleTestQuestionIndex
+                              ? {
+                                  ...question,
+                                  question: sampleTestQuestion,
+                                }
+                              : question,
+                          ),
+                        );
+                      } else {
+                        setNewSampleTestQuestions(
+                          newSampleTestQuestions.map((question, index) =>
+                            index ===
+                            sampleTestQuestionIndex - sampleTestQuestions.length
+                              ? {
+                                  ...question,
+                                  question: sampleTestQuestion,
+                                }
+                              : question,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2">
+                      {sampleTestQuestionIndex < sampleTestQuestions.length &&
+                      sampleTestQuestions[sampleTestQuestionIndex]
+                        ? sampleTestQuestions[sampleTestQuestionIndex].question
+                        : sampleTestQuestionIndex - sampleTestQuestions.length <
+                            newSampleTestQuestions.length
+                          ? newSampleTestQuestions[
+                              sampleTestQuestionIndex -
+                                sampleTestQuestions.length
+                            ].question
+                          : "No question available"}
+                    </span>
+                    {(sampleTestQuestionIndex < sampleTestQuestions.length ||
+                      sampleTestQuestionIndex - sampleTestQuestions.length <
+                        newSampleTestQuestions.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (
+                            sampleTestQuestionIndex < sampleTestQuestions.length
+                          ) {
+                            setSampleTestQuestion(
+                              sampleTestQuestions[sampleTestQuestionIndex]
+                                .question,
+                            );
+                          } else {
+                            setSampleTestQuestion(
+                              newSampleTestQuestions[
+                                sampleTestQuestionIndex -
+                                  sampleTestQuestions.length
+                              ].question,
+                            );
+                          }
+                          setSampleTestQuestionEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="sample-test-answers" className="text-right">
+                  Answers (comma separated)
+                </Label>
+                {sampleTestAnswersEditing ? (
+                  <Input
+                    id="sample-test-answers"
+                    value={sampleTestAnswers.join(", ")}
+                    onChange={(e) =>
+                      setSampleTestAnswers(
+                        e.target.value
+                          .split(",")
+                          .map((answer) => answer.trim()),
+                      )
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setSampleTestAnswersEditing(false);
+                        if (
+                          sampleTestQuestionIndex < sampleTestQuestions.length
+                        ) {
+                          setSampleTestQuestions(
+                            sampleTestQuestions.map((question, index) =>
+                              index === sampleTestQuestionIndex
+                                ? {
+                                    ...question,
+                                    answers: sampleTestAnswers,
+                                  }
+                                : question,
+                            ),
+                          );
+                        } else {
+                          setNewSampleTestQuestions(
+                            newSampleTestQuestions.map((question, index) =>
+                              index ===
+                              sampleTestQuestionIndex -
+                                sampleTestQuestions.length
+                                ? {
+                                    ...question,
+                                    answers: sampleTestAnswers,
+                                  }
+                                : question,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setSampleTestAnswersEditing(false);
+                      if (
+                        sampleTestQuestionIndex < sampleTestQuestions.length
+                      ) {
+                        setSampleTestQuestions(
+                          sampleTestQuestions.map((question, index) =>
+                            index === sampleTestQuestionIndex
+                              ? {
+                                  ...question,
+                                  answers: sampleTestAnswers,
+                                }
+                              : question,
+                          ),
+                        );
+                      } else {
+                        setNewSampleTestQuestions(
+                          newSampleTestQuestions.map((question, index) =>
+                            index ===
+                            sampleTestQuestionIndex - sampleTestQuestions.length
+                              ? {
+                                  ...question,
+                                  answers: sampleTestAnswers,
+                                }
+                              : question,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2 max-w-[300px] truncate text-sm">
+                      {sampleTestQuestionIndex < sampleTestQuestions.length &&
+                      sampleTestQuestions[sampleTestQuestionIndex]
+                        ? sampleTestQuestions[
+                            sampleTestQuestionIndex
+                          ].answers.join(", ")
+                        : sampleTestQuestionIndex - sampleTestQuestions.length <
+                            newSampleTestQuestions.length
+                          ? newSampleTestQuestions[
+                              sampleTestQuestionIndex -
+                                sampleTestQuestions.length
+                            ].answers.join(", ")
+                          : "No answers available"}
+                    </span>
+                    {(sampleTestQuestionIndex < sampleTestQuestions.length ||
+                      sampleTestQuestionIndex - sampleTestQuestions.length <
+                        newSampleTestQuestions.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (
+                            sampleTestQuestionIndex < sampleTestQuestions.length
+                          ) {
+                            setSampleTestAnswers(
+                              sampleTestQuestions[sampleTestQuestionIndex]
+                                .answers,
+                            );
+                          } else {
+                            setSampleTestAnswers(
+                              newSampleTestQuestions[
+                                sampleTestQuestionIndex -
+                                  sampleTestQuestions.length
+                              ].answers,
+                            );
+                          }
+                          setSampleTestAnswersEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label
+                  htmlFor="sample-test-correct-answer"
+                  className="text-right"
+                >
+                  Correct Answer
+                </Label>
+                {sampleTestCorrectAnswerEditing ? (
+                  <Input
+                    id="sample-test-correct-answer"
+                    value={sampleTestCorrectAnswer}
+                    onChange={(e) => setSampleTestCorrectAnswer(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setSampleTestCorrectAnswerEditing(false);
+                        if (
+                          sampleTestQuestionIndex < sampleTestQuestions.length
+                        ) {
+                          setSampleTestQuestions(
+                            sampleTestQuestions.map((question, index) =>
+                              index === sampleTestQuestionIndex
+                                ? {
+                                    ...question,
+                                    correctAnswer: sampleTestCorrectAnswer,
+                                  }
+                                : question,
+                            ),
+                          );
+                        } else {
+                          setNewSampleTestQuestions(
+                            newSampleTestQuestions.map((question, index) =>
+                              index ===
+                              sampleTestQuestionIndex -
+                                sampleTestQuestions.length
+                                ? {
+                                    ...question,
+                                    correctAnswer: sampleTestCorrectAnswer,
+                                  }
+                                : question,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setSampleTestCorrectAnswerEditing(false);
+                      if (
+                        sampleTestQuestionIndex < sampleTestQuestions.length
+                      ) {
+                        setSampleTestQuestions(
+                          sampleTestQuestions.map((question, index) =>
+                            index === sampleTestQuestionIndex
+                              ? {
+                                  ...question,
+                                  correctAnswer: sampleTestCorrectAnswer,
+                                }
+                              : question,
+                          ),
+                        );
+                      } else {
+                        setNewSampleTestQuestions(
+                          newSampleTestQuestions.map((question, index) =>
+                            index ===
+                            sampleTestQuestionIndex - sampleTestQuestions.length
+                              ? {
+                                  ...question,
+                                  correctAnswer: sampleTestCorrectAnswer,
+                                }
+                              : question,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2">
+                      {sampleTestQuestionIndex < sampleTestQuestions.length &&
+                      sampleTestQuestions[sampleTestQuestionIndex]
+                        ? sampleTestQuestions[sampleTestQuestionIndex]
+                            .correctAnswer
+                        : sampleTestQuestionIndex - sampleTestQuestions.length <
+                            newSampleTestQuestions.length
+                          ? newSampleTestQuestions[
+                              sampleTestQuestionIndex -
+                                sampleTestQuestions.length
+                            ].correctAnswer
+                          : "No correct answer available"}
+                    </span>
+                    {(sampleTestQuestionIndex < sampleTestQuestions.length ||
+                      sampleTestQuestionIndex - sampleTestQuestions.length <
+                        newSampleTestQuestions.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (
+                            sampleTestQuestionIndex < sampleTestQuestions.length
+                          ) {
+                            setSampleTestCorrectAnswer(
+                              sampleTestQuestions[sampleTestQuestionIndex]
+                                .correctAnswer,
+                            );
+                          } else {
+                            setSampleTestCorrectAnswer(
+                              newSampleTestQuestions[
+                                sampleTestQuestionIndex -
+                                  sampleTestQuestions.length
+                              ].correctAnswer,
+                            );
+                          }
+                          setSampleTestCorrectAnswerEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {(sampleTestQuestions.length > 0 ||
+                newSampleTestQuestions.length > 0) && (
+                <div className="flex justify-between pt-4">
+                  <Button
+                    onClick={() => {
+                      if (
+                        sampleTestQuestionIndex < sampleTestQuestions.length
+                      ) {
+                        setDeletedSampleTestQuestions([
+                          ...deletedSampleTestQuestions,
+                          sampleTestQuestions[sampleTestQuestionIndex].id,
+                        ]);
+                        setSampleTestQuestions(
+                          sampleTestQuestions.filter(
+                            (_, index) => index !== sampleTestQuestionIndex,
+                          ),
+                        );
+                      } else {
+                        setNewSampleTestQuestions(
+                          newSampleTestQuestions.filter(
+                            (_, index) =>
+                              index !==
+                              sampleTestQuestionIndex -
+                                sampleTestQuestions.length,
+                          ),
+                        );
+                      }
+
+                      if (sampleTestQuestionIndex > 0) {
+                        setSampleTestQuestionIndex(sampleTestQuestionIndex - 1);
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Trash2Icon className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        if (sampleTestQuestionIndex > 0) {
+                          setSampleTestQuestionIndex(
+                            sampleTestQuestionIndex - 1,
+                          );
+                        }
+                      }}
+                      disabled={sampleTestQuestionIndex === 0}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (
+                          sampleTestQuestionIndex <
+                          sampleTestQuestions.length +
+                            newSampleTestQuestions.length -
+                            1
+                        ) {
+                          setSampleTestQuestionIndex(
+                            sampleTestQuestionIndex + 1,
+                          );
+                        }
+                      }}
+                      disabled={
+                        sampleTestQuestionIndex ===
+                        sampleTestQuestions.length +
+                          newSampleTestQuestions.length -
+                          1
+                      }
+                      size="sm"
+                      variant="outline"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="p-4 border border-dashed rounded-md text-center">
+              Please save the week first before adding sample test questions.
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent
+          value="final-test-questions"
+          className="space-y-4 mt-2 border rounded-md p-4"
+        >
+          <div className="flex justify-between">
+            <h4 className="text-base font-medium">
+              Final Test Question {finalTestQuestionIndex + 1} of{" "}
+              {finalTestQuestions.length + newFinalTestQuestions.length}
+            </h4>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  if (weekIndex >= weeks.length) {
+                    toast.error(
+                      "Please save the week first before adding final test questions.",
+                    );
+                    return;
+                  }
+
+                  setNewFinalTestQuestions([
+                    ...newFinalTestQuestions,
+                    {
+                      question: `Question ${finalTestQuestions.length + newFinalTestQuestions.length + 1}`,
+                      answers: ["", "", "", ""],
+                      correctAnswer: "",
+                    },
+                  ]);
+
+                  setFinalTestQuestionIndex(
+                    finalTestQuestions.length + newFinalTestQuestions.length,
+                  );
+                }}
+                size="sm"
+                variant="outline"
+                disabled={
+                  updateFinalTestQuestionsMutation.isPending ||
+                  weekIndex >= weeks.length
+                }
+              >
+                New
+              </Button>
+
+              <Button
+                onClick={() => {
+                  if (weekIndex >= weeks.length) {
+                    toast.error(
+                      "Please save the week first before saving final test questions.",
+                    );
+                    return;
+                  }
+
+                  updateFinalTestQuestionsMutation.mutate({
+                    blockId: blockQueryResult.data.block.id,
+                    weekId: weeks[weekIndex].id,
+                    finalTestQuestions,
+                    deletedFinalTestQuestions,
+                    newFinalTestQuestions,
+                  });
+                }}
+                size="sm"
+                variant="outline"
+                disabled={
+                  updateFinalTestQuestionsMutation.isPending ||
+                  weekIndex >= weeks.length
+                }
+              >
+                {updateFinalTestQuestionsMutation.isPending && (
+                  <Loader2Icon className="animate-spin h-4 w-4 mr-1" />
+                )}
+                Save
+              </Button>
+            </div>
+          </div>
+
+          {weekIndex < weeks.length ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="final-test-question" className="text-right">
+                  Question
+                </Label>
+                {finalTestQuestionEditing ? (
+                  <Input
+                    id="final-test-question"
+                    value={finalTestQuestion}
+                    onChange={(e) => setFinalTestQuestion(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setFinalTestQuestionEditing(false);
+                        if (
+                          finalTestQuestionIndex < finalTestQuestions.length
+                        ) {
+                          setFinalTestQuestions(
+                            finalTestQuestions.map((question, index) =>
+                              index === finalTestQuestionIndex
+                                ? {
+                                    ...question,
+                                    question: finalTestQuestion,
+                                  }
+                                : question,
+                            ),
+                          );
+                        } else {
+                          setNewFinalTestQuestions(
+                            newFinalTestQuestions.map((question, index) =>
+                              index ===
+                              finalTestQuestionIndex - finalTestQuestions.length
+                                ? {
+                                    ...question,
+                                    question: finalTestQuestion,
+                                  }
+                                : question,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setFinalTestQuestionEditing(false);
+                      if (finalTestQuestionIndex < finalTestQuestions.length) {
+                        setFinalTestQuestions(
+                          finalTestQuestions.map((question, index) =>
+                            index === finalTestQuestionIndex
+                              ? {
+                                  ...question,
+                                  question: finalTestQuestion,
+                                }
+                              : question,
+                          ),
+                        );
+                      } else {
+                        setNewFinalTestQuestions(
+                          newFinalTestQuestions.map((question, index) =>
+                            index ===
+                            finalTestQuestionIndex - finalTestQuestions.length
+                              ? {
+                                  ...question,
+                                  question: finalTestQuestion,
+                                }
+                              : question,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2">
+                      {finalTestQuestionIndex < finalTestQuestions.length &&
+                      finalTestQuestions[finalTestQuestionIndex]
+                        ? finalTestQuestions[finalTestQuestionIndex].question
+                        : finalTestQuestionIndex - finalTestQuestions.length <
+                            newFinalTestQuestions.length
+                          ? newFinalTestQuestions[
+                              finalTestQuestionIndex - finalTestQuestions.length
+                            ].question
+                          : "No question available"}
+                    </span>
+                    {(finalTestQuestionIndex < finalTestQuestions.length ||
+                      finalTestQuestionIndex - finalTestQuestions.length <
+                        newFinalTestQuestions.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (
+                            finalTestQuestionIndex < finalTestQuestions.length
+                          ) {
+                            setFinalTestQuestion(
+                              finalTestQuestions[finalTestQuestionIndex]
+                                .question,
+                            );
+                          } else {
+                            setFinalTestQuestion(
+                              newFinalTestQuestions[
+                                finalTestQuestionIndex -
+                                  finalTestQuestions.length
+                              ].question,
+                            );
+                          }
+                          setFinalTestQuestionEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="final-test-answers" className="text-right">
+                  Answers (comma separated)
+                </Label>
+                {finalTestAnswersEditing ? (
+                  <Input
+                    id="final-test-answers"
+                    value={finalTestAnswers.join(", ")}
+                    onChange={(e) =>
+                      setFinalTestAnswers(
+                        e.target.value
+                          .split(",")
+                          .map((answer) => answer.trim()),
+                      )
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setFinalTestAnswersEditing(false);
+                        if (
+                          finalTestQuestionIndex < finalTestQuestions.length
+                        ) {
+                          setFinalTestQuestions(
+                            finalTestQuestions.map((question, index) =>
+                              index === finalTestQuestionIndex
+                                ? {
+                                    ...question,
+                                    answers: finalTestAnswers,
+                                  }
+                                : question,
+                            ),
+                          );
+                        } else {
+                          setNewFinalTestQuestions(
+                            newFinalTestQuestions.map((question, index) =>
+                              index ===
+                              finalTestQuestionIndex - finalTestQuestions.length
+                                ? {
+                                    ...question,
+                                    answers: finalTestAnswers,
+                                  }
+                                : question,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setFinalTestAnswersEditing(false);
+                      if (finalTestQuestionIndex < finalTestQuestions.length) {
+                        setFinalTestQuestions(
+                          finalTestQuestions.map((question, index) =>
+                            index === finalTestQuestionIndex
+                              ? {
+                                  ...question,
+                                  answers: finalTestAnswers,
+                                }
+                              : question,
+                          ),
+                        );
+                      } else {
+                        setNewFinalTestQuestions(
+                          newFinalTestQuestions.map((question, index) =>
+                            index ===
+                            finalTestQuestionIndex - finalTestQuestions.length
+                              ? {
+                                  ...question,
+                                  answers: finalTestAnswers,
+                                }
+                              : question,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2 max-w-[300px] truncate text-sm">
+                      {finalTestQuestionIndex < finalTestQuestions.length &&
+                      finalTestQuestions[finalTestQuestionIndex]
+                        ? finalTestQuestions[
+                            finalTestQuestionIndex
+                          ].answers.join(", ")
+                        : finalTestQuestionIndex - finalTestQuestions.length <
+                            newFinalTestQuestions.length
+                          ? newFinalTestQuestions[
+                              finalTestQuestionIndex - finalTestQuestions.length
+                            ].answers.join(", ")
+                          : "No answers available"}
+                    </span>
+                    {(finalTestQuestionIndex < finalTestQuestions.length ||
+                      finalTestQuestionIndex - finalTestQuestions.length <
+                        newFinalTestQuestions.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (
+                            finalTestQuestionIndex < finalTestQuestions.length
+                          ) {
+                            setFinalTestAnswers(
+                              finalTestQuestions[finalTestQuestionIndex]
+                                .answers,
+                            );
+                          } else {
+                            setFinalTestAnswers(
+                              newFinalTestQuestions[
+                                finalTestQuestionIndex -
+                                  finalTestQuestions.length
+                              ].answers,
+                            );
+                          }
+                          setFinalTestAnswersEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label
+                  htmlFor="final-test-correct-answer"
+                  className="text-right"
+                >
+                  Correct Answer
+                </Label>
+                {finalTestCorrectAnswerEditing ? (
+                  <Input
+                    id="final-test-correct-answer"
+                    value={finalTestCorrectAnswer}
+                    onChange={(e) => setFinalTestCorrectAnswer(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setFinalTestCorrectAnswerEditing(false);
+                        if (
+                          finalTestQuestionIndex < finalTestQuestions.length
+                        ) {
+                          setFinalTestQuestions(
+                            finalTestQuestions.map((question, index) =>
+                              index === finalTestQuestionIndex
+                                ? {
+                                    ...question,
+                                    correctAnswer: finalTestCorrectAnswer,
+                                  }
+                                : question,
+                            ),
+                          );
+                        } else {
+                          setNewFinalTestQuestions(
+                            newFinalTestQuestions.map((question, index) =>
+                              index ===
+                              finalTestQuestionIndex - finalTestQuestions.length
+                                ? {
+                                    ...question,
+                                    correctAnswer: finalTestCorrectAnswer,
+                                  }
+                                : question,
+                            ),
+                          );
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      setFinalTestCorrectAnswerEditing(false);
+                      if (finalTestQuestionIndex < finalTestQuestions.length) {
+                        setFinalTestQuestions(
+                          finalTestQuestions.map((question, index) =>
+                            index === finalTestQuestionIndex
+                              ? {
+                                  ...question,
+                                  correctAnswer: finalTestCorrectAnswer,
+                                }
+                              : question,
+                          ),
+                        );
+                      } else {
+                        setNewFinalTestQuestions(
+                          newFinalTestQuestions.map((question, index) =>
+                            index ===
+                            finalTestQuestionIndex - finalTestQuestions.length
+                              ? {
+                                  ...question,
+                                  correctAnswer: finalTestCorrectAnswer,
+                                }
+                              : question,
+                          ),
+                        );
+                      }
+                    }}
+                    className="col-span-3"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="col-span-3 flex items-center">
+                    <span className="mr-2">
+                      {finalTestQuestionIndex < finalTestQuestions.length &&
+                      finalTestQuestions[finalTestQuestionIndex]
+                        ? finalTestQuestions[finalTestQuestionIndex]
+                            .correctAnswer
+                        : finalTestQuestionIndex - finalTestQuestions.length <
+                            newFinalTestQuestions.length
+                          ? newFinalTestQuestions[
+                              finalTestQuestionIndex - finalTestQuestions.length
+                            ].correctAnswer
+                          : "No correct answer available"}
+                    </span>
+                    {(finalTestQuestionIndex < finalTestQuestions.length ||
+                      finalTestQuestionIndex - finalTestQuestions.length <
+                        newFinalTestQuestions.length) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (
+                            finalTestQuestionIndex < finalTestQuestions.length
+                          ) {
+                            setFinalTestCorrectAnswer(
+                              finalTestQuestions[finalTestQuestionIndex]
+                                .correctAnswer,
+                            );
+                          } else {
+                            setFinalTestCorrectAnswer(
+                              newFinalTestQuestions[
+                                finalTestQuestionIndex -
+                                  finalTestQuestions.length
+                              ].correctAnswer,
+                            );
+                          }
+                          setFinalTestCorrectAnswerEditing(true);
+                        }}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {(finalTestQuestions.length > 0 ||
+                newFinalTestQuestions.length > 0) && (
+                <div className="flex justify-between pt-4">
+                  <Button
+                    onClick={() => {
+                      if (finalTestQuestionIndex < finalTestQuestions.length) {
+                        setDeletedFinalTestQuestions([
+                          ...deletedFinalTestQuestions,
+                          finalTestQuestions[finalTestQuestionIndex].id,
+                        ]);
+                        setFinalTestQuestions(
+                          finalTestQuestions.filter(
+                            (_, index) => index !== finalTestQuestionIndex,
+                          ),
+                        );
+                      } else {
+                        setNewFinalTestQuestions(
+                          newFinalTestQuestions.filter(
+                            (_, index) =>
+                              index !==
+                              finalTestQuestionIndex -
+                                finalTestQuestions.length,
+                          ),
+                        );
+                      }
+
+                      if (finalTestQuestionIndex > 0) {
+                        setFinalTestQuestionIndex(finalTestQuestionIndex - 1);
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Trash2Icon className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        if (finalTestQuestionIndex > 0) {
+                          setFinalTestQuestionIndex(finalTestQuestionIndex - 1);
+                        }
+                      }}
+                      disabled={finalTestQuestionIndex === 0}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (
+                          finalTestQuestionIndex <
+                          finalTestQuestions.length +
+                            newFinalTestQuestions.length -
+                            1
+                        ) {
+                          setFinalTestQuestionIndex(finalTestQuestionIndex + 1);
+                        }
+                      }}
+                      disabled={
+                        finalTestQuestionIndex ===
+                        finalTestQuestions.length +
+                          newFinalTestQuestions.length -
+                          1
+                      }
+                      size="sm"
+                      variant="outline"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="p-4 border border-dashed rounded-md text-center">
+              Please save the week first before adding final test questions.
             </div>
           )}
         </TabsContent>

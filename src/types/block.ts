@@ -44,6 +44,9 @@ export interface WeekType {
   title: string;
   presentations: PresentationType[];
   audios: AudioType[];
+  flashcards: FlashcardType[];
+  sampleTestQuestions: TestQuestionType[];
+  finalTestQuestions: TestQuestionType[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -64,9 +67,6 @@ export interface BlockType {
   isSampleTestEnabled: boolean;
   isFinalTestEnabled: boolean;
   weeks: WeekType[];
-  flashcards: FlashcardType[];
-  sampleTestQuestions: TestQuestionType[];
-  finalTestQuestions: TestQuestionType[];
   blockUserNotes: BlockUserNoteType[];
   createdAt: Date;
   updatedAt: Date;

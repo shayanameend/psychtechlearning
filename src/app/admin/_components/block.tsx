@@ -13,12 +13,10 @@ import { paths } from "~/routes/paths";
 import type { BlockType } from "~/types/block";
 import { EditBlockButton } from "./edit-block-button";
 import { FinalTestToggleButton } from "./final-test-toggle-button";
-import { FlashcardsDialog } from "./flashcards-dialog";
 import { FlashcardsToggleButton } from "./flashcards-toggle-button";
 import { PublishButton } from "./publish-button";
 import { PublishStatusIndicator } from "./publish-status-indicator";
 import { SampleTestToggleButton } from "./sample-test-toggle-button";
-import { TestQuestionsDialog } from "./test-questions-dialog";
 import { truncateText } from "./utils";
 
 export function Block({ block }: Readonly<{ block: BlockType }>) {
@@ -116,7 +114,6 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
           </div>
           <div className={cn("flex items-end gap-2")}>
             <FlashcardsToggleButton block={block} />
-            <FlashcardsDialog block={block} />
           </div>
         </div>
         <div className={cn("flex gap-4 justify-between items-end")}>
@@ -128,12 +125,6 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
           </div>
           <div className={cn("flex items-end gap-2")}>
             <SampleTestToggleButton block={block} />
-            <TestQuestionsDialog
-              block={block}
-              type="sample"
-              title="Sample Questions"
-              description="This is a set of sample questions to help you practice and reinforce your knowledge on this topic. The questions consist of multiple choice questions."
-            />
           </div>
         </div>
         <div className={cn("flex gap-4 justify-between items-end")}>
@@ -145,12 +136,6 @@ export function Block({ block }: Readonly<{ block: BlockType }>) {
           </div>
           <div className={cn("flex items-end gap-2")}>
             <FinalTestToggleButton block={block} />
-            <TestQuestionsDialog
-              block={block}
-              type="final"
-              title="Final Questions"
-              description="This is a set of final questions to help you assess your knowledge on this topic. The questions consist of multiple choice questions."
-            />
           </div>
         </div>
       </article>
