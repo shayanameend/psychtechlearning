@@ -55,16 +55,14 @@ export function Block({
   block,
   showNotes,
 }: Readonly<{ block: BlockType; showNotes: boolean }>) {
-  const [flashcards, setFlashcards] = useState<FlashcardType[]>(
-    block.flashcards,
-  );
+  const [flashcards, setFlashcards] = useState<FlashcardType[]>([]);
   const [showFlashcard, setShowFlashcard] = useState(false);
   const [sampleTestQuestions, setSampleTestQuestions] = useState<
     TestQuestionType[]
-  >(block.sampleTestQuestions);
+  >([]);
   const [finalTestQuestions, setFinalTestQuestions] = useState<
     TestQuestionType[]
-  >(block.finalTestQuestions);
+  >([]);
   const [sampleTestAnswers, setSampleTestAnswers] = useState<
     Array<string | null>
   >([]);
@@ -99,16 +97,17 @@ export function Block({
 
   // Initialize with first week when block data is loaded
   useEffect(() => {
-    setFlashcards(block.flashcards);
-    setSampleTestQuestions(block.sampleTestQuestions);
-    setFinalTestQuestions(block.finalTestQuestions);
-
     // Initialize week selection if weeks exist
     if (block.weeks && block.weeks.length > 0) {
       const firstWeek = block.weeks[0];
       setSelectedWeekId(firstWeek.id);
       setCurrentWeek(firstWeek);
       setSelectedPresentationIndex(0);
+
+      // Set content for the first week
+      setFlashcards(firstWeek.flashcards || []);
+      setSampleTestQuestions(firstWeek.sampleTestQuestions || []);
+      setFinalTestQuestions(firstWeek.finalTestQuestions || []);
 
       if (firstWeek.audios && firstWeek.audios.length > 0) {
         const firstAudio = firstWeek.audios[0];
@@ -120,6 +119,9 @@ export function Block({
     } else {
       setCurrentWeek(null);
       setCurrentAudio(null);
+      setFlashcards([]);
+      setSampleTestQuestions([]);
+      setFinalTestQuestions([]);
     }
   }, [block]);
 
@@ -130,6 +132,11 @@ export function Block({
       if (week) {
         setCurrentWeek(week);
         setSelectedPresentationIndex(0);
+
+        // Update content for the selected week
+        setFlashcards(week.flashcards || []);
+        setSampleTestQuestions(week.sampleTestQuestions || []);
+        setFinalTestQuestions(week.finalTestQuestions || []);
 
         // Reset audio selection
         if (week.audios.length > 0) {
