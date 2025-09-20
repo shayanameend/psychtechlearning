@@ -151,13 +151,10 @@ export async function POST(request: NextRequest) {
       guideLink,
       guideDescription,
       weeksDescription,
-      weeks,
       flashcardsDescription,
-      flashcards,
       sampleTestDescription,
-      sampleTestQuestions,
       finalTestDescription,
-      finalTestQuestions,
+      weeks,
     } = CreateBlockSchema.parse(body);
 
     const block = await prisma.block.create({

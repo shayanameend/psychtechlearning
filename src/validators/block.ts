@@ -168,21 +168,8 @@ const CreateBlockSchema = zod.object({
     .min(3, {
       message: "Final test description must be at least 3 characters long!",
     }),
-  isPublished: zod.boolean().optional().default(false),
-  isFlashcardsEnabled: zod.boolean().optional().default(false),
-  isSampleTestEnabled: zod.boolean().optional().default(false),
-  isFinalTestEnabled: zod.boolean().optional().default(false),
   weeks: zod.array(WeekSchema).min(1, {
     message: "Block must have at least 1 week!",
-  }),
-  flashcards: zod.array(FlashcardSchema).min(1, {
-    message: "Flashcards must have at least 1 item!",
-  }),
-  sampleTestQuestions: zod.array(QuestionSchema).min(1, {
-    message: "Sample test questions must have at least 1 item!",
-  }),
-  finalTestQuestions: zod.array(QuestionSchema).min(1, {
-    message: "Final test questions must have at least 1 item!",
   }),
 });
 

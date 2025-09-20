@@ -1,12 +1,12 @@
 "use client";
 
-import type { default as zod } from "zod";
+import type zod from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AxiosError, default as axios } from "axios";
+import axios, { AxiosError } from "axios";
 import { Loader2Icon, PlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -56,9 +56,6 @@ export function NewBlockButton() {
       sampleTestDescription: "",
       finalTestDescription: "",
       weeks: [],
-      flashcards: [],
-      sampleTestQuestions: [],
-      finalTestQuestions: [],
     },
   });
 
@@ -166,7 +163,7 @@ export function NewBlockButton() {
                   )}
                 />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={createBlockform.control}
                   name="guideDescription"
@@ -201,7 +198,7 @@ export function NewBlockButton() {
                   )}
                 />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={createBlockform.control}
                   name="weeksDescription"
@@ -247,12 +244,12 @@ export function NewBlockButton() {
                   )}
                 />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={createBlockform.control}
                   name="flashcardsDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-9/12")}>
+                    <FormItem className={cn("w-full")}>
                       <FormLabel>Flashcards Description</FormLabel>
                       <FormControl>
                         <Textarea
@@ -265,40 +262,13 @@ export function NewBlockButton() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={createBlockform.control}
-                  name="flashcards"
-                  render={({ field }) => (
-                    <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Flashcards</FormLabel>
-                      <FormControl>
-                        <Input
-                          onChange={(event) => {
-                            createBlockform.setValue(
-                              "flashcards",
-                              Array.from({
-                                length: Number(event.target.value),
-                              }).map((_, index) => ({
-                                question: `Question ${index + 1}`,
-                                answer: `Answer ${index + 1}`,
-                              })),
-                            );
-                          }}
-                          value={field.value.length}
-                          type="text"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={createBlockform.control}
                   name="sampleTestDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-9/12")}>
+                    <FormItem className={cn("w-full")}>
                       <FormLabel>Sample Test Description</FormLabel>
                       <FormControl>
                         <Textarea
@@ -311,85 +281,19 @@ export function NewBlockButton() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={createBlockform.control}
-                  name="sampleTestQuestions"
-                  render={({ field }) => (
-                    <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Sample Test Questions</FormLabel>
-                      <FormControl>
-                        <Input
-                          onChange={(event) => {
-                            createBlockform.setValue(
-                              "sampleTestQuestions",
-                              Array.from({
-                                length: Number(event.target.value),
-                              }).map((_, index) => ({
-                                question: `Question ${index + 1}`,
-                                answers: [
-                                  "Option 1",
-                                  "Option 2",
-                                  "Option 3",
-                                  "Option 4",
-                                ],
-                                correctAnswer: "Option 1",
-                              })),
-                            );
-                          }}
-                          value={field.value.length}
-                          type="text"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={createBlockform.control}
                   name="finalTestDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-9/12")}>
+                    <FormItem className={cn("w-full")}>
                       <FormLabel>Final Test Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
                           placeholder="Take a test to assess your knowledge."
                           className={cn("resize-none min-h-14")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={createBlockform.control}
-                  name="finalTestQuestions"
-                  render={({ field }) => (
-                    <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Final Test Questions</FormLabel>
-                      <FormControl>
-                        <Input
-                          onChange={(event) => {
-                            createBlockform.setValue(
-                              "finalTestQuestions",
-                              Array.from({
-                                length: Number(event.target.value),
-                              }).map((_, index) => ({
-                                question: `Question ${index + 1}`,
-                                answers: [
-                                  "Option 1",
-                                  "Option 2",
-                                  "Option 3",
-                                  "Option 4",
-                                ],
-                                correctAnswer: "Option 1",
-                              })),
-                            );
-                          }}
-                          value={field.value.length}
-                          type="text"
                         />
                       </FormControl>
                       <FormMessage />

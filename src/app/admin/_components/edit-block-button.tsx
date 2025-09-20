@@ -57,9 +57,6 @@ export function EditBlockButton({ block }: Readonly<{ block: BlockType }>) {
       sampleTestDescription: block.sampleTestDescription,
       finalTestDescription: block.finalTestDescription,
       weeks: block.weeks,
-      flashcards: block.flashcards,
-      sampleTestQuestions: block.sampleTestQuestions,
-      finalTestQuestions: block.finalTestQuestions,
     },
   });
 
@@ -75,9 +72,6 @@ export function EditBlockButton({ block }: Readonly<{ block: BlockType }>) {
       sampleTestDescription: block.sampleTestDescription,
       finalTestDescription: block.finalTestDescription,
       weeks: block.weeks,
-      flashcards: block.flashcards,
-      sampleTestQuestions: block.sampleTestQuestions,
-      finalTestQuestions: block.finalTestQuestions,
     });
   }, [updateBlockform.reset, block]);
 
@@ -189,7 +183,7 @@ export function EditBlockButton({ block }: Readonly<{ block: BlockType }>) {
                   )}
                 />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={updateBlockform.control}
                   name="guideDescription"
@@ -224,7 +218,7 @@ export function EditBlockButton({ block }: Readonly<{ block: BlockType }>) {
                   )}
                 />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={updateBlockform.control}
                   name="weeksDescription"
@@ -271,12 +265,12 @@ export function EditBlockButton({ block }: Readonly<{ block: BlockType }>) {
                   )}
                 />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={updateBlockform.control}
                   name="flashcardsDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-9/12")}>
+                    <FormItem className={cn("w-full")}>
                       <FormLabel>Flashcards Description</FormLabel>
                       <FormControl>
                         <Textarea
@@ -289,41 +283,13 @@ export function EditBlockButton({ block }: Readonly<{ block: BlockType }>) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={updateBlockform.control}
-                  name="flashcards"
-                  render={({ field }) => (
-                    <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Flashcards</FormLabel>
-                      <FormControl>
-                        <Input
-                          onChange={(event) => {
-                            updateBlockform.setValue(
-                              "flashcards",
-                              Array.from({
-                                length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answer: "",
-                              })),
-                            );
-                          }}
-                          disabled={true}
-                          value={field.value.length}
-                          type="text"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={updateBlockform.control}
                   name="sampleTestDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-9/12")}>
+                    <FormItem className={cn("w-full")}>
                       <FormLabel>Sample Test Description</FormLabel>
                       <FormControl>
                         <Textarea
@@ -336,77 +302,19 @@ export function EditBlockButton({ block }: Readonly<{ block: BlockType }>) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={updateBlockform.control}
-                  name="sampleTestQuestions"
-                  render={({ field }) => (
-                    <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Sample Test Questions</FormLabel>
-                      <FormControl>
-                        <Input
-                          onChange={(event) => {
-                            updateBlockform.setValue(
-                              "sampleTestQuestions",
-                              Array.from({
-                                length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
-                              })),
-                            );
-                          }}
-                          disabled={true}
-                          value={field.value.length}
-                          type="text"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
-              <div className={cn("flex gap-4 flex-row-reverse")}>
+              <div className={cn("flex gap-4")}>
                 <FormField
                   control={updateBlockform.control}
                   name="finalTestDescription"
                   render={({ field }) => (
-                    <FormItem className={cn("w-9/12")}>
+                    <FormItem className={cn("w-full")}>
                       <FormLabel>Final Test Description</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
                           placeholder="Take a test to assess your knowledge."
                           className={cn("resize-none min-h-14")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={updateBlockform.control}
-                  name="finalTestQuestions"
-                  render={({ field }) => (
-                    <FormItem className={cn("w-3/12")}>
-                      <FormLabel>Final Test Questions</FormLabel>
-                      <FormControl>
-                        <Input
-                          onChange={(event) => {
-                            updateBlockform.setValue(
-                              "finalTestQuestions",
-                              Array.from({
-                                length: Number(event.target.value),
-                              }).map(() => ({
-                                question: "",
-                                answers: ["", "", "", ""],
-                                correctAnswer: "",
-                              })),
-                            );
-                          }}
-                          disabled={true}
-                          value={field.value.length}
-                          type="text"
                         />
                       </FormControl>
                       <FormMessage />
