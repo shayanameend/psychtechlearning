@@ -581,7 +581,8 @@ export function Block({
             </Button>
           </article>
 
-          {user?.role === "USER" && !block.isFlashcardsEnabled ? null : (
+          {(user?.role === "USER" && !block.isFlashcardsEnabled) ||
+          flashcards.length < 1 ? null : (
             <article
               className={cn(
                 "space-y-2 bg-white/50 p-4 rounded-lg shadow-sm flex flex-col h-full transform transition-transform hover:shadow-md hover:scale-[1.01]",
@@ -744,7 +745,8 @@ export function Block({
             </article>
           )}
 
-          {user?.role === "USER" && !block.isSampleTestEnabled ? null : (
+          {(user?.role === "USER" && !block.isSampleTestEnabled) ||
+          sampleTestQuestions.length < 1 ? null : (
             <article
               className={cn(
                 "space-y-2 bg-white/50 p-4 rounded-lg shadow-sm flex flex-col h-full transform transition-transform hover:shadow-md hover:scale-[1.01]",
@@ -959,7 +961,8 @@ export function Block({
             </article>
           )}
 
-          {user?.role === "USER" && !block.isFinalTestEnabled ? null : (
+          {(user?.role === "USER" && !block.isFinalTestEnabled) ||
+          finalTestQuestions.length < 1 ? null : (
             <article
               className={cn(
                 "space-y-2 bg-white/50 p-4 rounded-lg shadow-sm flex flex-col h-full transform transition-transform hover:shadow-md hover:scale-[1.01]",

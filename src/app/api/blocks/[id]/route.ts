@@ -126,18 +126,6 @@ export async function GET(
       throw new BadResponse("Block Not Found!");
     }
 
-    // if (!block.isFlashcardsEnabled) {
-    //   block.flashcards = [];
-    // }
-
-    // if (!block.isSampleTestEnabled) {
-    //   block.sampleTestQuestions = [];
-    // }
-
-    // if (!block.isFinalTestEnabled) {
-    //   block.finalTestQuestions = [];
-    // }
-
     return NextResponse.json(
       {
         data: { block },
@@ -285,18 +273,6 @@ export async function PUT(
     if (!block) {
       throw new BadResponse("Block Not Found!");
     }
-
-    // if (!block.isFlashcardsEnabled) {
-    //   block.flashcards = [];
-    // }
-
-    // if (!block.isSampleTestEnabled) {
-    //   block.sampleTestQuestions = [];
-    // }
-
-    // if (!block.isFinalTestEnabled) {
-    //   block.finalTestQuestions = [];
-    // }
 
     return NextResponse.json(
       {
